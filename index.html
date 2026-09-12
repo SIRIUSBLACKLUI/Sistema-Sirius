@@ -137,10 +137,23 @@ h1{letter-spacing:3px;color:#f6f8ff;text-shadow:0 0 8px #55d6ff55,0 0 24px #8b5c
 .knowledgeButtons button{border:1px solid #31547a;background:#081226;color:#ccecff;padding:10px 8px;font-size:10px;font-weight:900;letter-spacing:1px}
 .emptyKnowledge{font-size:10px;color:#7f90ad;border:1px dashed #294364;padding:12px;margin-top:10px;line-height:1.45}
 
+
+.libraryItem{border:1px solid #2a4b70;background:linear-gradient(180deg,#081528,#050c17);padding:12px;margin-top:9px}
+.libraryTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.libraryTitle{font-size:13px;font-weight:900;letter-spacing:.2px}
+.libraryAuthor{font-size:9px;color:#8399ba;margin-top:3px}
+.libraryBadge{font-size:8px;border:1px solid #3b628d;color:#77dcff;padding:3px 6px;white-space:nowrap}
+.libraryMeta{font-size:9px;color:#94a6c3;line-height:1.45;margin-top:8px}
+.libraryProgress{height:5px;background:#0b1423;border:1px solid #1d3654;margin-top:8px;overflow:hidden}
+.libraryProgress>div{height:100%;background:linear-gradient(90deg,#5068ff,#7ce7ff)}
+.libraryActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.libraryActions button{border:1px solid #355f8c;background:#09172c;color:#dff7ff;padding:9px 6px;font-size:9px;font-weight:900;letter-spacing:.8px}
+.libraryActions .openMaterial{border-color:#6854bd;background:#17102c;color:#e9e0ff}
+
 @media(max-width:370px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.rank{font-size:13px}}
 </style>
 </head>
-<body><div class="scanline"></div><div class="versionMark">SIRIUS // v2.10</div>
+<body><div class="scanline"></div><div class="versionMark">SIRIUS // v2.11</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div>
@@ -190,7 +203,7 @@ h1{letter-spacing:3px;color:#f6f8ff;text-shadow:0 0 8px #55d6ff55,0 0 24px #8b5c
   </div>
 </div>
 <main class="app">
-<div class="top"><div><div class="systemStatus">&#9679; SIRIUS // SISTEMA ONLINE</div><div class="sub">INTERFACE DO JOGADOR &#183; v2.10</div><h1>SIRIUS</h1><div class="playerTag">[ STATUS DO JOGADOR ]</div></div><div class="rank" id="rank">RANK E</div></div>
+<div class="top"><div><div class="systemStatus">&#9679; SIRIUS // SISTEMA ONLINE</div><div class="sub">INTERFACE DO JOGADOR &#183; v2.11</div><h1>SIRIUS</h1><div class="playerTag">[ STATUS DO JOGADOR ]</div></div><div class="rank" id="rank">RANK E</div></div>
 
 <section class="card">
 <div class="row"><div><div class="level" id="level">LEVEL 1</div><div class="small" id="xpText">0 / 100 XP</div><div class="next" id="nextText">100 XP para o pr&#243;ximo n&#237;vel</div></div><div style="text-align:right"><span class="sysIcon">&#9671;</span> <b id="total">0</b><div class="small">XP TOTAL</div></div></div>
@@ -209,7 +222,7 @@ h1{letter-spacing:3px;color:#f6f8ff;text-shadow:0 0 8px #55d6ff55,0 0 24px #8b5c
 </section>
 
 <section class="card">
-  <div class="row"><b class="sectionTitle">ARQUIVO DE CONHECIMENTO</b><span class="small">MEMORIA DE APRENDIZAGEM</span></div>
+  <div class="row"><b class="sectionTitle">BIBLIOTECA SIRIUS</b><span class="small">ARQUIVO DE CONHECIMENTO</span></div>
   <div class="knowledgeGrid">
     <div class="knowledgeStat"><div class="knowledgeStatLabel">FONTES</div><div class="knowledgeStatValue" id="knowledgeSourcesCount">0</div></div>
     <div class="knowledgeStat"><div class="knowledgeStatLabel">AVALIACOES PENDENTES</div><div class="knowledgeStatValue" id="knowledgePendingCount">0</div></div>
@@ -217,8 +230,8 @@ h1{letter-spacing:3px;color:#f6f8ff;text-shadow:0 0 8px #55d6ff55,0 0 24px #8b5c
     <div class="knowledgeStat"><div class="knowledgeStatLabel">PARA REVISAR</div><div class="knowledgeStatValue" id="knowledgeReviewCount">0</div></div>
   </div>
   <div class="knowledgeButtons">
-    <button onclick="addKnowledgeSource()">[ CADASTRAR FONTE ]</button>
-    <button onclick="showKnowledgeArchive()">[ ABRIR ARQUIVO ]</button>
+    <button onclick="addKnowledgeSource()">[ ADICIONAR MATERIAL ]</button>
+    <button onclick="showKnowledgeArchive()">[ VER BIBLIOTECA ]</button>
   </div>
   <div class="knowledgeList" id="knowledgePreview"></div>
 </section>
@@ -329,6 +342,12 @@ function migrateData(){
  if(!Array.isArray(data.knowledgeArchive.sources)) data.knowledgeArchive.sources=[];
  if(!Array.isArray(data.knowledgeArchive.records)) data.knowledgeArchive.records=[];
  if(!Array.isArray(data.knowledgeArchive.reviewQueue)) data.knowledgeArchive.reviewQueue=[];
+ data.knowledgeArchive.sources=data.knowledgeArchive.sources.map(s=>({
+  ...s,
+  author:s.author||"",
+  materialUrl:s.materialUrl||"",
+  progress:Number(s.progress)||0
+ }));
  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
 }
 migrateData();
@@ -404,8 +423,24 @@ function render(){
 
  const recentSources=[...sources].slice(-3).reverse();
  document.getElementById("knowledgePreview").innerHTML=recentSources.length
-  ? recentSources.map(s=>`<div class="knowledgeItem"><div class="knowledgeItemTitle">${escapeHtml(s.title)}</div><div class="knowledgeItemMeta">${escapeHtml(s.type||"Material")} ${s.section?`// ${escapeHtml(s.section)}`:""}<br>${escapeHtml(s.area||"Conhecimento geral")}</div></div>`).join("")
-  : `<div class="emptyKnowledge">Nenhuma fonte cadastrada ainda. Livros, artigos, cursos e outros materiais poderao ser registrados aqui e conectados as missoes de aprendizagem.</div>`;
+  ? recentSources.map(s=>{
+     const p=Math.max(0,Math.min(100,Number(s.progress)||0));
+     return `<div class="libraryItem">
+       <div class="libraryTop">
+        <div><div class="libraryTitle">${escapeHtml(s.title)}</div><div class="libraryAuthor">${escapeHtml(s.author||"Autor nao informado")}</div></div>
+        <div class="libraryBadge">${escapeHtml(s.type||"MATERIAL")}</div>
+       </div>
+       <div class="libraryMeta">${escapeHtml(s.area||"Conhecimento geral")}${s.section?` // ${escapeHtml(s.section)}`:""}<br>PROGRESSO: ${p}% ${s.materialUrl?"// PDF ASSOCIADO":"// SEM MATERIAL"}</div>
+       <div class="libraryProgress"><div style="width:${p}%"></div></div>
+       <div class="libraryActions">
+        ${s.materialUrl
+          ? `<button class="openMaterial" onclick="openKnowledgeMaterial('${s.id}')">[ ABRIR MATERIAL ]</button>`
+          : `<button onclick="setMaterialLink('${s.id}')">[ ASSOCIAR PDF ]</button>`}
+        <button onclick="updateKnowledgeProgress('${s.id}')">[ ATUALIZAR PROGRESSO ]</button>
+       </div>
+      </div>`;
+    }).join("")
+  : `<div class="emptyKnowledge">Sua biblioteca esta vazia. Adicione um livro ou material, associe um PDF autorizado e use o SIRIUS como base para futuras missoes de aprendizagem.</div>`;
 
  document.getElementById("missions").innerHTML=data.missions.map((m,n)=>{
  const mr=m.questRank||({"Microa\u00e7\u00e3o":"E","Simples":"D","Normal":"C","Dif\u00edcil":"B","Especial":"A","Boss":"S"}[m.difficulty]||"E");
@@ -504,27 +539,67 @@ function escapeHtml(value){
 }
 
 function addKnowledgeSource(){
- const title=(prompt("Nome do livro, artigo, curso ou material:")||"").trim();
+ const title=(prompt("Titulo do livro ou material:")||"").trim();
  if(!title)return;
 
- const type=(prompt("Tipo da fonte:\n1. Livro\n2. Artigo\n3. Curso\n4. Aula\n5. Outro\n\nDigite o numero:")||"5").trim();
+ const author=(prompt("Autor (opcional):")||"").trim();
+ const type=(prompt("Tipo:\n1. Livro\n2. Artigo\n3. Curso\n4. Aula\n5. Outro\n\nDigite o numero:")||"1").trim();
  const typeMap={"1":"Livro","2":"Artigo","3":"Curso","4":"Aula","5":"Outro"};
-
- const section=(prompt("Capitulo, secao ou paginas (opcional):")||"").trim();
- const area=(prompt("Area do conhecimento (ex.: Financas, Psicologia, Historia, Tecnologia):")||"Conhecimento geral").trim();
+ const area=(prompt("Categoria/area (ex.: Psicologia, Financas, Historia, Tecnologia):")||"Conhecimento geral").trim();
+ const section=(prompt("Capitulo, secao ou paginas iniciais (opcional):")||"").trim();
+ const materialUrl=(prompt("PDF/material (opcional):\nCole uma URL HTTPS ou um caminho do repositorio, por exemplo:\n/books/meu-livro.pdf\n\nVoce pode adicionar isso depois.")||"").trim();
 
  data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};
  data.knowledgeArchive.sources.push({
   id:"src_"+Date.now(),
   title,
+  author,
   type:typeMap[type]||"Outro",
-  section,
   area,
+  section,
+  materialUrl,
+  progress:0,
   createdAt:new Date().toISOString()
  });
 
  save();
- showSystemEvent("FONTE CADASTRADA",`${title} foi adicionado ao Arquivo de Conhecimento.`);
+ showSystemEvent("MATERIAL ADICIONADO",`${title} entrou na Biblioteca SIRIUS.`);
+}
+
+function setMaterialLink(id){
+ const s=(data.knowledgeArchive?.sources||[]).find(x=>x.id===id);
+ if(!s)return;
+ const value=(prompt("Cole a URL HTTPS ou caminho do PDF no repositorio:",s.materialUrl||"")||"").trim();
+ if(!value)return;
+ s.materialUrl=value;
+ save();
+ showToast("MATERIAL ASSOCIADO // PDF PRONTO PARA ABRIR");
+}
+
+function openKnowledgeMaterial(id){
+ const s=(data.knowledgeArchive?.sources||[]).find(x=>x.id===id);
+ if(!s)return;
+ if(!s.materialUrl){
+  alert("Este material ainda nao possui PDF ou URL associado.");
+  return;
+ }
+ const u=s.materialUrl.trim();
+ if(!(u.startsWith("https://") || u.startsWith("/") || u.startsWith("./") || u.toLowerCase().endsWith(".pdf"))){
+  alert("Use uma URL HTTPS ou um caminho de arquivo PDF do repositorio.");
+  return;
+ }
+ window.open(u,"_blank","noopener");
+}
+
+function updateKnowledgeProgress(id){
+ const s=(data.knowledgeArchive?.sources||[]).find(x=>x.id===id);
+ if(!s)return;
+ const raw=prompt("Progresso atual do material (0 a 100):",String(Number(s.progress)||0));
+ if(raw===null)return;
+ const p=Math.max(0,Math.min(100,Number(raw)||0));
+ s.progress=p;
+ save();
+ showToast(`PROGRESSO DO MATERIAL // ${p}%`);
 }
 
 function showKnowledgeArchive(){
@@ -539,8 +614,12 @@ function showKnowledgeArchive(){
  p.style.display="block";
 
  const sourceHtml=sources.length
-   ? sources.slice().reverse().map(s=>`<div class="statusCell"><div class="statusLabel">${escapeHtml(s.type||"FONTE")}</div><div class="statusValue" style="font-size:13px">${escapeHtml(s.title)}</div><div class="small">${escapeHtml(s.section||s.area||"")}</div></div>`).join("")
-   : `<div class="statusCell"><div class="small">Nenhuma fonte cadastrada.</div></div>`;
+   ? sources.slice().reverse().map(s=>`<div class="statusCell">
+       <div class="statusLabel">${escapeHtml(s.type||"FONTE")} // ${Math.max(0,Math.min(100,Number(s.progress)||0))}%</div>
+       <div class="statusValue" style="font-size:13px">${escapeHtml(s.title)}</div>
+       <div class="small">${escapeHtml(s.author||"Autor nao informado")} // ${escapeHtml(s.area||"Conhecimento geral")} ${s.materialUrl?"// PDF ASSOCIADO":""}</div>
+      </div>`).join("")
+   : `<div class="statusCell"><div class="small">Nenhum material cadastrado.</div></div>`;
 
  p.innerHTML=`<div class="small" style="margin:8px 0">FONTES REGISTRADAS: ${sources.length} // AVALIACOES: ${records.length} // REVISOES PENDENTES: ${reviews.length}</div><div class="statusGrid">${sourceHtml}</div>`;
  document.getElementById("systemCloseBtn").textContent="FECHAR ARQUIVO";
