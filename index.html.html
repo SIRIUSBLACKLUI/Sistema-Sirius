@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="manifest.json">
+<title>Sistema Alysson</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070b16;color:#f4f7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:520px;margin:auto;padding:22px 16px 40px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+h1{font-size:26px;margin:0}.sub{color:#8e9ab5;font-size:13px}.card{background:#11182b;border:1px solid #26304a;border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 8px 25px #0004}
+.level{font-size:20px;font-weight:800}.xp{margin-top:10px;height:12px;background:#242d43;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#8b5cf6;border-radius:20px}.row{display:flex;justify-content:space-between;gap:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.attr{background:#0c1222;padding:12px;border-radius:13px}.attr b{display:block;font-size:18px;margin-top:4px}.attrProgress{margin-top:9px;height:7px;background:#242d43;border-radius:20px;overflow:hidden}.attrBar{height:100%;background:#8b5cf6;border-radius:20px}.attrMeta{margin-top:5px;font-size:11px;color:#8e9ab5}.mission{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #252d42}.mission:last-child{border:0}.mission input{width:21px;height:21px;accent-color:#8b5cf6}.done{text-decoration:line-through;color:#77829c}.btn{width:100%;border:0;border-radius:13px;padding:13px;background:#8b5cf6;color:white;font-weight:800;font-size:15px;margin-top:10px}.danger{background:#252d42}.small{font-size:12px;color:#8e9ab5}.rank{font-weight:800;color:#c4b5fd}.next{font-size:11px;color:#8e9ab5;margin-top:5px}
+</style>
+</head>
+<body><main class="app">
+<div class="top"><div><div class="sub">SISTEMA DE EVOLUÇÃO PESSOAL</div><h1>⚔️ Sistema Alysson</h1></div><div class="rank" id="rank">E</div></div>
+
+<section class="card">
+<div class="row"><div><div class="level" id="level">Nível 1</div><div class="small" id="xpText">0 / 100 XP</div><div class="next" id="nextText">100 XP para o próximo nível</div></div><div style="text-align:right">🏆 <b id="total">0</b><div class="small">XP total</div></div></div>
+<div class="xp"><div class="bar" id="bar"></div></div>
+</section>
+
+<section class="card"><div class="row"><b>🧬 Atributos</b><span class="small">evolução real</span></div><div class="grid" id="attrs"></div></section>
+
+<section class="card"><div class="row"><b>🎯 Missões de hoje</b><span class="small">+XP ao concluir</span></div><div id="missions"></div>
+<button class="btn" onclick="addMission()">+ Adicionar missão</button></section>
+
+<section class="card"><div class="row"><b>🔥 Sequência</b><b id="streak">0 dias</b></div><div class="small" style="margin-top:6px">A sequência aumenta quando você conclui pelo menos uma missão em um dia.</div></section>
+
+<button class="btn danger" onclick="resetSystem()">Reiniciar progresso</button>
+</main>
+<script>
+const officialAttributes=["Disciplina","Físico","Intelecto","Comunicação","Foco","Relacionamento","Organização"];
+const defaultData={xp:0,streak:0,lastDay:null,attrs:{
+Disciplina:{level:1,pd:0},
+"Físico":{level:1,pd:0},
+Intelecto:{level:1,pd:0},
+"Comunicação":{level:1,pd:0},
+Foco:{level:1,pd:0},
+Relacionamento:{level:1,pd:0},
+"Organização":{level:1,pd:0}
+},missions:[
+{name:"Treino",xp:20,done:false},{name:"Estudo",xp:20,done:false},{name:"Revisão de memória",xp:15,done:false},{name:"Prática de comunicação",xp:15,done:false},{name:"Missão de disciplina",xp:15,done:false}]};
+
+let data=JSON.parse(localStorage.getItem("alyssonSystem")||"null")||structuredClone(defaultData);
+
+function migrateData(){
+ if(!data || typeof data!=="object") data=structuredClone(defaultData);
+ if(typeof data.xp!=="number") data.xp=0;
+ if(typeof data.streak!=="number") data.streak=0;
+ if(!Array.isArray(data.missions)) data.missions=structuredClone(defaultData.missions);
+
+ const old=data.attrs&&typeof data.attrs==="object"?data.attrs:{};
+ const readLevel=(name)=>{
+  const value=old[name];
+  if(typeof value==="number") return Math.max(1,Math.floor(value));
+  if(value&&typeof value==="object"&&typeof value.level==="number") return Math.max(1,Math.floor(value.level));
+  return 1;
+ };
+ const readPd=(name)=>{
+  const value=old[name];
+  if(value&&typeof value==="object"&&typeof value.pd==="number") return Math.max(0,Math.min(99,Math.floor(value.pd)));
+  return 0;
+ };
+
+ const conhecimento=Math.max(readLevel("Conhecimento"),readLevel("Inteligência"),readLevel("Intelecto"));
+ data.attrs={
+  Disciplina:{level:readLevel("Disciplina"),pd:readPd("Disciplina")},
+  "Físico":{level:readLevel("Físico"),pd:readPd("Físico")},
+  Intelecto:{level:conhecimento,pd:readPd("Intelecto")},
+  "Comunicação":{level:readLevel("Comunicação"),pd:readPd("Comunicação")},
+  Foco:{level:readLevel("Foco"),pd:readPd("Foco")},
+  Relacionamento:{level:readLevel("Relacionamento"),pd:readPd("Relacionamento")},
+  "Organização":{level:readLevel("Organização"),pd:readPd("Organização")}
+ };
+ localStorage.setItem("alyssonSystem",JSON.stringify(data));
+}
+migrateData();
+
+function save(){localStorage.setItem("alyssonSystem",JSON.stringify(data));render()}
+function levelInfo(){
+ let xp=Math.max(0,Number(data.xp)||0);
+ let level=Math.floor(Math.sqrt(xp/100))+1;
+ let currentLevelXP=100*Math.pow(level-1,2);
+ let nextLevelXP=100*Math.pow(level,2);
+ let cur=xp-currentLevelXP;
+ let needed=nextLevelXP-currentLevelXP;
+ let percent=needed>0?(cur/needed)*100:0;
+ return {level,cur,needed,percent,nextLevelXP}
+}
+function rank(l){
+ return l>=75?"SSS":l>=50?"SS":l>=40?"S":l>=30?"A":l>=20?"B":l>=10?"C":l>=5?"D":"E";
+}
+function render(){
+ let i=levelInfo();
+ document.getElementById("level").textContent="Nível "+i.level;
+ document.getElementById("xpText").textContent=i.cur+" / "+i.needed+" XP";
+ document.getElementById("total").textContent=data.xp;document.getElementById("nextText").textContent=(i.needed-i.cur)+" XP para o próximo nível";
+ document.getElementById("bar").style.width=Math.min(100,i.percent)+"%";
+ document.getElementById("rank").textContent="RANK "+rank(i.level);
+ document.getElementById("streak").textContent=data.streak+" "+(data.streak==1?"dia":"dias");
+ document.getElementById("attrs").innerHTML=officialAttributes.map(name=>{
+ const a=data.attrs[name]||{level:1,pd:0};
+ const pd=Math.max(0,Math.min(99,Number(a.pd)||0));
+ return `<div class="attr"><span class="small">${name}</span><b>Lv. ${a.level}</b><div class="attrProgress"><div class="attrBar" style="width:${pd}%"></div></div><div class="attrMeta">${pd} / 100 PD</div></div>`;
+}).join("");
+ document.getElementById("missions").innerHTML=data.missions.map((m,n)=>`<label class="mission"><input type="checkbox" ${m.done?"checked":""} onchange="toggle(${n})"><span class="${m.done?"done":""}">${m.name}<br><span class="small">+${m.xp} XP</span></span></label>`).join("");
+}
+function toggle(n){let m=data.missions[n]; if(m.done)return; m.done=true;data.xp+=m.xp;const today=new Date().toDateString();if(data.lastDay!==today){data.streak++;data.lastDay=today}save()}
+function addMission(){let name=prompt("Nome da missão:");if(name){data.missions.push({name,xp:10,done:false});save()}}
+function resetSystem(){if(confirm("Reiniciar todo o progresso?")){localStorage.removeItem("alyssonSystem");location.reload()}}
+render();
+</script></body></html>
