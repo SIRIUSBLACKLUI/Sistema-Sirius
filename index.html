@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="manifest.json">
+<title>Sistema Alysson</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070b16;color:#f4f7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:520px;margin:auto;padding:22px 16px 40px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+h1{font-size:26px;margin:0}.sub{color:#8e9ab5;font-size:13px}.card{background:#11182b;border:1px solid #26304a;border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 8px 25px #0004}
+.level{font-size:20px;font-weight:800}.xp{margin-top:10px;height:12px;background:#242d43;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#8b5cf6;border-radius:20px}.row{display:flex;justify-content:space-between;gap:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.attr{background:#0c1222;padding:12px;border-radius:13px}.attr b{display:block;font-size:18px;margin-top:4px}.mission{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #252d42}.mission:last-child{border:0}.mission input{width:21px;height:21px;accent-color:#8b5cf6}.done{text-decoration:line-through;color:#77829c}.btn{width:100%;border:0;border-radius:13px;padding:13px;background:#8b5cf6;color:white;font-weight:800;font-size:15px;margin-top:10px}.danger{background:#252d42}.small{font-size:12px;color:#8e9ab5}.rank{font-weight:800;color:#c4b5fd}
+</style>
+</head>
+<body><main class="app">
+<div class="top"><div><div class="sub">SISTEMA DE EVOLUÇÃO PESSOAL</div><h1>⚔️ Sistema Alysson</h1></div><div class="rank" id="rank">E</div></div>
+
+<section class="card">
+<div class="row"><div><div class="level" id="level">Nível 1</div><div class="small" id="xpText">0 / 100 XP</div></div><div style="text-align:right">🏆 <b id="total">0</b><div class="small">XP total</div></div></div>
+<div class="xp"><div class="bar" id="bar"></div></div>
+</section>
+
+<section class="card"><div class="row"><b>🧬 Atributos</b><span class="small">evolução real</span></div><div class="grid" id="attrs"></div></section>
+
+<section class="card"><div class="row"><b>🎯 Missões de hoje</b><span class="small">+XP ao concluir</span></div><div id="missions"></div>
+<button class="btn" onclick="addMission()">+ Adicionar missão</button></section>
+
+<section class="card"><div class="row"><b>🔥 Sequência</b><b id="streak">0 dias</b></div><div class="small" style="margin-top:6px">A sequência aumenta quando você conclui pelo menos uma missão em um dia.</div></section>
+
+<button class="btn danger" onclick="resetSystem()">Reiniciar progresso</button>
+</main>
+<script>
+const defaultData={xp:0,streak:0,lastDay:null,attrs:{Disciplina:1,Conhecimento:1,Comunicação:1,Inteligência:1,Relacionamento:1,Energia:1},missions:[
+{name:"Treino",xp:20,done:false},{name:"Estudo",xp:20,done:false},{name:"Revisão de memória",xp:15,done:false},{name:"Prática de comunicação",xp:15,done:false},{name:"Missão de disciplina",xp:15,done:false}]};
+let data=JSON.parse(localStorage.getItem("alyssonSystem")||"null")||defaultData;
+function save(){localStorage.setItem("alyssonSystem",JSON.stringify(data));render()}
+function levelInfo(){let level=Math.floor(data.xp/100)+1, cur=data.xp%100; return {level,cur}}
+function rank(l){return l>=50?"S":l>=30?"A":l>=20?"B":l>=10?"C":l>=5?"D":"E"}
+function render(){
+ let i=levelInfo(); document.getElementById("level").textContent="Nível "+i.level;document.getElementById("xpText").textContent=i.cur+" / 100 XP";document.getElementById("total").textContent=data.xp;document.getElementById("bar").style.width=i.cur+"%";document.getElementById("rank").textContent="RANK "+rank(i.level);
+ document.getElementById("streak").textContent=data.streak+" "+(data.streak==1?"dia":"dias");
+ document.getElementById("attrs").innerHTML=Object.entries(data.attrs).map(([k,v])=>`<div class="attr"><span class="small">${k}</span><b>Lv. ${v}</b></div>`).join("");
+ document.getElementById("missions").innerHTML=data.missions.map((m,n)=>`<label class="mission"><input type="checkbox" ${m.done?"checked":""} onchange="toggle(${n})"><span class="${m.done?"done":""}">${m.name}<br><span class="small">+${m.xp} XP</span></span></label>`).join("");
+}
+function toggle(n){let m=data.missions[n]; if(m.done)return; m.done=true;data.xp+=m.xp;const today=new Date().toDateString();if(data.lastDay!==today){data.streak++;data.lastDay=today}save()}
+function addMission(){let name=prompt("Nome da missão:");if(name){data.missions.push({name,xp:10,done:false});save()}}
+function resetSystem(){if(confirm("Reiniciar todo o progresso?")){localStorage.removeItem("alyssonSystem");location.reload()}}
+render();
+</script></body></html>
