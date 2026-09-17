@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.1</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.2</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -5411,7 +5411,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const RELEASE="v2.22.1";
+ const RELEASE="v2.22.2";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
@@ -5436,7 +5436,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </script>
 
 
-<!-- ===== SIRIUS v2.22.1 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
+<!-- ===== SIRIUS v2.22.2 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
 <style>
 .coreCommandHero{position:relative;overflow:hidden;border:1px solid #245f88;background:linear-gradient(135deg,#03101d 0%,#07162b 55%,#120d2c 100%);padding:18px 16px 15px;box-shadow:inset 0 0 42px #2b66a010,0 12px 28px #0007}
 .coreCommandHero:before,.coreCommandHero:after{content:"";position:absolute;pointer-events:none}.coreCommandHero:before{inset:0;background:linear-gradient(90deg,transparent 49.7%,#55d6ff0b 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#55d6ff08 50%,transparent 50.3%);background-size:34px 34px}.coreCommandHero:after{left:0;top:0;width:37%;height:2px;background:#59e9ff;box-shadow:0 0 16px #59e9ff}
@@ -5453,7 +5453,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const VERSION="v2.22.1";
+ const VERSION="v2.22.2";
  function refreshCoreCenter(){
   try{
    const st=document.getElementById("coreStateText"),en=document.getElementById("coreEngineText"),pr=document.getElementById("corePriorityText");
@@ -5470,13 +5470,13 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </script>
 
 
-<!-- ===== SIRIUS v2.22.1 // CLOUDFLARE MAX PATCH ===== -->
+<!-- ===== SIRIUS v2.22.2 // CLOUDFLARE MAX PATCH ===== -->
 <style>
 .professorCloudflareBadge{display:inline-flex;align-items:center;gap:6px;margin-top:9px;border:1px solid #245f7c;background:#03111d;padding:6px 8px;font-size:6px;letter-spacing:1.2px;color:#7ce7ff}.professorCloudflareBadge i{width:5px;height:5px;border-radius:50%;background:#58efbd;box-shadow:0 0 8px #58efbd}.professorClassState{box-shadow:inset 0 0 12px #55dfff0a}.professorMsg.feedback{border-left:3px solid #55cda6!important}.professorMsg.test{border-left:3px solid #aa7cff!important}
 </style>
 <script>
 (function(){
- const V="v2.22.1";
+ const V="v2.22.2";
  function tagCloudflare(){
   const hero=document.querySelector('.professorAiHero');
   if(hero&&!hero.querySelector('.professorCloudflareBadge'))hero.insertAdjacentHTML('beforeend','<div class="professorCloudflareBadge"><i></i>CLOUDFLARE AI // PROFESSOR EM DUPLA PASSAGEM PEDAGÓGICA</div>');
@@ -5485,6 +5485,254 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
  const old=window.renderProfessorAI;if(typeof old==='function')window.renderProfessorAI=function(){const r=old();tagCloudflare();return r};
  setTimeout(tagCloudflare,350);setTimeout(tagCloudflare,1200);
 })();
+
+
+// ===== SIRIUS v2.22.2 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
+(function(){
+  const __v222_buildContext = buildSiriusContext;
+  buildSiriusContext = function(){
+    const ctx = __v222_buildContext();
+    const missions = Array.isArray(data.missions) ? data.missions : [];
+    ctx.recentMissionHistory = missions.slice(-20).map(m=>({
+      name:m.name||"",
+      desc:m.desc||"",
+      attr:m.attr||"",
+      difficulty:m.difficulty||"",
+      done:!!m.done,
+      rejected:!!m.rejectedAt,
+      createdAt:m.createdAt||m.acceptedAt||""
+    }));
+    ctx.missionRules = {
+      maxActive: MAX_ACTIVE_MISSIONS,
+      activeNow: activeMissionCount(),
+      requireSpecificity: true,
+      avoidGenericTemplates: true,
+      askOneClarifyingQuestionIfContextMissing: true
+    };
+    return ctx;
+  };
+
+  function v222Field(text, pattern){
+    const m = String(text||"").match(pattern);
+    return m ? String(m[1]||"").trim().replace(/[ \t]+/g," ") : "";
+  }
+
+  function v222GuessAttr(text){
+    const t=String(text||"").toLowerCase();
+    if(/disciplina/.test(t)) return "Disciplina";
+    if(/\bfoco\b/.test(t)) return "Foco";
+    if(/intelect|estud|leitur|aprend|livro|aula/.test(t)) return "Intelecto";
+    if(/f[ií]sic|treino|exerc|caminh|corrid/.test(t)) return "Físico";
+    if(/comunica|conversa|fala|orat[oó]ria|idioma|ingl[eê]s/.test(t)) return "Comunicação";
+    if(/relaciona|fam[ií]lia|amig|social/.test(t)) return "Relacionamento";
+    try{
+      const attrs=Object.entries(data.attrs||{});
+      if(attrs.length){
+        attrs.sort((a,b)=>(Number(a[1]?.level)||1)-(Number(b[1]?.level)||1) || (Number(a[1]?.pd)||0)-(Number(b[1]?.pd)||0));
+        if(officialAttributes.includes(attrs[0][0])) return attrs[0][0];
+      }
+    }catch(e){}
+    return "Disciplina";
+  }
+
+  function v222MissionLooksGeneric(m){
+    if(!m) return false;
+    const t = `${m.name||""} ${m.desc||""}`.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    return [
+      /escolha uma tarefa (importante|adiada)/,
+      /faca uma tarefa/,
+      /realize uma atividade/,
+      /faca algo produtivo/,
+      /estude (um|algum) (tema|assunto|conteudo)/,
+      /^missao de (disciplina|foco|estudo|comunicacao)/,
+      /defina \d+ minutos sem distracoes/
+    ].some(rx=>rx.test(t));
+  }
+
+  function v222ProposalFromReply(reply){
+    const text=String(reply||"");
+    if(!/(miss[aã]o\s+proposta|proposta\s+de\s+miss[aã]o|aprova\s+essa\s+miss[aã]o|pr[oó]xima\s+a[cç][aã]o)/i.test(text)) return null;
+
+    let name = v222Field(text,/(?:miss[aã]o\s+proposta|t[ií]tulo)\s*:\s*([^\n\r.]+)/i);
+    let desc = v222Field(text,/descri[cç][aã]o\s*:\s*([\s\S]*?)(?=\n\s*(?:dificuldade|evid[eê]ncia|condi[cç][aã]o|recompensa|atributo|aprova)\s*:|\n\s*aprova|$)/i);
+    let evidence = v222Field(text,/evid[eê]ncia\s*:\s*([\s\S]*?)(?=\n\s*(?:condi[cç][aã]o|recompensa|atributo|aprova)\s*:|\n\s*aprova|$)/i);
+    let completion = v222Field(text,/(?:condi[cç][aã]o(?:\s+de\s+conclus[aã]o)?|conclus[aã]o)\s*:\s*([\s\S]*?)(?=\n\s*(?:evid[eê]ncia|recompensa|atributo|aprova)\s*:|\n\s*aprova|$)/i);
+    let difficulty = v222Field(text,/dificuldade\s*:\s*([^\n\r.]+)/i) || "Normal";
+
+    if(!name){
+      name=v222Field(text,/miss[aã]o\s+proposta\s*:\s*([^\n\r.]+)/i);
+    }
+    if(!desc){
+      desc=v222Field(text,/miss[aã]o\s+proposta\s*:\s*[^\n\r]+\s*[\r\n]+([\s\S]*?)(?=\n\s*(?:dificuldade|evid[eê]ncia|aprova)|$)/i);
+    }
+
+    const attr=v222GuessAttr(`${name} ${desc} ${text}`);
+    if(!name) name=`${attr} // MISSÃO ADAPTATIVA`;
+    if(!desc) return null;
+    if(!evidence) evidence="Registre o resultado concreto obtido, como executou a missão e o que precisa ajustar na próxima tentativa.";
+    if(!completion) completion=evidence;
+
+    const raw={
+      type:"PROPOSE_MISSION",
+      reason:"Proposta convertida pelo SIRIUS em uma missão funcional para aprovação.",
+      mission:{
+        name,
+        desc,
+        evidence,
+        attr,
+        secondaryAttr:"",
+        difficulty,
+        validation:/estud|leitur|aprend|livro|aula|idioma/i.test(`${name} ${desc}`)?"study":"action",
+        material:"",
+        contentType:"",
+        learningGoal:"",
+        focusMethod:/pomodoro/i.test(text)?"Pomodoro":"Nenhuma",
+        learningMethod:/feynman/i.test(text)?"Feynman":/recupera[cç][aã]o ativa/i.test(text)?"Recuperacao Ativa":"Nenhuma",
+        durationMin:Number((text.match(/(\d{1,3})\s*min/i)||[])[1])||20,
+        pauseMin:0,
+        completionCondition:completion,
+        methodReason:"Missão estruturada para ter ação observável, critério de conclusão e evidência."
+      }
+    };
+    return sanitizeAiMissionProposal(raw);
+  }
+
+  function v222MissionInstruction(){
+    return `
+[SIRIUS // DIRETRIZ DE MISSÃO]
+Quando houver criação de missão, ela precisa ser específica para o contexto real do jogador.
+NÃO use modelos genéricos como "escolha uma tarefa importante", "faça algo produtivo", "estude um assunto" ou equivalentes.
+Use objetivos ativos, atributos, missões recentes, biblioteca, histórico e prioridade.
+Toda missão deve ter: ação concreta + duração + condição objetiva de conclusão + evidência.
+Se faltar um dado essencial para personalizar de verdade, faça UMA pergunta curta e NÃO gere missão ainda.
+Quando gerar, retorne action.type="PROPOSE_MISSION" com mission estruturada. Não dependa de "sim/não" escrito no texto; a interface já possui botões de aprovação.
+`;
+  }
+
+  async function v222FetchAi(endpoint,message,history){
+    const response=await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message,context:buildSiriusContext(),history})
+    });
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(payload.error||`HTTP ${response.status}`);
+    return payload;
+  }
+
+  const __v222_send = sendSiriusAI;
+  sendSiriusAI = async function(){
+    const endpoint=getAiEndpoint();
+    if(!endpoint){closeSiriusAI();configureSiriusAI();return;}
+    const input=document.getElementById("aiInput");
+    const text=(input?.value||"").trim();
+    if(!text)return;
+
+    if(data.pendingAiProposal && /^(sim|s|aprovar|aprova|aceito|aceitar)$/i.test(text)){
+      input.value="";
+      approveAiMissionProposal();
+      return;
+    }
+    if(data.pendingAiProposal && /^(n[aã]o|nao|n|rejeitar|rejeito|recusar)$/i.test(text)){
+      input.value="";
+      rejectAiMissionProposal();
+      return;
+    }
+
+    data.aiChatHistory=Array.isArray(data.aiChatHistory)?data.aiChatHistory:[];
+    data.aiChatHistory.push({role:"user",text,at:new Date().toISOString()});
+    data.aiChatHistory=data.aiChatHistory.slice(-30);
+    save();
+    input.value="";
+    renderSiriusAIHistory();
+
+    const btn=document.getElementById("aiSendBtn");
+    if(btn){btn.disabled=true;btn.textContent="PROCESSANDO...";}
+
+    try{
+      const wantsMission=/miss[aã]o|prioridade|pr[oó]xima a[cç][aã]o|disciplina|foco/i.test(text);
+      const message=wantsMission ? `${text}\n\n${v222MissionInstruction()}` : text;
+      let payload=await v222FetchAi(endpoint,message,data.aiChatHistory.slice(-12));
+      let reply=String(payload.reply||payload.message||payload.content||"").trim();
+      if(!reply)throw new Error("Resposta vazia");
+
+      let proposal=sanitizeAiMissionProposal(payload.action||payload.proposal||null) || v222ProposalFromReply(reply);
+
+      if(proposal && v222MissionLooksGeneric(proposal.mission)){
+        const refine=`A missão anterior ficou genérica. Refaça usando dados concretos do contexto real enviado pelo app.
+Se não houver informação suficiente, faça UMA pergunta objetiva e NÃO gere missão.
+Proposta anterior: ${JSON.stringify(proposal.mission)}
+
+${v222MissionInstruction()}`;
+        const refined=await v222FetchAi(endpoint,refine,data.aiChatHistory.slice(-12));
+        const refinedReply=String(refined.reply||refined.message||refined.content||"").trim();
+        const refinedProposal=sanitizeAiMissionProposal(refined.action||refined.proposal||null) || v222ProposalFromReply(refinedReply);
+        if(refinedReply){
+          reply=refinedReply;
+          proposal=refinedProposal;
+        }
+      }
+
+      data.aiChatHistory.push({role:"assistant",text:reply,at:new Date().toISOString()});
+      if(proposal)data.pendingAiProposal=proposal;
+      data.aiChatHistory=data.aiChatHistory.slice(-30);
+      save();
+      renderSiriusAIHistory();
+    }catch(err){
+      console.error(err);
+      data.aiChatHistory.push({role:"assistant",text:"FALHA DE CONEXÃO // Não foi possível acessar o núcleo de inteligência. Verifique a configuração do backend.",at:new Date().toISOString()});
+      save();
+      renderSiriusAIHistory();
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent="ENVIAR";}
+    }
+  };
+
+  const __v222_approve = approveAiMissionProposal;
+  approveAiMissionProposal = function(){
+    const before=data.pendingAiProposal?.mission?.name||"";
+    const countBefore=activeMissionCount();
+    __v222_approve();
+
+    const approved=!!before && !data.pendingAiProposal && activeMissionCount()>countBefore;
+    if(approved){
+      try{closeSiriusAI();}catch(e){}
+      try{refreshDashboard();}catch(e){}
+      setTimeout(()=>{
+        try{
+          const btn=document.querySelector('.bottomDock button[data-view="missions"]');
+          if(typeof openDockView==="function")openDockView("missions",btn);
+          window.scrollTo({top:0,behavior:"smooth"});
+          if(typeof showToast==="function")showToast("MISSÃO APROVADA // ABRINDO MISSÕES");
+        }catch(e){console.error(e);}
+      },140);
+    }
+  };
+
+  const __v222_requestMission = requestAiMission;
+  requestAiMission = function(){
+    openSiriusAI();
+    const input=document.getElementById("aiInput");
+    if(input){
+      input.value="Sirius, analise meu estado atual e proponha UMA missão específica para hoje usando meu contexto real, histórico e objetivos. Se faltar informação para personalizar, faça uma pergunta antes. Não registre nada antes da minha aprovação.";
+      input.focus();
+    }
+  };
+
+  const __v222_refresh = refreshDashboard;
+  refreshDashboard = function(){
+    __v222_refresh();
+    try{
+      const count=activeMissionCount();
+      const el=document.getElementById("dashMissionCount");
+      if(el && count>MAX_ACTIVE_MISSIONS)el.textContent=`${count} ATIVAS // LIMITE ${MAX_ACTIVE_MISSIONS}`;
+    }catch(e){}
+  };
+
+  try{refreshDashboard();}catch(e){}
+})();
+
 </script>
 
 </body></html>
