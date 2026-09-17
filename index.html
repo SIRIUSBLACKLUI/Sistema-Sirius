@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.21.8</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.21.9</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -5344,7 +5344,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
  async function callProfessorAI(messageText,task){
   const endpoint=getAiEndpoint();if(!endpoint){configureSiriusAI();throw new Error("IA não configurada")}
   const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task:task||"professor_teach",message:messageText,context:buildSiriusContext(),professorSession:session(),history:[]})});
-  const p=await r.json().catch(()=>({}));if(!r.ok)throw new Error(p.error||`HTTP ${r.status}`);return normalizeTeacherTurn(extractJsonFromTeacher(p));
+  const p=await r.json().catch(()=>({}));if(!r.ok)throw new Error(p.details||p.error||`HTTP ${r.status}`);const turn=normalizeTeacherTurn(extractJsonFromTeacher(p));if(!turn.teacher&&!turn.feedback&&!turn.question)throw new Error("O Worker não retornou uma etapa de aula válida. Atualize o worker.js para v2.17.0.");return turn;
  }
  function renderProfessorAI(){
   ensureProfessorAI();const s=session(),msgs=document.getElementById("professorMessages"),composer=document.getElementById("professorComposer"),title=document.getElementById("professorClassTitle"),meta=document.getElementById("professorClassMeta"),state=document.getElementById("professorClassState"),obj=document.getElementById("professorObjective");
@@ -5375,7 +5375,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 
 
 
-<!-- ===== SIRIUS v2.21.8 // IA HUD + PROFESSOR FIX + MISSION DIVERSITY ===== -->
+<!-- ===== SIRIUS v2.21.9 // IA HUD + PROFESSOR FIX + MISSION DIVERSITY ===== -->
 <style>
 /* Remove the decorative orb: the intelligence screen is now a functional RPG HUD. */
 #siriusOrbStage,.siriusOrbStage,.siriusOrb,.orbStatus{display:none!important}
@@ -5393,7 +5393,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const RELEASE="v2.21.8";
+ const RELEASE="v2.21.9";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
