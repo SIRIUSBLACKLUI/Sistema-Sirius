@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.2</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.3</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -5411,7 +5411,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const RELEASE="v2.22.2";
+ const RELEASE="v2.22.3";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
@@ -5436,7 +5436,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </script>
 
 
-<!-- ===== SIRIUS v2.22.2 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
+<!-- ===== SIRIUS v2.22.3 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
 <style>
 .coreCommandHero{position:relative;overflow:hidden;border:1px solid #245f88;background:linear-gradient(135deg,#03101d 0%,#07162b 55%,#120d2c 100%);padding:18px 16px 15px;box-shadow:inset 0 0 42px #2b66a010,0 12px 28px #0007}
 .coreCommandHero:before,.coreCommandHero:after{content:"";position:absolute;pointer-events:none}.coreCommandHero:before{inset:0;background:linear-gradient(90deg,transparent 49.7%,#55d6ff0b 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#55d6ff08 50%,transparent 50.3%);background-size:34px 34px}.coreCommandHero:after{left:0;top:0;width:37%;height:2px;background:#59e9ff;box-shadow:0 0 16px #59e9ff}
@@ -5453,7 +5453,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const VERSION="v2.22.2";
+ const VERSION="v2.22.3";
  function refreshCoreCenter(){
   try{
    const st=document.getElementById("coreStateText"),en=document.getElementById("coreEngineText"),pr=document.getElementById("corePriorityText");
@@ -5470,13 +5470,13 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </script>
 
 
-<!-- ===== SIRIUS v2.22.2 // CLOUDFLARE MAX PATCH ===== -->
+<!-- ===== SIRIUS v2.22.3 // CLOUDFLARE MAX PATCH ===== -->
 <style>
 .professorCloudflareBadge{display:inline-flex;align-items:center;gap:6px;margin-top:9px;border:1px solid #245f7c;background:#03111d;padding:6px 8px;font-size:6px;letter-spacing:1.2px;color:#7ce7ff}.professorCloudflareBadge i{width:5px;height:5px;border-radius:50%;background:#58efbd;box-shadow:0 0 8px #58efbd}.professorClassState{box-shadow:inset 0 0 12px #55dfff0a}.professorMsg.feedback{border-left:3px solid #55cda6!important}.professorMsg.test{border-left:3px solid #aa7cff!important}
 </style>
 <script>
 (function(){
- const V="v2.22.2";
+ const V="v2.22.3";
  function tagCloudflare(){
   const hero=document.querySelector('.professorAiHero');
   if(hero&&!hero.querySelector('.professorCloudflareBadge'))hero.insertAdjacentHTML('beforeend','<div class="professorCloudflareBadge"><i></i>CLOUDFLARE AI // PROFESSOR EM DUPLA PASSAGEM PEDAGÓGICA</div>');
@@ -5487,7 +5487,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 })();
 
 
-// ===== SIRIUS v2.22.2 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
+// ===== SIRIUS v2.22.3 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
 (function(){
   const __v222_buildContext = buildSiriusContext;
   buildSiriusContext = function(){
@@ -5731,6 +5731,147 @@ ${v222MissionInstruction()}`;
   };
 
   try{refreshDashboard();}catch(e){}
+})();
+
+
+
+// ===== SIRIUS v2.22.3 // APRENDER + PROFESSOR UNIFICADOS =====
+(function(){
+  function mergeLearningProfessor(){
+    const learning=document.getElementById("view-learning");
+    const professor=document.getElementById("view-professor");
+    if(!learning||!professor)return;
+
+    // Remove duplicação visual: a área APRENDER passa a conter o Professor SIRIUS.
+    const hero=professor.querySelector(".professorAiHero");
+    const classShell=professor.querySelector(".professorClassShell");
+    const history=professor.querySelector(".professorHistoryPanel");
+
+    if(hero){
+      hero.querySelector(".kicker").textContent="[ SIRIUS // APRENDER COM PROFESSOR IA ]";
+      const h3=hero.querySelector("h3");
+      if(h3)h3.textContent="O QUE VOCÊ QUER APRENDER?";
+      const p=hero.querySelector("p");
+      if(p)p.textContent="Escolha um tema ou continue uma trilha. O Professor SIRIUS diagnostica seu nível, ensina em microblocos, pratica com você, corrige uma resposta por vez e registra seu progresso.";
+      const hint=hero.querySelector(".professorAiHint");
+      if(hint)hint.textContent="BIBLIOTECA OPCIONAL // O material pode aprofundar a aula, mas não é obrigatório.";
+    }
+
+    // Remove o antigo cabeçalho genérico do Learning Hub para não haver dois campos iguais.
+    const oldHero=learning.querySelector(".learningHubHero");
+    if(oldHero)oldHero.remove();
+
+    // Cabeçalho unificado.
+    if(!document.getElementById("unifiedLearningHeader")){
+      learning.insertAdjacentHTML("afterbegin",`
+        <div id="unifiedLearningHeader" class="learningHubHero" style="border-color:#6752d9;background:linear-gradient(145deg,#08152b,#100b2e)">
+          <div class="lessonBadge">[ SIRIUS // CENTRAL DE APRENDIZAGEM ]</div>
+          <h3>APRENDER</h3>
+          <p>Uma única área para trilhas, aulas com o Professor SIRIUS, prática, avaliação e retenção. Seu progresso fica conectado ao histórico de aprendizagem.</p>
+          <div style="margin-top:10px;font-size:8px;letter-spacing:1.4px;color:#71dfff">TRILHA → AULA → PRÁTICA → CORREÇÃO → AVALIAÇÃO → REVISÃO</div>
+        </div>`);
+    }
+
+    const anchor=learning.querySelector(".dashPanel");
+    if(hero && !learning.contains(hero)) learning.insertBefore(hero, anchor||learning.firstChild);
+    if(classShell && !learning.contains(classShell)) learning.insertBefore(classShell, anchor||null);
+    if(history && !learning.contains(history)) learning.insertBefore(history, anchor||null);
+
+    // Renomeia módulos locais como apoio, não como uma segunda "aula".
+    const panels=[...learning.querySelectorAll(".dashPanel")];
+    panels.forEach(panel=>{
+      const title=panel.querySelector(".dashPanelTitle");
+      if(!title)return;
+      if(title.textContent.includes("COMEÇAR RAPIDAMENTE")){
+        title.textContent="MÉTODOS DE APRENDIZAGEM";
+        const sub=panel.querySelector(".dashPanelSub");
+        if(sub)sub.textContent="FERRAMENTAS DE APOIO PARA USAR DENTRO DAS AULAS";
+      }
+    });
+
+    // A antiga view Professor deixa de ser uma área independente.
+    professor.style.display="none";
+    professor.setAttribute("aria-hidden","true");
+
+    // Oculta o botão PROFESSSOR do menu "Mais" e amplia APRENDER como ponto único.
+    document.querySelectorAll('button').forEach(btn=>{
+      const span=btn.querySelector("span");
+      if(span && span.textContent.trim().toUpperCase()==="PROFESSOR"){
+        btn.style.display="none";
+      }
+      if(span && span.textContent.trim().toUpperCase()==="APRENDER"){
+        btn.title="Trilhas e Professor SIRIUS";
+      }
+    });
+
+    // Central de comando: Professor aponta para Aprender.
+    document.querySelectorAll('[onclick*="showDashView(\'professor\')"],[onclick*="openMoreView(\'professor\')"]').forEach(el=>{
+      el.setAttribute("onclick","showDashView('learning')");
+      const b=el.querySelector("b");
+      if(b)b.textContent="APRENDER COM SIRIUS";
+      const small=el.querySelector("small");
+      if(small)small.textContent="Trilhas, tutoria adaptativa, prática, correção e avaliação.";
+      const em=el.querySelector("em");
+      if(em)em.textContent="ABRIR APRENDIZAGEM →";
+    });
+  }
+
+  // Qualquer rota antiga para "professor" passa a abrir APRENDER.
+  const oldShowDashView=window.showDashView;
+  if(typeof oldShowDashView==="function"){
+    window.showDashView=function(id,...args){
+      if(id==="professor")id="learning";
+      const r=oldShowDashView.call(this,id,...args);
+      if(id==="learning")setTimeout(mergeLearningProfessor,20);
+      return r;
+    };
+  }
+
+  const oldOpenMoreView=window.openMoreView;
+  if(typeof oldOpenMoreView==="function"){
+    window.openMoreView=function(id,...args){
+      if(id==="professor")id="learning";
+      const r=oldOpenMoreView.call(this,id,...args);
+      if(id==="learning")setTimeout(mergeLearningProfessor,20);
+      return r;
+    };
+  }
+
+  // Pesquisa da aba APRENDER agora inicia uma aula real no Professor SIRIUS,
+  // em vez de gerar um texto único e genérico.
+  const oldResearch=window.siriusResearchLesson;
+  window.siriusResearchLesson=async function(){
+    const learnInput=document.getElementById("learnTopic");
+    const topic=(learnInput?.value||"").trim();
+    if(!topic){
+      if(typeof oldResearch==="function")return oldResearch();
+      return;
+    }
+    const profInput=document.getElementById("professorTopicInput");
+    if(profInput)profInput.value=topic;
+    mergeLearningProfessor();
+    if(typeof window.startProfessorClass==="function")return window.startProfessorClass();
+    if(typeof oldResearch==="function")return oldResearch();
+  };
+
+  // Enter no tema também inicia a aula.
+  document.addEventListener("keydown",e=>{
+    const t=e.target;
+    if(t?.id==="professorTopicInput" && e.key==="Enter" && !e.shiftKey){
+      e.preventDefault();
+      if(typeof startProfessorClass==="function")startProfessorClass();
+    }
+  });
+
+  // Atualiza textos persistentes que ainda chamavam o Professor de aba separada.
+  document.querySelectorAll(".coreHeroSub").forEach(el=>{
+    el.textContent=el.textContent.replace(" • PROFESSOR","");
+  });
+
+  setTimeout(()=>{
+    mergeLearningProfessor();
+    try{if(typeof renderProfessorAI==="function")renderProfessorAI();}catch(e){}
+  },500);
 })();
 
 </script>
