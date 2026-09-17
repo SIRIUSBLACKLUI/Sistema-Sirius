@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.21.9</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.0</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -1459,17 +1459,17 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 </div>
 <div class="aiChatOverlay" id="aiChatOverlay">
   <div class="aiChatTop">
-    <div><div class="aiChatBrand">[ SIRIUS // NUCLEO DE INTELIGENCIA ]</div><div class="aiChatTitle">INTERFACE DO SISTEMA</div></div>
+    <div><div class="aiChatBrand">[ SIRIUS // NUCLEO DE INTELIGENCIA ]</div><div class="aiChatTitle">TERMINAL DO NÚCLEO</div></div>
     <button class="aiChatClose" onclick="closeSiriusAI()">FECHAR</button>
   </div>
   <div class="aiMessages" id="aiMessages"></div>
   <div class="aiComposer" id="aiComposer">
-    <textarea id="aiInput" placeholder="Digite sua mensagem para o SIRIUS..."></textarea>
+    <textarea id="aiInput" placeholder="Insira um comando para o SIRIUS..."></textarea>
     <div class="aiComposerActions">
-      <button type="button" onclick="clearSiriusAIHistory()" id="aiClearBtn">LIMPAR CONVERSA</button>
-      <button type="button" onclick="sendSiriusAI()" id="aiSendBtn">ENVIAR MENSAGEM</button>
+      <button type="button" onclick="clearSiriusAIHistory()" id="aiClearBtn">LIMPAR LOG</button>
+      <button type="button" onclick="sendSiriusAI()" id="aiSendBtn">EXECUTAR COMANDO</button>
     </div>
-    <div class="aiComposerHint">ENTER = NOVA LINHA // USE ENVIAR MENSAGEM PARA CONFIRMAR</div>
+    <div class="aiComposerHint">ENTER = NOVA LINHA // EXECUTAR COMANDO = CONFIRMAR</div>
   </div>
 </div>
 
@@ -1669,9 +1669,25 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
     </section>
 
     <section class="dashView" id="view-ai">
-      <div class="dashPanel"><div class="dashPanelTitle">NÚCLEO DE INTELIGÊNCIA</div><div class="dashPanelSub">SIRIUS // IA</div>
-        <div class="bookActions"><button class="primary" onclick="openSiriusAI()">FALAR COM SIRIUS</button><button onclick="requestAiStatusAnalysis()">ANALISAR STATUS</button><button onclick="requestAiMission()">GERAR MISSÃO</button><button onclick="configureSiriusAI()">CONFIGURAR IA</button></div>
-        <div class="small" id="dashAiStatus" style="margin-top:10px"></div>
+      <div class="coreCommandHero">
+        <div class="coreScan"></div>
+        <div class="coreEyebrow">[ SIRIUS // NÚCLEO DE INTELIGÊNCIA ]</div>
+        <div class="coreHeroRow"><div><div class="coreHeroTitle">CENTRAL DE COMANDO</div><div class="coreHeroSub">ANÁLISE • DIRETRIZES • MISSÕES • PROFESSOR</div></div><div class="coreOnline"><i></i> NÚCLEO ONLINE</div></div>
+        <div class="coreTelemetry">
+          <div><b>ESTADO</b><span id="coreStateText">AGUARDANDO COMANDO</span></div>
+          <div><b>MOTOR</b><span id="coreEngineText">WORKER SEGURO</span></div>
+          <div><b>PRIORIDADE</b><span id="corePriorityText">ANALISAR</span></div>
+        </div>
+      </div>
+      <div class="coreCommandGrid">
+        <button class="coreCommand primary" onclick="openSiriusAI()"><span class="coreCmdIcon">⌁</span><b>ABRIR TERMINAL</b><small>Converse com o núcleo usando o contexto real do jogador.</small><em>ENTRAR →</em></button>
+        <button class="coreCommand" onclick="requestAiStatusAnalysis()"><span class="coreCmdIcon">◫</span><b>ANÁLISE TÁTICA</b><small>Leia status, carga, fraquezas e próxima prioridade.</small><em>EXECUTAR →</em></button>
+        <button class="coreCommand" onclick="requestAiMission()"><span class="coreCmdIcon">◇</span><b>GERAR DIRETRIZ</b><small>Crie uma missão variada e observável, sujeita à aprovação.</small><em>GERAR →</em></button>
+        <button class="coreCommand professor" onclick="showDashView('professor')"><span class="coreCmdIcon">Ψ</span><b>PROFESSOR SIRIUS</b><small>Tutoria adaptativa em microblocos, correção e avaliação.</small><em>INICIAR AULA →</em></button>
+      </div>
+      <div class="coreBriefing">
+        <div class="coreBriefHead"><span>[ BRIEFING DO SISTEMA ]</span><button onclick="configureSiriusAI()">CONFIGURAÇÃO</button></div>
+        <div class="coreBriefBody"><div class="corePulseLine"></div><div><b id="coreBriefTitle">CANAL DE IA</b><p id="dashAiStatus">Verificando configuração do núcleo...</p></div></div>
       </div>
     </section>
 
@@ -5319,7 +5335,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
   return {teacher:raw,question:"",phase:"lesson"};
  }
  function normalizeTeacherTurn(raw,fallbackPhase="lesson"){
-  const phase=["lesson","test","complete"].includes(String(raw?.phase||""))?String(raw.phase):fallbackPhase;
+  const phase=["diagnostic","lesson","practice","test","complete"].includes(String(raw?.phase||""))?String(raw.phase):fallbackPhase;
   return {
    phase,
    objective:String(raw?.objective||"").slice(0,500),
@@ -5335,16 +5351,16 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
  function session(){ensureProfessorAI();return data.professorLiveSession}
  function message(role,text,type=""){const s=session();if(!s)return;s.messages=s.messages||[];s.messages.push({role,text:String(text||"").slice(0,6000),type,at:new Date().toISOString()});s.messages=s.messages.slice(-40)}
  function setBusy(b,label){const s=session();if(s)s.busy=!!b;const a=document.getElementById("professorAnswerBtn"),st=document.getElementById("professorStartBtn");if(a){a.disabled=!!b;a.textContent=b?(label||"PROFESSOR PENSANDO..."):"RESPONDER AO PROFESSOR"}if(st){st.disabled=!!b;st.textContent=b?"PREPARANDO AULA...":"INICIAR AULA"}}
- function teacherPromptStart(topic){return `Você é o PROFESSOR SIRIUS e vai CONDUZIR uma aula interativa completa em português sobre o tema: "${topic}". O aluno só escolheu o tema; faça todo o restante. Comece definindo um objetivo claro, ensine apenas o PRIMEIRO bloco em linguagem adequada a um iniciante sem infantilizar, dê um exemplo concreto e termine com UMA pergunta de recuperação/aplicação para medir compreensão. Não despeje a aula inteira de uma vez. Adapte nas próximas respostas. Em temas factuais ou atuais, não invente certeza: sinalize limites quando necessário. Responda SOMENTE JSON válido com este formato: {"phase":"lesson","objective":"objetivo da aula","teacher":"explicação do primeiro bloco + exemplo","question":"uma pergunta para o aluno","feedback":"","score":null,"strengths":[],"gaps":[]}.`}
+ function teacherPromptStart(topic){return `Inicie uma tutoria individual sobre "${topic}". NÃO assuma que o aluno é iniciante e NÃO despeje uma aula pronta. Primeiro faça um diagnóstico curto para descobrir nível e objetivo real. Dê no máximo uma microexplicação de contexto e termine com UMA pergunta diagnóstica útil. Depois das respostas, ensine em microblocos progressivos. O foco é compreensão e aplicação, não resumo. Evite perguntas triviais quando houver alternativa melhor. Retorne o próximo passo da aula no schema do Professor SIRIUS.`}
  function teacherPromptAnswer(s,answer){
-  const compact=(s.messages||[]).slice(-10).map(x=>`${x.role.toUpperCase()}: ${x.text}`).join("\n");
-  const finalTurn=(Number(s.turn)||0)>=4;
-  return `Você é o PROFESSOR SIRIUS conduzindo uma aula interativa sobre "${s.topic}". OBJETIVO: ${s.objective||"definir e dominar fundamentos do tema"}. TURNO DE RESPOSTA: ${s.turn}. HISTÓRICO RECENTE:\n${compact}\nRESPOSTA ATUAL DO ALUNO: ${answer}\n\nAvalie a resposta de forma pedagógica. Diga o que está correto e corrija erros concretos. Adapte a explicação à dificuldade demonstrada. ${finalTurn?`Este é o momento da AVALIAÇÃO FINAL. Dê uma nota de 0 a 100 considerando compreensão, precisão, explicação com palavras próprias e aplicação. Se nota >= ${PASS_SCORE}, use phase="complete". Se nota < ${PASS_SCORE}, use phase="complete" também, mas explique as lacunas e não aprove. Não faça nova pergunta.`:`Se ainda houver lacunas, explique de outro modo e faça UMA nova pergunta. Se o aluno estiver indo bem, aprofunde. Nos turnos 3 e 4 use phase="test" e faça perguntas mais exigentes, sem dar a resposta.`} Responda SOMENTE JSON válido: {"phase":"lesson|test|complete","objective":"","feedback":"feedback direto sobre a resposta","teacher":"nova explicação/adaptação ou síntese final","question":"próxima pergunta; vazio se complete","score":null,"strengths":["..."],"gaps":["..."],"summary":"síntese final se complete","next":"próximo passo recomendado"}.`;
+  const compact=(s.messages||[]).slice(-14).map(x=>`${x.role.toUpperCase()}: ${x.text}`).join("\n");
+  const finalTurn=(Number(s.turn)||0)>=7;
+  return `Continue a tutoria individual sobre "${s.topic}". OBJETIVO ATUAL: ${s.objective||"definir após diagnóstico"}. TURNO: ${s.turn}. HISTÓRICO RECENTE:\n${compact}\nRESPOSTA DO ALUNO: ${answer}\n\nFaça uma correção específica baseada no que ele escreveu. Identifique um acerto real e a principal lacuna, sem elogio automático. Adapte o próximo microbloco: simplifique e use outro exemplo se houver confusão; aprofunde e exija transferência se houver domínio. Faça apenas UMA próxima pergunta ou exercício. ${finalTurn?`Se já houver evidência suficiente de aprendizagem, faça a avaliação final com nota 0-100, compreensão + precisão + aplicação + transferência, use phase="complete" e não faça nova pergunta. Se ainda faltar evidência, mantenha test/practice.`:`Alterne explicação, aplicação, exemplo/contraexemplo e recuperação ativa. Não faça perguntas triviais só para avançar.`} Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
  }
  async function callProfessorAI(messageText,task){
   const endpoint=getAiEndpoint();if(!endpoint){configureSiriusAI();throw new Error("IA não configurada")}
   const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task:task||"professor_teach",message:messageText,context:buildSiriusContext(),professorSession:session(),history:[]})});
-  const p=await r.json().catch(()=>({}));if(!r.ok)throw new Error(p.details||p.error||`HTTP ${r.status}`);const turn=normalizeTeacherTurn(extractJsonFromTeacher(p));if(!turn.teacher&&!turn.feedback&&!turn.question)throw new Error("O Worker não retornou uma etapa de aula válida. Atualize o worker.js para v2.17.0.");return turn;
+  const p=await r.json().catch(()=>({}));if(!r.ok)throw new Error(p.details||p.error||`HTTP ${r.status}`);const turn=normalizeTeacherTurn(extractJsonFromTeacher(p));turn.engine=String(p.engine||turn.engine||"");if(!turn.teacher&&!turn.feedback&&!turn.question)throw new Error("O Worker não retornou uma etapa de aula válida. Atualize o worker.js para v2.18.0.");return turn;
  }
  function renderProfessorAI(){
   ensureProfessorAI();const s=session(),msgs=document.getElementById("professorMessages"),composer=document.getElementById("professorComposer"),title=document.getElementById("professorClassTitle"),meta=document.getElementById("professorClassMeta"),state=document.getElementById("professorClassState"),obj=document.getElementById("professorObjective");
@@ -5393,7 +5409,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 </style>
 <script>
 (function(){
- const RELEASE="v2.21.9";
+ const RELEASE="v2.22.0";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
@@ -5414,6 +5430,40 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
  // If a legacy orb script inserts itself after load, remove it again.
  const mo=new MutationObserver(()=>{const o=document.getElementById("siriusOrbStage");if(o)o.remove();if(document.getElementById("aiChatOverlay")?.classList.contains("show"))installHud()});mo.observe(document.body,{childList:true,subtree:true});
  setTimeout(()=>{installHud();document.querySelectorAll(".versionMark").forEach(x=>x.textContent=`SIRIUS // ${RELEASE}`)},300);
+})();
+</script>
+
+
+<!-- ===== SIRIUS v2.22.0 // OPENAI PROFESSOR + COMMAND CENTER ===== -->
+<style>
+.coreCommandHero{position:relative;overflow:hidden;border:1px solid #245f88;background:linear-gradient(135deg,#03101d 0%,#07162b 55%,#120d2c 100%);padding:18px 16px 15px;box-shadow:inset 0 0 42px #2b66a010,0 12px 28px #0007}
+.coreCommandHero:before,.coreCommandHero:after{content:"";position:absolute;pointer-events:none}.coreCommandHero:before{inset:0;background:linear-gradient(90deg,transparent 49.7%,#55d6ff0b 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#55d6ff08 50%,transparent 50.3%);background-size:34px 34px}.coreCommandHero:after{left:0;top:0;width:37%;height:2px;background:#59e9ff;box-shadow:0 0 16px #59e9ff}
+.coreScan{position:absolute;left:0;right:0;height:1px;top:30%;background:linear-gradient(90deg,transparent,#63e8ff77,transparent);animation:coreScan 5s linear infinite;opacity:.55}@keyframes coreScan{0%{transform:translateY(-50px)}100%{transform:translateY(170px)}}
+.coreEyebrow{position:relative;font-size:7px;letter-spacing:2.7px;color:#aa8cff;font-weight:950}.coreHeroRow{position:relative;display:flex;align-items:end;justify-content:space-between;gap:10px;margin-top:10px}.coreHeroTitle{font-size:23px;font-weight:1000;letter-spacing:1.4px}.coreHeroSub{font-size:7px;letter-spacing:1.3px;color:#7fa8c9;margin-top:5px}.coreOnline{font-size:7px;letter-spacing:1px;border:1px solid #2e765f;background:#061c18;color:#7dffd0;padding:7px 9px;white-space:nowrap}.coreOnline i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#54f0b2;box-shadow:0 0 9px #54f0b2;margin-right:5px}
+.coreTelemetry{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:14px}.coreTelemetry>div{border:1px solid #204d6e;background:#03101d99;padding:8px}.coreTelemetry b{display:block;font-size:5.5px;letter-spacing:1.3px;color:#58dffb}.coreTelemetry span{display:block;font-size:7.5px;margin-top:4px;color:#d4e9f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coreCommandGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.coreCommand{position:relative;text-align:left;min-height:138px;padding:14px 13px 12px;border:1px solid #22577d;background:linear-gradient(145deg,#04111f,#07182a);color:#eaf8ff;overflow:hidden}.coreCommand:before{content:"";position:absolute;left:0;top:0;width:2px;height:44%;background:#52dcff;box-shadow:0 0 12px #52dcff}.coreCommand.primary{border-color:#2e87c4;background:linear-gradient(145deg,#05203a,#083267)}.coreCommand.professor{border-color:#694cbd;background:linear-gradient(145deg,#0b1127,#1b1038)}.coreCommand.professor:before{background:#9a71ff;box-shadow:0 0 12px #9a71ff}.coreCmdIcon{display:block;font-size:22px;color:#69e6ff;line-height:1;margin-bottom:13px}.coreCommand.professor .coreCmdIcon{color:#ae8aff}.coreCommand b{display:block;font-size:10px;letter-spacing:1.5px}.coreCommand small{display:block;color:#8faac3;font-size:8px;line-height:1.45;margin-top:7px}.coreCommand em{position:absolute;right:11px;bottom:10px;font-style:normal;font-size:6px;color:#6fdfff;letter-spacing:1px}.coreCommand.professor em{color:#b59aff}
+.coreBriefing{border:1px solid #244c6f;background:#04101d;margin-top:10px}.coreBriefHead{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-bottom:1px solid #173a56;font-size:6px;color:#72ddf8;letter-spacing:1.5px}.coreBriefHead button{border:1px solid #315a80;background:#07172b;color:#a9cce7;font-size:6px;padding:5px 7px}.coreBriefBody{display:flex;gap:9px;padding:11px}.corePulseLine{width:2px;background:#5de6ff;box-shadow:0 0 11px #5de6ff}.coreBriefBody b{font-size:8px;letter-spacing:1px}.coreBriefBody p{margin:5px 0 0;color:#8fa8c0;font-size:8px;line-height:1.45}
+/* terminal: logs, not chat bubbles */
+.aiMessages{gap:7px!important;background:linear-gradient(180deg,#020b15,#020712)!important}.aiBubble{max-width:94%!important;border:1px solid #234b69!important;background:#04111f!important;padding:11px 12px!important;box-shadow:none!important}.aiBubble.sirius{align-self:flex-start!important;border-left:2px solid #59e6ff!important}.aiBubble.user{align-self:flex-end!important;border-color:#5a458f!important;border-right:2px solid #a67cff!important;background:#100d25!important}.aiBubble.system{align-self:stretch!important;max-width:100%!important;border:1px dashed #2c5f80!important;background:#04101a!important}.aiBubble:before{display:block;font-size:6px;letter-spacing:1.5px;color:#66dff9;margin-bottom:6px;font-weight:900}.aiBubble.sirius:before{content:"[ SIRIUS // RETORNO DO NÚCLEO ]"}.aiBubble.user:before{content:"[ COMANDO DO JOGADOR ]";color:#b398ff}.aiBubble.system:before{content:"[ EVENTO DO SISTEMA ]"}.aiComposer textarea{border-radius:0!important;background:#020a13!important}.aiComposerActions #aiSendBtn{background:linear-gradient(180deg,#137bd0,#164a9f)!important;border-color:#45bff5!important}
+/* professor: more like a tutoring console */
+.professorAiHero{border-color:#654bc1!important;background:linear-gradient(145deg,#071225,#111039)!important}.professorClassShell{box-shadow:inset 0 0 30px #16345213}.professorMsg.teacher{border-left-width:3px!important}.professorObjective:after{content:" // TUTORIA ADAPTATIVA";color:#66dff8;font-size:7px;letter-spacing:1px}.professorAiHint:after{content:" // OPENAI QUANDO CONFIGURADA NO WORKER";color:#a98cff}
+@media(max-width:520px){.coreCommandGrid{grid-template-columns:1fr 1fr}.coreCommand{min-height:128px;padding:12px 10px}.coreCommand small{font-size:7.5px}.coreHeroTitle{font-size:20px}.coreOnline{font-size:6px;padding:6px}.coreTelemetry{grid-template-columns:1fr 1fr 1fr}}
+</style>
+<script>
+(function(){
+ const VERSION="v2.22.0";
+ function refreshCoreCenter(){
+  try{
+   const st=document.getElementById("coreStateText"),en=document.getElementById("coreEngineText"),pr=document.getElementById("corePriorityText");
+   if(st)st.textContent=(data.aiBusy?"PROCESSANDO":"AGUARDANDO COMANDO");
+   if(en)en.textContent=getAiEndpoint()?"WORKER ONLINE":"CONFIGURAR IA";
+   if(pr){const am=typeof adaptiveMetrics==="function"?adaptiveMetrics():null;pr.textContent=(am?.weakest?.name||"ANÁLISE").toUpperCase()}
+  }catch(e){}
+ }
+ const oldOpen=window.openSiriusAI;window.openSiriusAI=function(){refreshCoreCenter();return oldOpen()};
+ const oldRefresh=window.refreshDashboard;window.refreshDashboard=function(){oldRefresh();refreshCoreCenter()};
+ const oldSend=window.sendSiriusAI;window.sendSiriusAI=async function(){data.aiBusy=true;refreshCoreCenter();try{return await oldSend()}finally{data.aiBusy=false;refreshCoreCenter()}};
+ setTimeout(()=>{document.querySelectorAll(".versionMark").forEach(x=>x.textContent=`SIRIUS // ${VERSION}`);refreshCoreCenter()},350);
 })();
 </script>
 
