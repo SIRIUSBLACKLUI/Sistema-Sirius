@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="sirius-apple-touch-icon.png">
@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.5</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.6</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -5570,7 +5570,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </style>
 <script>
 (function(){
- const RELEASE="v2.22.5";
+ const RELEASE="v2.22.6";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
@@ -5595,7 +5595,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </script>
 
 
-<!-- ===== SIRIUS v2.22.5 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
+<!-- ===== SIRIUS v2.22.6 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
 <style>
 .coreCommandHero{position:relative;overflow:hidden;border:1px solid #245f88;background:linear-gradient(135deg,#03101d 0%,#07162b 55%,#120d2c 100%);padding:18px 16px 15px;box-shadow:inset 0 0 42px #2b66a010,0 12px 28px #0007}
 .coreCommandHero:before,.coreCommandHero:after{content:"";position:absolute;pointer-events:none}.coreCommandHero:before{inset:0;background:linear-gradient(90deg,transparent 49.7%,#55d6ff0b 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#55d6ff08 50%,transparent 50.3%);background-size:34px 34px}.coreCommandHero:after{left:0;top:0;width:37%;height:2px;background:#59e9ff;box-shadow:0 0 16px #59e9ff}
@@ -5612,7 +5612,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </style>
 <script>
 (function(){
- const VERSION="v2.22.5";
+ const VERSION="v2.22.6";
  function refreshCoreCenter(){
   try{
    const st=document.getElementById("coreStateText"),en=document.getElementById("coreEngineText"),pr=document.getElementById("corePriorityText");
@@ -5629,13 +5629,13 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </script>
 
 
-<!-- ===== SIRIUS v2.22.5 // CLOUDFLARE MAX PATCH ===== -->
+<!-- ===== SIRIUS v2.22.6 // CLOUDFLARE MAX PATCH ===== -->
 <style>
 .professorCloudflareBadge{display:inline-flex;align-items:center;gap:6px;margin-top:9px;border:1px solid #245f7c;background:#03111d;padding:6px 8px;font-size:6px;letter-spacing:1.2px;color:#7ce7ff}.professorCloudflareBadge i{width:5px;height:5px;border-radius:50%;background:#58efbd;box-shadow:0 0 8px #58efbd}.professorClassState{box-shadow:inset 0 0 12px #55dfff0a}.professorMsg.feedback{border-left:3px solid #55cda6!important}.professorMsg.test{border-left:3px solid #aa7cff!important}
 </style>
 <script>
 (function(){
- const V="v2.22.5";
+ const V="v2.22.6";
  function tagCloudflare(){
   const hero=document.querySelector('.professorAiHero');
   if(hero&&!hero.querySelector('.professorCloudflareBadge'))hero.insertAdjacentHTML('beforeend','<div class="professorCloudflareBadge"><i></i>CLOUDFLARE AI // PROFESSOR EM DUPLA PASSAGEM PEDAGÓGICA</div>');
@@ -5646,7 +5646,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 })();
 
 
-// ===== SIRIUS v2.22.5 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
+// ===== SIRIUS v2.22.6 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
 (function(){
   const __v222_buildContext = buildSiriusContext;
   buildSiriusContext = function(){
@@ -5894,7 +5894,7 @@ ${v222MissionInstruction()}`;
 
 
 
-// ===== SIRIUS v2.22.5 // APRENDER + PROFESSOR UNIFICADOS =====
+// ===== SIRIUS v2.22.6 // APRENDER + PROFESSOR UNIFICADOS =====
 (function(){
   function mergeLearningProfessor(){
     const learning=document.getElementById("view-learning");
@@ -6076,11 +6076,6 @@ ${v222MissionInstruction()}`;
       if(input)input.placeholder="Ex.: Inglês — iniciante | Programação — básico";
     }
   }
-
-  document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
-
-  const obs=new MutationObserver(()=>v224CleanLearningUI());
-  obs.observe(document.documentElement,{childList:true,subtree:true});
   setTimeout(v224CleanLearningUI,0);
   setTimeout(v224CleanLearningUI,350);
   setTimeout(v224CleanLearningUI,900);
@@ -6089,7 +6084,6 @@ ${v222MissionInstruction()}`;
 
 
 <style id="sirius-v225-touch-fix">
-html,body{touch-action:manipulation}
 button,a,[role="button"],input,textarea,select{
   touch-action:manipulation;
 }
@@ -6101,11 +6095,67 @@ button,a,[role="button"],input,textarea,select{
 </style>
 <script>
 (function(){
-  // v2.22.5: correção crítica de toque no iPhone.
+  // v2.22.6: correção crítica de toque no iPhone.
   // Não usamos preventDefault global em touchend, pois isso bloqueia cliques.
-  document.addEventListener("gesturestart", function(e){
-    e.preventDefault();
-  }, {passive:false});
+})();
+</script>
+
+
+<style id="sirius-v226-interaction-fix">
+@media(max-width:900px){
+  input,textarea,select{
+    font-size:16px!important;
+  }
+}
+button,a,[role="button"]{touch-action:manipulation}
+</style>
+<script>
+(function(){
+  function applyV226LearningCleanup(){
+    try{
+      const h=document.getElementById("unifiedLearningHeader");
+      if(h)h.remove();
+
+      document.querySelectorAll("#view-learning .dashPanel").forEach(panel=>{
+        const title=panel.querySelector(".dashPanelTitle");
+        const txt=(title?.textContent||"").trim().toUpperCase();
+        if(["MÉTODOS DE APRENDIZAGEM","COMEÇAR RAPIDAMENTE","TÉCNICAS DISPONÍVEIS"].includes(txt)){
+          panel.style.display="none";
+        }
+      });
+
+      document.querySelectorAll("#view-learning .techniqueCatalog").forEach(cat=>{
+        cat.style.display="none";
+        const sub=cat.previousElementSibling;
+        const title=sub?.previousElementSibling;
+        if(sub?.classList?.contains("dashPanelSub"))sub.style.display="none";
+        if(title?.classList?.contains("dashPanelTitle"))title.style.display="none";
+      });
+
+      const hero=document.querySelector("#view-learning .professorAiHero");
+      if(hero){
+        const p=hero.querySelector("p");
+        if(p && !p.dataset.v226){
+          p.textContent='Diga o tema e, se souber, informe seu nível. Ex.: “Inglês — iniciante”. O Professor SIRIUS começa ensinando, usa uma prática por vez e avança sem repetir perguntas.';
+          p.dataset.v226="1";
+        }
+        const input=hero.querySelector("#professorTopicInput");
+        if(input)input.placeholder="Ex.: Inglês — iniciante | Programação — básico";
+      }
+    }catch(e){console.error("v2.22.6 cleanup",e)}
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",applyV226LearningCleanup,{once:true});
+  }else{
+    applyV226LearningCleanup();
+  }
+
+  // Reaplica apenas quando o usuário entra na aba APRENDER, sem observer global.
+  document.addEventListener("click",e=>{
+    const el=e.target.closest?.('[onclick*="learning"],[data-view="learning"]');
+    if(el)setTimeout(applyV226LearningCleanup,50);
+  },{passive:true});
 })();
 </script>
 
