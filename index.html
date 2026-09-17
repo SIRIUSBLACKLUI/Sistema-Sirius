@@ -1409,7 +1409,7 @@ button.trainingBtn:active{background:linear-gradient(180deg,#188dff,#075cae)!imp
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.6</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.7</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -5570,7 +5570,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </style>
 <script>
 (function(){
- const RELEASE="v2.22.6";
+ const RELEASE="v2.22.7";
  function hud(){return document.getElementById("aiSystemHud")}
  function installHud(){
   document.getElementById("siriusOrbStage")?.remove();
@@ -5595,7 +5595,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </script>
 
 
-<!-- ===== SIRIUS v2.22.6 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
+<!-- ===== SIRIUS v2.22.7 // CLOUDFLARE MAX + ADAPTIVE PROFESSOR ===== -->
 <style>
 .coreCommandHero{position:relative;overflow:hidden;border:1px solid #245f88;background:linear-gradient(135deg,#03101d 0%,#07162b 55%,#120d2c 100%);padding:18px 16px 15px;box-shadow:inset 0 0 42px #2b66a010,0 12px 28px #0007}
 .coreCommandHero:before,.coreCommandHero:after{content:"";position:absolute;pointer-events:none}.coreCommandHero:before{inset:0;background:linear-gradient(90deg,transparent 49.7%,#55d6ff0b 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#55d6ff08 50%,transparent 50.3%);background-size:34px 34px}.coreCommandHero:after{left:0;top:0;width:37%;height:2px;background:#59e9ff;box-shadow:0 0 16px #59e9ff}
@@ -5612,7 +5612,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </style>
 <script>
 (function(){
- const VERSION="v2.22.6";
+ const VERSION="v2.22.7";
  function refreshCoreCenter(){
   try{
    const st=document.getElementById("coreStateText"),en=document.getElementById("coreEngineText"),pr=document.getElementById("corePriorityText");
@@ -5629,16 +5629,16 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 </script>
 
 
-<!-- ===== SIRIUS v2.22.6 // CLOUDFLARE MAX PATCH ===== -->
+<!-- ===== SIRIUS v2.22.7 // CLOUDFLARE MAX PATCH ===== -->
 <style>
 .professorCloudflareBadge{display:inline-flex;align-items:center;gap:6px;margin-top:9px;border:1px solid #245f7c;background:#03111d;padding:6px 8px;font-size:6px;letter-spacing:1.2px;color:#7ce7ff}.professorCloudflareBadge i{width:5px;height:5px;border-radius:50%;background:#58efbd;box-shadow:0 0 8px #58efbd}.professorClassState{box-shadow:inset 0 0 12px #55dfff0a}.professorMsg.feedback{border-left:3px solid #55cda6!important}.professorMsg.test{border-left:3px solid #aa7cff!important}
 </style>
 <script>
 (function(){
- const V="v2.22.6";
+ const V="v2.22.7";
  function tagCloudflare(){
   const hero=document.querySelector('.professorAiHero');
-  if(hero&&!hero.querySelector('.professorCloudflareBadge'))hero.insertAdjacentHTML('beforeend','<div class="professorCloudflareBadge"><i></i>CLOUDFLARE AI // PROFESSOR EM DUPLA PASSAGEM PEDAGÓGICA</div>');
+  if(hero&&!hero.querySelector('.professorCloudflareBadge'))hero.insertAdjacentHTML('beforeend','<div class="professorCloudflareBadge"><i></i>CLOUDFLARE AI // MODO ECONÔMICO ADAPTATIVO</div>');
   document.querySelectorAll('.versionMark').forEach(x=>x.textContent=`SIRIUS // ${V}`);
  }
  const old=window.renderProfessorAI;if(typeof old==='function')window.renderProfessorAI=function(){const r=old();tagCloudflare();return r};
@@ -5646,7 +5646,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
 })();
 
 
-// ===== SIRIUS v2.22.6 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
+// ===== SIRIUS v2.22.7 // MISSÕES INTELIGENTES + FLUXO FUNCIONAL =====
 (function(){
   const __v222_buildContext = buildSiriusContext;
   buildSiriusContext = function(){
@@ -5894,7 +5894,7 @@ ${v222MissionInstruction()}`;
 
 
 
-// ===== SIRIUS v2.22.6 // APRENDER + PROFESSOR UNIFICADOS =====
+// ===== SIRIUS v2.22.7 // APRENDER + PROFESSOR UNIFICADOS =====
 (function(){
   function mergeLearningProfessor(){
     const learning=document.getElementById("view-learning");
@@ -6095,7 +6095,7 @@ button,a,[role="button"],input,textarea,select{
 </style>
 <script>
 (function(){
-  // v2.22.6: correção crítica de toque no iPhone.
+  // v2.22.7: correção crítica de toque no iPhone.
   // Não usamos preventDefault global em touchend, pois isso bloqueia cliques.
 })();
 </script>
@@ -6142,7 +6142,7 @@ button,a,[role="button"]{touch-action:manipulation}
         const input=hero.querySelector("#professorTopicInput");
         if(input)input.placeholder="Ex.: Inglês — iniciante | Programação — básico";
       }
-    }catch(e){console.error("v2.22.6 cleanup",e)}
+    }catch(e){console.error("v2.22.7 cleanup",e)}
   }
 
   if(document.readyState==="loading"){
@@ -6156,6 +6156,257 @@ button,a,[role="button"]{touch-action:manipulation}
     const el=e.target.closest?.('[onclick*="learning"],[data-view="learning"]');
     if(el)setTimeout(applyV226LearningCleanup,50);
   },{passive:true});
+})();
+</script>
+
+
+<style id="sirius-v227-ai-economy">
+.professorCloudflareBadge.offline{
+  border-color:#8f6a2f!important;
+  color:#ffd27a!important;
+}
+.professorCloudflareBadge.offline i{
+  background:#ffc857!important;
+  box-shadow:0 0 8px #ffc857!important;
+}
+</style>
+<script>
+(function(){
+  function quotaText(v){
+    return String(v||"").toLowerCase();
+  }
+  function isQuotaFailure(payload,status){
+    const t=quotaText(
+      (payload&&payload.details)||" "+
+      (payload&&payload.error)||" "+
+      (payload&&payload.message)||""
+    );
+    return status===429 ||
+      (payload&&payload.quota_exhausted===true) ||
+      t.includes("4006") ||
+      t.includes("daily free allocation") ||
+      t.includes("used up your daily") ||
+      t.includes("quota") ||
+      t.includes("neurons");
+  }
+
+  function offlineProfessorTurn(s,messageText){
+    const topic=String(s?.topic||"").toLowerCase();
+    const turn=Number(s?.turn)||0;
+    const prefix="[ MODO OFFLINE // COTA DA IA ESGOTADA ]\n";
+
+    // Inglês básico/iniciante: sequência local curta e não repetitiva.
+    if(/ingl[eê]s|english/.test(topic)){
+      const blocks=[
+        {
+          teacher:"Vamos começar por cumprimentos básicos.\n\nHello = Olá\nHi = Oi\nGood morning = Bom dia\n\nExemplo: “Hi, I am Ana.” = “Oi, eu sou Ana.”",
+          question:"PRÁTICA // Escreva uma forma curta de dizer “Olá” em inglês."
+        },
+        {
+          teacher:"Agora vamos para apresentação.\n\nI am... = Eu sou...\nMy name is... = Meu nome é...\n\nExemplo: “My name is Lucas.”",
+          question:"PRÁTICA // Escreva “Meu nome é [seu nome]” em inglês."
+        },
+        {
+          teacher:"Próximo bloco: agradecer.\n\nThank you = Obrigado(a)\nThanks = Valeu / Obrigado(a)\nYou’re welcome = De nada\n\nExemplo: “Thanks!” — “You’re welcome.”",
+          question:"PRÁTICA // Como você diria “Obrigado” em inglês?"
+        },
+        {
+          teacher:"Agora, despedidas.\n\nBye = Tchau\nGoodbye = Adeus / Tchau\nSee you = Até mais\n\nExemplo: “See you tomorrow.” = “Até amanhã.”",
+          question:"PRÁTICA // Escreva uma despedida curta em inglês."
+        }
+      ];
+      const b=blocks[Math.min(turn,blocks.length-1)];
+      return {
+        phase:"lesson",
+        objective:"Construir uma base prática de inglês para comunicação simples.",
+        teacher:prefix+"A IA online atingiu a cota diária. A aula continua com o conteúdo local do SIRIUS.\n\n"+b.teacher,
+        feedback:turn>0?"Sua resposta foi registrada. No modo offline eu não faço avaliação semântica real; uso a prática apenas para manter a sequência da aula.":"",
+        question:b.question,
+        score:null,
+        strengths:[],
+        gaps:[],
+        summary:"",
+        next:"",
+        difficulty:s?.declaredLevel||"iniciante",
+        method:"modo offline guiado",
+        engine:"offline"
+      };
+    }
+
+    if(/programa|c[oó]digo|javascript|python|app|mobile|software/.test(topic)){
+      const blocks=[
+        {
+          teacher:"Primeiro conceito: variável. Uma variável guarda um valor que o programa precisa lembrar.\n\nExemplo em JavaScript:\nlet nome = 'Ana';\n\nO nome da variável é `nome` e o valor guardado é `Ana`.",
+          question:"PRÁTICA // Se você precisasse guardar a idade de uma pessoa, que nome daria para essa variável?"
+        },
+        {
+          teacher:"Agora: condição. Uma condição permite tomar decisões.\n\nExemplo:\nif (idade >= 18) { ... }\n\nO código dentro do bloco só executa quando a condição é verdadeira.",
+          question:"PRÁTICA // Em suas palavras, para que serve um `if`?"
+        },
+        {
+          teacher:"Próximo conceito: repetição. Um loop repete uma ação enquanto uma regra for satisfeita ou para cada item de uma coleção.",
+          question:"PRÁTICA // Dê um exemplo de algo em um app que precisaria ser repetido."
+        }
+      ];
+      const b=blocks[Math.min(turn,blocks.length-1)];
+      return {
+        phase:"lesson",
+        objective:"Aprender fundamentos de programação de forma progressiva.",
+        teacher:prefix+"A IA online atingiu a cota diária. Vou continuar com uma trilha local de fundamentos.\n\n"+b.teacher,
+        feedback:turn>0?"Sua resposta foi salva. No modo offline não existe correção semântica real; a avaliação ficará para quando a IA estiver disponível.":"",
+        question:b.question,
+        score:null,strengths:[],gaps:[],summary:"",next:"",
+        difficulty:s?.declaredLevel||"iniciante",
+        method:"modo offline guiado",
+        engine:"offline"
+      };
+    }
+
+    if(/lembr|mem[oó]ria|reten|estud|leitur|livro/.test(topic)){
+      const blocks=[
+        {
+          teacher:"Para lembrar melhor, comece pela recuperação ativa: feche o material e tente recuperar a ideia sem olhar.\n\nLer novamente mede reconhecimento. Tentar explicar sem consultar mede recuperação.",
+          question:"PRÁTICA // Sem consultar nada, diga em uma frase o que você acabou de entender sobre recuperação ativa."
+        },
+        {
+          teacher:"Depois, use revisão espaçada. Em vez de reler várias vezes no mesmo dia, volte ao conteúdo depois de um intervalo e tente recuperá-lo novamente antes de consultar.",
+          question:"PRÁTICA // Quando você poderia revisar novamente algo estudado hoje?"
+        }
+      ];
+      const b=blocks[Math.min(turn,blocks.length-1)];
+      return {
+        phase:"lesson",
+        objective:"Melhorar retenção usando recuperação ativa e revisões distribuídas.",
+        teacher:prefix+"A IA online atingiu a cota diária. Vou usar o protocolo local de aprendizagem.\n\n"+b.teacher,
+        feedback:turn>0?"Resposta registrada. No modo offline não faço avaliação semântica real.":"",
+        question:b.question,
+        score:null,strengths:[],gaps:[],summary:"",next:"",
+        difficulty:s?.declaredLevel||"basico",
+        method:"modo offline guiado",
+        engine:"offline"
+      };
+    }
+
+    return {
+      phase:"lesson",
+      objective:`Avançar no tema ${s?.topic||"escolhido"} de forma estruturada.`,
+      teacher:prefix+
+        "A IA online atingiu a cota diária. Para não inventar conteúdo específico sem o modelo, o SIRIUS não fará uma explicação factual sobre este tema em modo offline.\n\n"+
+        "Você ainda pode continuar organizando o estudo: escolha um conceito pequeno do tema, descreva o que já sabe e registre uma dúvida concreta. Quando a IA voltar, o Professor retoma daqui.",
+      feedback:turn>0?"Sua resposta foi preservada localmente.":"",
+      question:"PRÁTICA OFFLINE // Qual é o primeiro conceito específico deste tema que você quer dominar?",
+      score:null,strengths:[],gaps:[],summary:"",next:"",
+      difficulty:s?.declaredLevel||"basico",
+      method:"modo offline seguro",
+      engine:"offline"
+    };
+  }
+
+  // Substitui apenas a função de chamada do Professor. Uma chamada online por turno;
+  // o próprio app só pede uma segunda chamada quando detecta resposta ruim/repetida.
+  window.callProfessorAIEconomic = async function(messageText,task){
+    const endpoint=getAiEndpoint();
+    if(!endpoint){
+      const s=(typeof session==="function"?session():data.professorLiveSession);
+      if(s){s.aiMode="offline";save();}
+      return offlineProfessorTurn(s,messageText);
+    }
+
+    const s=(typeof session==="function"?session():data.professorLiveSession);
+    const compactSession=s?{
+      topic:s.topic,
+      objective:s.objective,
+      phase:s.phase,
+      difficulty:s.difficulty,
+      declaredLevel:s.declaredLevel,
+      turn:s.turn,
+      askedQuestions:(s.askedQuestions||[]).slice(-6),
+      messages:(s.messages||[]).slice(-8)
+    }:null;
+
+    const response=await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        task:task||"professor_teach",
+        message:String(messageText||"").slice(0,6000),
+        context:buildSiriusContext(),
+        professorSession:compactSession,
+        history:[]
+      })
+    });
+
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok){
+      if(isQuotaFailure(payload,response.status)){
+        if(s){
+          s.aiMode="offline";
+          s.quotaFallbackAt=new Date().toISOString();
+          save();
+        }
+        return offlineProfessorTurn(s,messageText);
+      }
+      throw new Error(payload.details||payload.error||`HTTP ${response.status}`);
+    }
+
+    if(s && s.aiMode==="offline"){
+      s.aiMode="online";
+      save();
+    }
+    return payload;
+  };
+
+  // Intercepta fetch do professor através de uma versão econômica da função existente.
+  // Usa os normalizadores já presentes no SIRIUS.
+  if(typeof callProfessorAI==="function"){
+    callProfessorAI=async function(messageText,task){
+      const s=(typeof session==="function"?session():data.professorLiveSession);
+      const payload=await window.callProfessorAIEconomic(messageText,task);
+      let raw;
+      if(payload && payload.engine==="offline"){
+        raw=payload;
+      }else{
+        raw=extractJsonFromTeacher(payload);
+      }
+      const turn=normalizeTeacherTurn(raw);
+      turn.engine=String(payload?.engine||raw?.engine||"cloudflare");
+      if(!turn.teacher&&!turn.feedback&&!turn.question){
+        if(s){
+          s.aiMode="offline";
+          save();
+        }
+        return normalizeTeacherTurn(offlineProfessorTurn(s,messageText));
+      }
+      return turn;
+    };
+  }
+
+  // Atualiza o badge quando a aula está em fallback local.
+  const previousRender=window.renderProfessorAI;
+  if(typeof previousRender==="function"){
+    window.renderProfessorAI=function(){
+      const r=previousRender();
+      const s=data.professorLiveSession;
+      const badge=document.querySelector(".professorCloudflareBadge");
+      if(badge){
+        if(s?.aiMode==="offline"){
+          badge.classList.add("offline");
+          badge.innerHTML="<i></i>MODO OFFLINE // COTA DA IA ESGOTADA";
+        }else{
+          badge.classList.remove("offline");
+          badge.innerHTML="<i></i>CLOUDFLARE AI // MODO ECONÔMICO ADAPTATIVO";
+        }
+      }
+      return r;
+    };
+  }
+
+  // Núcleo geral: mensagem amigável quando a cota acabar.
+  const oldFetch=window.fetch.bind(window);
+  window.fetch=async function(input,init){
+    const res=await oldFetch(input,init);
+    return res;
+  };
 })();
 </script>
 
