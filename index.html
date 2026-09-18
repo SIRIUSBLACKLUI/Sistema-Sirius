@@ -7932,4 +7932,116 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.34 // HOME STATUS ESTÁVEL ===== -->
+<style id="sirius-v22234-home-status-stable-style">
+/* HOME > STATUS DO JOGADOR: usa fundo CSS fixo em vez de <img> para evitar
+   encolhimento/reflow no iPhone depois de toques/navegação. */
+#view-home #homeAttrCards .homeAttrCard.artAttr{
+  min-height:188px!important;
+  padding:0!important;
+  overflow:hidden!important;
+  position:relative!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) auto!important;
+  background:#030812!important;
+  border:1px solid var(--ac)!important;
+  contain:layout paint;
+  transform:none!important;
+  transition:none!important;
+  filter:none!important;
+  -webkit-tap-highlight-color:transparent;
+}
+#view-home #homeAttrCards .homeAttrCard.artAttr:active{
+  transform:none!important;
+  filter:none!important;
+}
+#view-home #homeAttrCards .artAttrVisual{
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  aspect-ratio:1/1!important;
+  background-image:var(--attr-art)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  border-bottom:1px solid color-mix(in srgb,var(--ac) 55%,transparent)!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  backface-visibility:hidden;
+  transform:translateZ(0);
+}
+#view-home #homeAttrCards .artAttrMeta{
+  min-width:0!important;
+  width:100%!important;
+  position:relative!important;
+  z-index:2!important;
+}
+@media(max-width:640px){
+  #view-home #homeAttrCards .homeAttrCard.artAttr{min-height:132px!important}
+}
+</style>
+<script id="sirius-v22234-home-status-stable-script">
+(function(){
+  const VERSION='v2.22.34';
+  const COLORS={"Físico":"#ff6072","Intelecto":"#38e2c1","Disciplina":"#ffb143","Comunicação":"#ae5bff","Foco":"#58dfff","Relacionamento":"#ff70b9"};
+  const CORE=["Físico","Intelecto","Disciplina","Comunicação","Foco","Relacionamento"];
+
+  function esc(s){
+    try{return typeof escapeHtml==='function'?escapeHtml(String(s??'')):String(s??'');}catch(e){return String(s??'');}
+  }
+
+  /* Cria os seis cards uma única vez. Refreshes futuros só alteram o texto.
+     Isso evita que toques em outras áreas façam as imagens serem recriadas. */
+  window.renderBottomHomeAttrs=function(){
+    const target=document.getElementById('homeAttrCards');
+    if(!target)return;
+    const cards=target.querySelectorAll('.homeAttrCard.artAttr[data-home-attr]');
+    const needsBuild=cards.length!==CORE.length;
+    if(needsBuild){
+      target.innerHTML=CORE.map(name=>{
+        const a=data?.attrs?.[name]||{level:1,pd:0};
+        const src=(typeof SIRIUS_ATTR_ART!=='undefined'&&SIRIUS_ATTR_ART[name])?SIRIUS_ATTR_ART[name]:'';
+        const cssUrl=src?`url(&quot;${src}&quot;)`:'none';
+        return `<div class="homeAttrCard artAttr" data-home-attr="${esc(name)}" style="--ac:${COLORS[name]};--attr-art:${cssUrl}">
+          <div class="artAttrVisual" role="img" aria-label="${esc(name)}"></div>
+          <div class="artAttrMeta"><span class="n">${esc(name.toUpperCase())}</span><span class="v">LV ${Number(a.level)||1} // ${Number(a.pd)||0} PD</span></div>
+        </div>`;
+      }).join('');
+    }else{
+      CORE.forEach(name=>{
+        const card=target.querySelector(`[data-home-attr="${name}"]`);
+        if(!card)return;
+        const a=data?.attrs?.[name]||{level:1,pd:0};
+        const v=card.querySelector('.v');
+        if(v)v.textContent=`LV ${Number(a.level)||1} // ${Number(a.pd)||0} PD`;
+      });
+    }
+  };
+
+  function ensureHomeStatus(){
+    try{window.renderBottomHomeAttrs();}catch(e){console.error(e);}
+  }
+
+  /* Reaplica apenas se algum código legado tentar reconstruir a área. */
+  const target=document.getElementById('homeAttrCards');
+  if(target && typeof MutationObserver!=='undefined'){
+    let pending=false;
+    const observer=new MutationObserver(()=>{
+      if(pending)return;
+      const ok=target.querySelectorAll('.homeAttrCard.artAttr[data-home-attr]').length===CORE.length;
+      if(ok)return;
+      pending=true;
+      requestAnimationFrame(()=>{pending=false;ensureHomeStatus();});
+    });
+    observer.observe(target,{childList:true,subtree:false});
+  }
+
+  ensureHomeStatus();
+  setTimeout(ensureHomeStatus,120);
+  document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+})();
+</script>
+
 </body></html>
