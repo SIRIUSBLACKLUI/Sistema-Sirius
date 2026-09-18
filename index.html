@@ -7261,7 +7261,7 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
     const obs=new MutationObserver(()=>requestAnimationFrame(apply));
     ['dashCurrentBook','homeStreakCard','weeklySummaryCard'].forEach(id=>{const n=document.getElementById(id); if(n)obs.observe(n,{childList:true,subtree:false})});
   }
-  const boot=()=>{apply();watch();setTimeout(apply,180);setTimeout(apply,600)};
+  const boot=()=>{apply();setTimeout(apply,180);setTimeout(apply,600)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
 </script>
@@ -7406,7 +7406,7 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
  const run=()=>{if(lock)return;lock=true;requestAnimationFrame(()=>{try{apply()}finally{lock=false}})};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run,120),{once:true}); else setTimeout(run,120);
  setTimeout(run,420);setTimeout(run,900);
- const home=document.getElementById('view-home'); if(home)new MutationObserver(run).observe(home,{childList:true,subtree:true});
+ /* Observador permanente removido: causava reconstruções recursivas da Home. */
 })();
 </script>
 <!-- v2.22.29: corrige somente Missão Principal, Prioritária, Missões do Dia, Livro e Sequência. Resumo Semanal/STATUS preservados. -->
@@ -7571,7 +7571,7 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
   const run30=()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;apply30()})};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run30,150),{once:true});else setTimeout(run30,150);
   setTimeout(run30,500);setTimeout(run30,1000);
-  const home=document.getElementById('view-home');if(home)new MutationObserver(run30).observe(home,{childList:true,subtree:true});
+  /* Observador permanente removido: a aplicação inicial já preserva o layout. */
 })();
 </script>
 <!-- v2.22.30: remove personagens de Missão Principal, Prioritária e Missões do Dia; melhora somente o layout das missões diárias. -->
@@ -7833,7 +7833,7 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
   const run=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;cleanTargetBackgrounds()})};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run,80),{once:true}); else setTimeout(run,80);
   setTimeout(run,320);setTimeout(run,800);
-  const home=document.getElementById('view-home'); if(home)new MutationObserver(run).observe(home,{childList:true,subtree:true});
+  /* Observador permanente removido para impedir ciclo entre patches visuais. */
 })();
 </script>
 <!-- v2.22.32: remove anime de Missões do Dia, Livro em Leitura e Sequência; melhora layout das missões. STATUS e demais áreas preservados. -->
@@ -8179,16 +8179,16 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
 })();
 </script>
 
-<!-- ===== SIRIUS v2.22.37 // NAVEGAÇÃO BAIXO CONSUMO iPHONE ===== -->
-<style id="sirius-v22237-navigation-style">
+<!-- ===== SIRIUS v2.22.38 // NAVEGAÇÃO E RENDERIZAÇÃO BAIXO CONSUMO ===== -->
+<style id="sirius-v22238-navigation-style">
 button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
 }
 </style>
-<script id="sirius-v22237-navigation-script">
+<script id="sirius-v22238-navigation-script">
 (function(){
-  const VERSION='v2.22.37';
+  const VERSION='v2.22.38';
   let navigationToken=0;
 
   function activateView(view){
@@ -8206,6 +8206,7 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
       if(token!==navigationToken)return;
       try{
         if(view==='status'&&typeof renderStatusHud==='function')renderStatusHud();
+        else if(typeof refreshDashboard==='function')refreshDashboard();
       }catch(e){console.error('SIRIUS navigation render',e)}
     },0));
   }
@@ -8234,13 +8235,111 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
   try{
     data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
     if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
-      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // NAVEGAÇÃO DE BAIXO CONSUMO NO IPHONE`);
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // RENDERIZAÇÃO DE BAIXO CONSUMO NO IPHONE`);
       localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
     }
   }catch(e){console.warn('SIRIUS version log unavailable',e)}
 
   function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
   markVersion();setTimeout(markVersion,300);setTimeout(markVersion,1800);
+})();
+</script>
+
+<!-- SIRIUS v2.22.38: substitui 13 camadas acumuladas de refresh por um único
+     atualizador seletivo. Não reconstrói painéis ocultos nem grava dados. -->
+<script id="sirius-v22238-refresh-consolidation">
+(function(){
+  let queued=false;
+  const signatures=new Map();
+
+  function safe(name,fn){
+    try{if(typeof fn==='function')fn()}catch(e){console.error('SIRIUS '+name,e)}
+  }
+  function changed(key,value,fn){
+    if(signatures.get(key)===value)return;
+    signatures.set(key,value);
+    safe(key,fn);
+  }
+  function activeView(){
+    return document.querySelector('.dashView.active')?.id?.replace(/^view-/,'')||'home';
+  }
+  function missionSignature(){
+    return JSON.stringify((data.missions||[]).map(m=>[m.name,m.done,m.queued,m.rejectedAt,m.startedAt,m.learningState,m.validationScore,m.durationMin]));
+  }
+  function bookSignature(){
+    return JSON.stringify((data.knowledgeArchive?.sources||[]).map(s=>[s.id,s.title,s.author,s.progress,s.lastReadAt,s.coverUrl,s.localEpub,s.materialUrl]));
+  }
+  function profileSignature(){
+    return JSON.stringify([data.xp,data.streak,data.completedMissions,data.attrs,data.adaptiveProfile,data.personalGoals]);
+  }
+  function retentionSignature(){
+    return JSON.stringify((data.knowledgeArchive?.reviewQueue||[]).map(r=>[r.id,r.state,r.done,r.dueAt,r.stage,r.missionCreated]));
+  }
+  function setText(id,value){const el=document.getElementById(id);if(el&&el.textContent!==String(value))el.textContent=String(value)}
+
+  function updateLightStats(){
+    const li=levelInfo();
+    setText('dashLevel','LEVEL '+li.level);setText('dashXpText',`${li.cur} / ${li.needed} XP`);
+    setText('dashRank',rank(li.level));setText('dashTotal',data.xp||0);setText('dashStreak',data.streak||0);
+    setText('dashCompleted',Number(data.completedMissions)||(data.missions||[]).filter(m=>m.done).length);
+    setText('dashMissionCount',`${typeof activeMissionCount==='function'?activeMissionCount():0} / ${MAX_ACTIVE_MISSIONS}`);
+    const bar=document.getElementById('dashBar');if(bar)bar.style.width=Math.min(100,li.percent)+'%';
+    safe('menu indicators',typeof updateMenuIndicators==='function'?updateMenuIndicators:null);
+  }
+
+  function flush(){
+    queued=false;
+    updateLightStats();
+    const view=activeView();
+    const missions=missionSignature(),books=bookSignature(),profile=profileSignature(),retention=retentionSignature();
+
+    if(view==='home'){
+      safe('home attributes',typeof renderBottomHomeAttrs==='function'?renderBottomHomeAttrs:null);
+      changed('home-profile',profile,typeof renderPlayerProfile==='function'?renderPlayerProfile:null);
+      changed('home-priority',missions,typeof renderPriorityMission==='function'?renderPriorityMission:null);
+      changed('home-missions',missions,typeof renderBottomHomeMissions==='function'?renderBottomHomeMissions:null);
+      changed('home-book',books,typeof renderBottomHomeBook==='function'?renderBottomHomeBook:null);
+      changed('home-meta',JSON.stringify([data.streak,data.xp,data.completedMissions,data.readingSessions,missions]),typeof renderHomeMeta==='function'?renderHomeMeta:null);
+      return;
+    }
+    if(view==='status'){
+      safe('status',typeof renderStatusHud==='function'?renderStatusHud:null);
+      return;
+    }
+    if(view==='missions'){
+      changed('missions-view',missions,typeof renderInteractiveMissionLists==='function'?renderInteractiveMissionLists:null);
+      changed('missions-priority',missions,typeof renderPriorityMission==='function'?renderPriorityMission:null);
+      return;
+    }
+    if(view==='books'){
+      changed('books-view',books,typeof renderRealLibrary==='function'?renderRealLibrary:null);
+      return;
+    }
+    if(view==='training'){
+      changed('training-view',missions+profile,typeof renderHudTraining==='function'?renderHudTraining:null);
+      return;
+    }
+    if(view==='adaptive'){
+      changed('adaptive-view',profile+missions,typeof renderAdaptiveCore==='function'?renderAdaptiveCore:null);
+      return;
+    }
+    if(view==='learning'){
+      changed('learning-retention',retention,typeof renderRetentionQueue==='function'?renderRetentionQueue:null);
+      changed('learning-professor',JSON.stringify(data.professorLiveSession||null),typeof renderProfessorAI==='function'?renderProfessorAI:null);
+      return;
+    }
+    if(view==='data')safe('test mode',typeof renderTestMode==='function'?renderTestMode:null);
+    if(view==='ai')safe('ai core',typeof refreshCoreCenter==='function'?refreshCoreCenter:null);
+  }
+
+  /* Chamadas repetidas na mesma animação tornam-se uma única atualização. */
+  window.refreshDashboard=function(){
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(flush);
+  };
+
+  window.refreshDashboard();
 })();
 </script>
 
