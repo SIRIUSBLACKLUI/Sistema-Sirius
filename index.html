@@ -8363,4 +8363,56 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+<!-- ===== SIRIUS v2.22.40 // PAINEL MAIS LIMPO ===== -->
+<style id="sirius-v22240-more-clean">
+/* O texto "ÁREAS DO SIRIUS" pertence à antiga imagem de cabeçalho. */
+#moreSheet .moreAnimeTitle{display:none!important}
+
+/* As artes dos cards já possuem seus próprios símbolos; esconde o segundo
+   desenho SVG que ficava sobreposto, como o relógio em HISTÓRICO. */
+#moreSheet .moreCardAnime > svg{display:none!important}
+#moreSheet .moreCardAnime{gap:0!important}
+#moreSheet .moreCardAnime > span{
+  padding:7px 10px!important;
+  border:1px solid rgba(91,202,255,.24);
+  background:rgba(1,8,18,.68);
+  border-radius:999px;
+  backdrop-filter:blur(3px);
+}
+
+/* Mesmo acabamento arredondado e limpo da navegação inferior. */
+#moreSheet .moreAnimePanel{
+  width:calc(100% - 16px)!important;
+  margin:0 8px!important;
+  border:1px solid #35c9ff!important;
+  border-bottom:0!important;
+  border-radius:28px 28px 0 0!important;
+  padding:18px 12px calc(18px + env(safe-area-inset-bottom))!important;
+  overflow:hidden!important;
+}
+
+/* A arte antiga já continha a palavra FECHAR; agora existe apenas o texto real. */
+#moreSheet .moreAnimeClose{
+  background:linear-gradient(180deg,#08223b,#03101f)!important;
+  background-image:none!important;
+  color:#eef9ff!important;
+}
+#moreSheet .moreAnimeClose::before,
+#moreSheet .moreAnimeClose::after{display:none!important;content:none!important}
+</style>
+<script id="sirius-v22240-version">
+(function(){
+  const VERSION='v2.22.40';
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // PAINEL MAIS LIMPO E SEM ELEMENTOS SOBREPOSTOS`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
