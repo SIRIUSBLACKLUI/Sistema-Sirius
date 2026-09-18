@@ -8666,4 +8666,105 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+<!-- ===== SIRIUS v2.22.44 // CORREÇÃO ESTRUTURAL REAL DO LIVRO ===== -->
+<style id="sirius-v22244-s28-book-fix">
+/* O renderizador ativo usa s28Book*. Estas regras controlam a estrutura real. */
+#view-home.s17Home .s28BookHero{
+  display:grid!important;
+  grid-template-columns:72px minmax(0,1fr)!important;
+  gap:18px!important;
+  align-items:center!important;
+  min-height:148px!important;
+  padding:5px 2px 1px!important;
+}
+#view-home.s17Home .s28BookCover{
+  width:72px!important;
+  min-width:72px!important;
+  align-self:center!important;
+  position:relative!important;
+  z-index:4!important;
+}
+#view-home.s17Home .s28BookCover .bookCover{
+  width:68px!important;
+  min-width:68px!important;
+  max-width:68px!important;
+  margin:0!important;
+}
+#view-home.s17Home .s28BookCopy{
+  min-width:0!important;
+  width:100%!important;
+  position:relative!important;
+  z-index:3!important;
+  overflow:visible!important;
+}
+#view-home.s17Home .s28BookTitle{
+  max-width:72%!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  overflow-wrap:anywhere!important;
+}
+#view-home.s17Home .s28BookAuthor{
+  max-width:72%!important;
+  font-size:5.3px!important;
+  margin-top:5px!important;
+}
+#view-home.s17Home .s28BookProgress{
+  margin-top:7px!important;
+  font-size:5.5px!important;
+}
+#view-home.s17Home .s28BookBar{
+  height:9px!important;
+  margin-top:5px!important;
+  position:relative!important;
+  z-index:4!important;
+  background:rgba(4,17,32,.97)!important;
+}
+#view-home.s17Home .s28BookActions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:7px!important;
+  margin-top:7px!important;
+  position:relative!important;
+  z-index:4!important;
+}
+#view-home.s17Home .s28BookActions button{
+  min-height:36px!important;
+  padding:7px 4px!important;
+  font-size:5px!important;
+  background:rgba(4,18,34,.97)!important;
+}
+#view-home.s17Home .s28BookActions .primary{
+  background:linear-gradient(180deg,#1b9cff,#116cd7)!important;
+}
+@media(max-width:640px){
+  #view-home.s17Home .s28BookPanel{padding:10px!important}
+  #view-home.s17Home .s28BookHero{
+    grid-template-columns:68px minmax(0,1fr)!important;
+    gap:20px!important;
+    min-height:142px!important;
+    padding:4px 1px 0!important;
+  }
+  #view-home.s17Home .s28BookCover{width:68px!important;min-width:68px!important}
+  #view-home.s17Home .s28BookCover .bookCover{width:64px!important;min-width:64px!important;max-width:64px!important}
+  #view-home.s17Home .s28BookTitle{max-width:70%!important;font-size:8.6px!important}
+  #view-home.s17Home .s28BookAuthor{max-width:70%!important;font-size:5.2px!important}
+  #view-home.s17Home .s28BookProgress{margin-top:6px!important}
+  #view-home.s17Home .s28BookActions button{min-height:34px!important}
+}
+</style>
+<script id="sirius-v22244-version">
+(function(){
+  const VERSION='v2.22.44';
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO ESTRUTURAL DO LIVRO NO IPHONE`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
