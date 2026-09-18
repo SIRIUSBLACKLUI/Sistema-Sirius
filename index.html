@@ -2059,7 +2059,7 @@ button:active{
 
         <div class="dashPanelTitle" style="margin-top:14px">RETENÇÃO PROGRAMADA</div>
         <div class="dashPanelSub">REVISÕES SURPRESA E REPETIÇÃO ESPAÇADA</div>
-        <div id="retentionQueue" class="roadmapGrid"></div>
+        <div id="retentionQueueData" class="roadmapGrid retentionQueueTarget"></div>
 
         <div class="dashPanelTitle" style="margin-top:14px">TÉCNICAS DISPONÍVEIS</div>
         <div class="dashPanelSub">TOQUE EM UMA TÉCNICA PARA ENTENDER QUANDO E COMO USAR</div>
@@ -3227,14 +3227,14 @@ function ensureDueRetentionReviews(){
 }
 
 function renderRetentionQueue(){
- const el=document.getElementById("retentionQueue");if(!el)return;
+ const targets=[...document.querySelectorAll(".retentionQueueTarget")];if(!targets.length)return;
  const queue=(data.knowledgeArchive?.reviewQueue||[]).filter(r=>!r.done).sort((a,b)=>Date.parse(a.dueAt)-Date.parse(b.dueAt));
- if(!queue.length){el.innerHTML=`<div class="small">Nenhuma revisão programada. Revisões serão criadas após uma missão de aprendizagem aprovada.</div>`;return;}
- el.innerHTML=queue.slice(0,6).map(r=>{
+ const html=!queue.length?`<div class="small">Nenhuma revisão programada. Revisões serão criadas após uma missão de aprendizagem aprovada.</div>`:queue.slice(0,6).map(r=>{
   const due=Date.parse(r.dueAt),days=Math.ceil((due-Date.now())/86400000);
   const label=r.state==="recovery"?"RECUPERAÇÃO":r.missionCreated?"MISSÃO LIBERADA":days<=0?"DISPONÍVEL":`EM ${days} ${days===1?"DIA":"DIAS"}`;
   return `<div class="roadmapItem ${days<=0||r.missionCreated?"active":"future"}"><div class="roadmapVersion">ETAPA ${Number(r.stage)||1}</div><div><b>${escapeHtml(r.sourceTitle||"REVISÃO")}</b><span>${label} // intervalo ${Number(r.intervalDays)||0} dias // origem ${Number(r.originScore)||0}/100</span></div></div>`;
  }).join("");
+ targets.forEach(el=>{el.innerHTML=html});
 }
 
 // Compatibilidade com registros antigos e testes administrativos.
@@ -5672,7 +5672,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 
 <!-- ===== SIRIUS v2.21.6 // WORKER MERGE: INTELLIGENCE, LEARNING & LIBRARY ===== -->
 <style>
-  html{touch-action:manipulation}
+  html{touch-action:auto}
   .learningHubHero{padding:18px;border:1px solid #24bdf0;background:linear-gradient(145deg,#07182b,#030b16);box-shadow:inset 0 1px #62e6ff66,0 0 30px #009dff18}
   .learningHubHero h3{margin:4px 0 8px;font-size:22px;letter-spacing:1.5px}
   .learningHubHero p{margin:0;color:#95abc8;font-size:12px;line-height:1.55}
@@ -5731,7 +5731,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
     view.innerHTML=`<div class="learningHubHero"><div class="lessonBadge">[ SIRIUS // CENTRAL DE APRENDIZAGEM ]</div><h3>O QUE VOCÊ QUER APRENDER?</h3><p>Pesquise um assunto, estude em etapas, responda sem consultar e transforme o resultado em revisão. A pesquisa aprofundada usa a IA configurada; os módulos essenciais funcionam localmente.</p><div class="learnSearch"><input id="learnTopic" placeholder="Ex.: pensamento crítico, finanças pessoais, comunicação..."><button onclick="siriusResearchLesson()">PESQUISAR E CRIAR AULA</button></div></div>
     <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">COMEÇAR RAPIDAMENTE</div><div class="dashPanelSub">MÓDULOS ESSENCIAIS DISPONÍVEIS NESTE APARELHO</div><div class="learnQuickGrid">${Object.keys(curatedLessons).map((k,i)=>`<button class="learnQuick" style="--lc:${["#43e1c1","#ffd05b","#69cfff","#ff657c"][i]}" onclick="siriusOpenLocalLesson('${k}')"><b>${curatedLessons[k].title}</b><span>${curatedLessons[k].text.slice(0,74)}...</span></button>`).join("")}</div></div>
     <div class="lessonWorkspace" id="lessonWorkspace"><span class="lessonBadge" id="lessonBadge">AULA</span><h4 id="lessonTitle"></h4><div class="lessonText" id="lessonText"></div><div class="lessonSources" id="lessonSources"></div><div class="lessonQuestions" id="lessonQuestions"></div><textarea class="learnAnswer" id="lessonAnswer" placeholder="Explique com suas palavras, sem consultar a explicação acima..."></textarea><div class="bookActions" style="margin-top:9px"><button class="learnAction" onclick="siriusSubmitLearning()">ENVIAR PARA AVALIAÇÃO</button><button class="learnAction secondary" onclick="document.getElementById('lessonAnswer').value=''">LIMPAR RESPOSTA</button></div></div>
-    <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">RETENÇÃO PROGRAMADA</div><div class="dashPanelSub">REVISÕES GERADAS APÓS APRENDIZAGEM APROVADA</div><div id="retentionQueue" class="roadmapGrid"></div></div>`;
+    <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">RETENÇÃO PROGRAMADA</div><div class="dashPanelSub">REVISÕES GERADAS APÓS APRENDIZAGEM APROVADA</div><div id="retentionQueueLearning" class="roadmapGrid retentionQueueTarget"></div></div>`;
   }
   window.siriusOpenLocalLesson=function(key){const l=curatedLessons[key];if(!l)return;learningSession={topic:key,...l,external:false};renderLesson()};
   function renderLesson(){
@@ -8041,6 +8041,144 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
   ensureHomeStatus();
   setTimeout(ensureHomeStatus,120);
   document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+})();
+</script>
+
+<!-- ===== SIRIUS v2.22.35 // CONSOLIDAÇÃO SEGURA ===== -->
+<script id="sirius-v22235-safe-core">
+(function(){
+  const VERSION='v2.22.35';
+  const RECOVERY_KEY='siriusRecoverySnapshot';
+
+  function notifyStorageFailure(err){
+    console.error('SIRIUS storage failure',err);
+    try{showToast('NÃO FOI POSSÍVEL SALVAR. EXPORTE UM BACKUP.');}catch(e){}
+    alert('O SIRIUS não conseguiu salvar os dados neste aparelho. Nenhum progresso novo foi confirmado. Exporte um backup antes de continuar.');
+  }
+
+  function persistRecovery(snapshot,reason){
+    try{
+      localStorage.setItem(RECOVERY_KEY,JSON.stringify({version:VERSION,reason,createdAt:new Date().toISOString(),data:snapshot}));
+    }catch(e){console.warn('SIRIUS recovery snapshot unavailable',e)}
+    try{
+      openSiriusDb().then(db=>new Promise((resolve,reject)=>{
+        const tx=db.transaction('recovery','readwrite');
+        tx.objectStore('recovery').put({version:VERSION,reason,createdAt:new Date().toISOString(),data:snapshot},'latest');
+        tx.oncomplete=()=>{db.close();resolve(true)};
+        tx.onerror=()=>{const error=tx.error;db.close();reject(error)};
+      })).catch(e=>console.warn('SIRIUS IndexedDB recovery unavailable',e));
+    }catch(e){console.warn('SIRIUS recovery unavailable',e)}
+  }
+
+  /* Banco v2: mantém EPUBs e acrescenta uma área independente de recuperação. */
+  window.openSiriusDb=function(){
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open('SIRIUS_LOCAL_FILES',2);
+      req.onupgradeneeded=()=>{
+        const db=req.result;
+        if(!db.objectStoreNames.contains('epubs'))db.createObjectStore('epubs');
+        if(!db.objectStoreNames.contains('recovery'))db.createObjectStore('recovery');
+      };
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error);
+      req.onblocked=()=>reject(new Error('indexeddb_blocked'));
+    });
+  };
+
+  /* Um único filtro oficial para todos os contadores de missões ativas. */
+  window.activeMissionCount=function(){
+    return (data.missions||[]).filter(m=>!m.done&&!m.queued&&!m.rejectedAt).length;
+  };
+
+  /* Salvamento transacional: conserva o último estado válido antes de gravar. */
+  window.save=function(){
+    const previousRaw=localStorage.getItem(STORAGE_KEY);
+    try{
+      if(previousRaw){
+        const previous=JSON.parse(previousRaw);
+        persistRecovery(previous,'before_save');
+      }
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+      render();
+      return true;
+    }catch(err){
+      if(previousRaw!==null){try{localStorage.setItem(STORAGE_KEY,previousRaw)}catch(e){}}
+      notifyStorageFailure(err);
+      return false;
+    }
+  };
+
+  function validBackup(parsed){
+    if(!parsed||typeof parsed!=='object'||!parsed.data||typeof parsed.data!=='object')return false;
+    if(parsed.app&&parsed.app!=='SIRIUS')return false;
+    if(parsed.schemaVersion!==undefined&&(!Number.isInteger(Number(parsed.schemaVersion))||Number(parsed.schemaVersion)<1||Number(parsed.schemaVersion)>2))return false;
+    const incoming=parsed.data;
+    return Number.isFinite(Number(incoming.xp))&&Array.isArray(incoming.missions)&&incoming.attrs&&typeof incoming.attrs==='object';
+  }
+
+  window.importSiriusBackup=function(event){
+    const input=event?.target;
+    const file=input?.files?.[0];
+    if(!file)return;
+    const state=document.getElementById('dataGuardState');
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      let previousRaw=null;
+      let previousEpubs=[];
+      try{
+        const parsed=JSON.parse(String(reader.result||''));
+        if(!validBackup(parsed))throw new Error('backup_invalido');
+        const epubCount=Array.isArray(parsed.localEpubs)?parsed.localEpubs.length:0;
+        const message=epubCount
+          ?`Este backup contém ${epubCount} EPUB${epubCount===1?'':'s'}. Os dados atuais serão protegidos antes da restauração. Continuar?`
+          :'Os dados atuais serão protegidos antes da restauração. Continuar?';
+        if(!confirm(message))return;
+        if(state)state.textContent='CRIANDO PONTO DE RECUPERAÇÃO...';
+        previousRaw=localStorage.getItem(STORAGE_KEY);
+        previousEpubs=await siriusCollectLocalEpubsForBackup();
+        if(previousRaw)persistRecovery(JSON.parse(previousRaw),'before_import');
+        data=structuredClone(parsed.data);
+        migrateData();
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+        const result=await siriusRestoreLocalEpubsFromBackup(parsed.localEpubs||[]);
+        if(result.failed)throw new Error('epub_restore_partial');
+        if(state)state.textContent=epubCount?`BACKUP RESTAURADO // ${result.restored}/${epubCount} EPUB${epubCount===1?'':'S'}`:'BACKUP IMPORTADO // DADOS RESTAURADOS';
+        showSystemEvent('BACKUP RESTAURADO','Dados validados e restaurados com ponto de recuperação criado.');
+        render();
+        try{refreshDashboard()}catch(e){}
+      }catch(err){
+        console.error(err);
+        if(previousRaw!==null){
+          try{
+            localStorage.setItem(STORAGE_KEY,previousRaw);
+            data=JSON.parse(previousRaw);
+            await siriusRestoreLocalEpubsFromBackup(previousEpubs);
+            render();
+          }catch(rollbackError){console.error('SIRIUS rollback failure',rollbackError)}
+        }
+        if(state)state.textContent='IMPORTAÇÃO CANCELADA // DADOS ANTERIORES PRESERVADOS';
+        alert('O backup não pôde ser restaurado. O SIRIUS manteve os dados anteriores.');
+      }finally{
+        if(input)input.value='';
+      }
+    };
+    reader.onerror=()=>{if(input)input.value='';alert('Não foi possível ler o arquivo de backup.');};
+    reader.readAsText(file);
+  };
+
+  /* Registra a estabilização uma única vez, sem duplicar o histórico. */
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // CONSOLIDAÇÃO SEGURA DE DADOS E MISSÕES`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+
+  function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  markVersion();
+  setTimeout(markVersion,250);
+  setTimeout(markVersion,1600);
 })();
 </script>
 
