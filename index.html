@@ -5672,7 +5672,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
 
 <!-- ===== SIRIUS v2.21.6 // WORKER MERGE: INTELLIGENCE, LEARNING & LIBRARY ===== -->
 <style>
-  html{touch-action:auto}
+  html{touch-action:manipulation}
   .learningHubHero{padding:18px;border:1px solid #24bdf0;background:linear-gradient(145deg,#07182b,#030b16);box-shadow:inset 0 1px #62e6ff66,0 0 30px #009dff18}
   .learningHubHero h3{margin:4px 0 8px;font-size:22px;letter-spacing:1.5px}
   .learningHubHero p{margin:0;color:#95abc8;font-size:12px;line-height:1.55}
@@ -5716,15 +5716,8 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
   };
 
 
-  document.addEventListener("dblclick",e=>e.preventDefault(),{passive:false});
-  let lastTouchEnd=0;
-  document.addEventListener("touchend",e=>{
-    if(e.touches?.length>1)return;
-    const editable=e.target.closest?.("input,textarea,select,[contenteditable=true]");
-    const now=Date.now();
-    if(!editable&&now-lastTouchEnd<320)e.preventDefault();
-    lastTouchEnd=now;
-  },{passive:false});
+  /* Gestos nativos permanecem livres. Bloqueios globais de touchend causavam
+     atraso ou perda do clique sintetizado pelo Safari no iPhone. */
 
   function installLearningHub(){
     const view=document.getElementById("view-learning");if(!view)return;
@@ -6084,7 +6077,11 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
  const oldContext=window.buildSiriusContext;window.buildSiriusContext=function(){const c=oldContext();const ai=(data.missions||[]).filter(m=>m.aiGenerated).slice(-8).map(m=>({name:m.name,material:m.material||m.sourceTitle||"",attr:m.attr,acceptedAt:m.acceptedAt||m.createdAt}));c.missionDiversity={recentAiMissions:ai,avoidImmediateRepeats:true,allowNoBookMission:true,rule:"Não repetir o mesmo material ou a mesma estrutura nas propostas consecutivas, salvo se o usuário pedir revisão explícita. Priorizar tema pedido, objetivos, atributo fraco, revisões pendentes ou ação prática; livro é opcional."};return c};
  window.requestAiMission=function(){openSiriusAI();const recent=(data.missions||[]).filter(m=>m.aiGenerated).slice(-5).map(m=>`${m.name}${m.material?` [${m.material}]`:""}`).join(" | ")||"nenhuma";const input=document.getElementById("aiInput");input.value=`Sirius, proponha UMA missão adequada para hoje. VARIE de verdade: não repita as últimas missões ou o mesmo livro sem necessidade. Livro é opcional. Considere meu objetivo, atributo mais fraco, revisões pendentes e histórico. Últimas missões de IA: ${recent}. Não registre nada antes da minha aprovação.`;input.focus()};
  // If a legacy orb script inserts itself after load, remove it again.
- const mo=new MutationObserver(()=>{const o=document.getElementById("siriusOrbStage");if(o)o.remove();if(document.getElementById("aiChatOverlay")?.classList.contains("show"))installHud()});mo.observe(document.body,{childList:true,subtree:true});
+ const aiOverlay=document.getElementById("aiChatOverlay");
+ if(aiOverlay){
+  const mo=new MutationObserver(()=>{const o=document.getElementById("siriusOrbStage");if(o)o.remove();if(aiOverlay.classList.contains("show"))installHud()});
+  mo.observe(aiOverlay,{childList:true,subtree:true});
+ }
  setTimeout(()=>{installHud();document.querySelectorAll(".versionMark").forEach(x=>x.textContent=`SIRIUS // ${RELEASE}`)},300);
 })();
 </script>
@@ -8179,6 +8176,72 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
   markVersion();
   setTimeout(markVersion,250);
   setTimeout(markVersion,1600);
+})();
+</script>
+
+<!-- ===== SIRIUS v2.22.36 // NAVEGAÇÃO IMEDIATA iPHONE ===== -->
+<style id="sirius-v22236-navigation-style">
+button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+</style>
+<script id="sirius-v22236-navigation-script">
+(function(){
+  const VERSION='v2.22.36';
+  let navigationToken=0;
+
+  function activateView(view){
+    document.querySelectorAll('.dashView').forEach(x=>x.classList.toggle('active',x.id==='view-'+view));
+    const shell=document.getElementById('dashboardShell');
+    if(shell)shell.classList.toggle('home-active',view==='home');
+    if(typeof setDockActive==='function')setDockActive(view);
+    else document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+    document.getElementById('moreSheet')?.classList.remove('show');
+    try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){window.scrollTo(0,0)}
+  }
+
+  function renderAfterPaint(view,token){
+    requestAnimationFrame(()=>setTimeout(()=>{
+      if(token!==navigationToken)return;
+      try{
+        if(view==='status'&&typeof renderStatusHud==='function')renderStatusHud();
+        else if(typeof refreshDashboard==='function')refreshDashboard();
+      }catch(e){console.error('SIRIUS navigation render',e)}
+    },0));
+  }
+
+  /* A tela é ativada primeiro. O processamento pesado só começa depois que o
+     Safari teve oportunidade de exibir a aba selecionada. */
+  window.openDockView=function(view){
+    const token=++navigationToken;
+    activateView(view);
+    renderAfterPaint(view,token);
+  };
+
+  window.openDashView=function(view){window.openDockView(view)};
+
+  window.openMoreView=function(view){
+    const token=++navigationToken;
+    activateView(view);
+    document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.remove('active'));
+    renderAfterPaint(view,token);
+  };
+
+  window.openMoreSheet=function(){
+    document.getElementById('moreSheet')?.classList.add('show');
+  };
+
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // NAVEGAÇÃO IMEDIATA NO IPHONE`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+
+  function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  markVersion();setTimeout(markVersion,300);setTimeout(markVersion,1800);
 })();
 </script>
 
