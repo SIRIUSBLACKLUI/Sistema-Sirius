@@ -1797,7 +1797,7 @@ button:active{
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.21</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.23</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -2092,6 +2092,7 @@ button:active{
         <div class="bookActions"><button class="primary" onclick="exportSiriusBackup()">EXPORTAR BACKUP</button><button onclick="document.getElementById('siriusBackupInput').click()">IMPORTAR BACKUP</button></div>
         <div class="small" style="margin-top:10px">Exporte antes de trocar de aparelho, limpar dados ou alterar grandes versões do sistema.</div>
       </div>
+      <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">LOG DE VERSÕES</div><div class="dashPanelSub">ATUALIZAÇÕES REGISTRADAS NESTE APARELHO</div><div id="dataVersionLog" class="versionLogList" style="margin-top:10px"></div></div>
       <div class="testLab"><div class="testLabTitle">LABORATÓRIO // MODO DE TESTE</div><div class="testLabState" id="testModeState">Teste novas telas sem alterar XP, atributos, sequência, livros ou missões reais.</div><div class="bookActions" style="margin-top:9px"><button class="primary" onclick="toggleSiriusTestMode()" id="testModeToggle">ATIVAR TESTE</button><button onclick="runSiriusTestMission()">TESTAR MISSÃO</button><button onclick="clearSiriusTestData()">LIMPAR TESTES</button></div><div class="testBadge" id="testModeBadge">MODO REAL ATIVO</div></div>
       <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">ROTEIRO DE EVOLUÇÃO</div><div class="dashPanelSub">PRÓXIMAS ATUALIZAÇÕES APROVADAS</div>
         <div class="roadmapGrid">
@@ -7038,6 +7039,100 @@ button,a,[role="button"]{touch-action:manipulation}
  #view-home.s20Home .s20Weekly .metaBox{min-height:68px!important;padding:4px!important}
  #view-home.s20Home .s20Weekly .metaBox b{font-size:13px!important}
  #view-home.s20Home .s20Weekly .metaBox span{font-size:3.6px!important;letter-spacing:.35px!important}
+}
+</style>
+<style id="sirius-v22222-version-log-style">
+#dataVersionLog{display:grid;gap:7px}
+#dataVersionLog .versionLogItem{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;border:1px solid #245778;background:#03101d;padding:9px 10px}
+#dataVersionLog .versionLogBadge{border:1px solid #45cfff;color:#71e6ff;background:#061827;padding:6px 8px;font-size:7px;font-weight:900;letter-spacing:1px;white-space:nowrap}
+#dataVersionLog .versionLogText b{display:block;color:#eaf8ff;font-size:8px;letter-spacing:1px}
+#dataVersionLog .versionLogText span{display:block;color:#83a5bf;font-size:7px;letter-spacing:.55px;margin-top:4px}
+</style>
+<script id="sirius-v22222-version-log-script">
+(function(){
+ const VERSION='v2.22.23';
+ const VERSION_NOTE='HOME FLUIDA SEM PERSONAGENS NOS PAINÉIS PRINCIPAIS';
+ function formatDate(value){
+  const d=new Date(value);if(Number.isNaN(d.getTime()))return 'DATA NÃO DISPONÍVEL';
+  try{return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(d)}catch(e){return d.toLocaleString('pt-BR')}
+ }
+ function ensureVersionLog(){
+  if(typeof data!=='object'||!data)return false;
+  if(!Array.isArray(data.versionHistory))data.versionHistory=[];
+  if(data.versionHistory.some(item=>item&&item.version===VERSION))return false;
+  const installedAt=new Date().toISOString();
+  data.versionHistory.unshift({version:VERSION,installedAt,note:VERSION_NOTE});
+  data.versionHistory=data.versionHistory.slice(0,50);
+  if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // ${VERSION_NOTE}`);
+  if(typeof save==='function')save();
+  else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  return true;
+ }
+ function renderVersionLog(){
+  const el=document.getElementById('dataVersionLog');if(!el||typeof data!=='object'||!data)return;
+  const history=Array.isArray(data.versionHistory)?data.versionHistory:[];
+  el.innerHTML=history.length?history.map(item=>`<div class="versionLogItem"><div class="versionLogBadge">${escapeHtml(item.version||'VERSÃO')}</div><div class="versionLogText"><b>${escapeHtml(item.note||'ATUALIZAÇÃO DO SISTEMA')}</b><span>${escapeHtml(formatDate(item.installedAt))}</span></div></div>`).join(''):'<div class="small">Nenhuma versão registrada neste aparelho.</div>';
+ }
+ function boot(){
+  try{ensureVersionLog();renderVersionLog();document.querySelectorAll('.versionMark').forEach(x=>x.textContent=`SIRIUS // ${VERSION}`)}catch(e){console.error('Version log',e)}
+ }
+ const previousRefresh=window.refreshDashboard;
+ if(typeof previousRefresh==='function')window.refreshDashboard=function(){const result=previousRefresh.apply(this,arguments);renderVersionLog();return result};
+ document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,150));
+ setTimeout(boot,500);setTimeout(boot,1600);
+})();
+</script>
+<style id="sirius-v22223-home-clean-panels">
+/* Correção visual isolada da Home. A aba Status permanece intacta. */
+#view-home.s20Home .s20MainQuestPanel{
+ background:linear-gradient(120deg,#04101e 0%,#071a31 48%,#0b2746 72%,#061320 100%)!important;
+ background-size:180% 180%!important;
+ animation:s23PanelFlow 12s ease-in-out infinite!important;
+}
+#view-home.s20Home .s20MainQuestPanel .mainQuestCard{
+ background:linear-gradient(115deg,rgba(5,18,34,.96),rgba(8,37,65,.80),rgba(4,18,34,.94))!important;
+}
+#view-home.s20Home .s20Priority{
+ background:linear-gradient(125deg,#090b1e 0%,#17113a 48%,#13274c 76%,#080d1d 100%)!important;
+ background-size:180% 180%!important;
+ animation:s23PanelFlow 13s ease-in-out infinite reverse!important;
+}
+#view-home.s20Home .s20Priority::before{
+ background:radial-gradient(circle at 82% 24%,rgba(121,77,255,.20),transparent 34%),linear-gradient(90deg,rgba(8,10,28,.95),rgba(8,18,39,.82))!important;
+}
+#view-home.s20Home .s20MissionPanel{
+ background:linear-gradient(145deg,#04101d,#07182a 52%,#061321)!important;
+ background-size:170% 170%!important;
+ animation:s23PanelFlow 15s ease-in-out infinite!important;
+}
+#view-home.s20Home .s20MissionCard::before{
+ background-image:radial-gradient(circle at 68% 22%,color-mix(in srgb,var(--s20c) 13%,transparent),transparent 35%),linear-gradient(125deg,#06111e,#081b2d 55%,#06111e)!important;
+ background-size:160% 160%!important;
+ background-position:center!important;
+}
+#view-home.s20Home .s20MissionCard::after{
+ background:linear-gradient(90deg,rgba(4,14,26,.97),rgba(7,24,42,.78) 65%,rgba(4,14,26,.90))!important;
+}
+#view-home.s20Home .s20BookPanel{
+ background:linear-gradient(120deg,#04101d 0%,#071a2d 50%,#08243d 72%,#05111e 100%)!important;
+ background-size:180% 180%!important;
+ animation:s23PanelFlow 14s ease-in-out infinite reverse!important;
+}
+#view-home.s20Home .s20Streak{
+ background-position:right 44%!important;
+ background-size:auto 180%!important;
+}
+/* Mantém a grade aprovada; altera apenas o recorte do terceiro card. */
+#view-home.s20Home .s20Weekly .metaBox:nth-child(3){
+ background-position:center 68%!important;
+}
+@keyframes s23PanelFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){
+ #view-home.s20Home .s20MainQuestPanel,#view-home.s20Home .s20Priority,#view-home.s20Home .s20MissionPanel,#view-home.s20Home .s20BookPanel{animation:none!important}
+}
+@media(max-width:640px){
+ #view-home.s20Home .s20Streak{background-position:right 44%!important;background-size:auto 180%!important}
+ #view-home.s20Home .s20Weekly .metaBox:nth-child(3){background-position:center 68%!important}
 }
 </style>
 </body></html>
