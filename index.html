@@ -8844,4 +8844,85 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+<!-- ===== SIRIUS v2.22.46 // LIVRO MENOR + ARTES REENQUADRADAS ===== -->
+<style id="sirius-v22246-home-book-streak-frame">
+/* Escopo fechado: apenas Livro em leitura e Sequência da Home. */
+#view-home.s17Home .s28BookPanel{
+  padding:10px 12px 11px!important;
+  background-size:auto,31% auto!important;
+  background-position:center,right 48%!important;
+}
+#view-home.s17Home .s28BookPanel .sectionToolbar{
+  margin-bottom:5px!important;
+}
+#view-home.s17Home .s28BookHero{
+  grid-template-columns:66px minmax(0,1fr)!important;
+  gap:14px!important;
+  min-height:116px!important;
+  padding:0 2px!important;
+}
+#view-home.s17Home .s28BookCover{
+  width:64px!important;
+  min-width:64px!important;
+}
+#view-home.s17Home .s28BookCover .bookCover{
+  width:60px!important;
+  min-width:60px!important;
+  max-width:60px!important;
+}
+#view-home.s17Home .s28BookTitle,
+#view-home.s17Home .s28BookAuthor{
+  max-width:74%!important;
+}
+#view-home.s17Home .s28BookProgress{margin-top:5px!important}
+#view-home.s17Home .s28BookBar{height:8px!important;margin-top:4px!important}
+#view-home.s17Home .s28BookActions{margin-top:5px!important;gap:6px!important}
+#view-home.s17Home .s28BookActions button{min-height:31px!important;padding:6px 4px!important}
+
+#view-home.s17Home .s28Streak,
+#view-home.s17Home .s17Streak{
+  background-size:auto,39% auto!important;
+  background-position:center,right 55%!important;
+}
+
+@media(max-width:640px){
+  #view-home.s17Home .s28BookPanel{
+    padding:9px 10px 10px!important;
+    background-size:auto,32% auto!important;
+    background-position:center,right 47%!important;
+  }
+  #view-home.s17Home .s28BookPanel .sectionToolbar{margin-bottom:4px!important}
+  #view-home.s17Home .s28BookHero{
+    grid-template-columns:61px minmax(0,1fr)!important;
+    gap:13px!important;
+    min-height:110px!important;
+    padding:0 1px!important;
+  }
+  #view-home.s17Home .s28BookCover{width:59px!important;min-width:59px!important}
+  #view-home.s17Home .s28BookCover .bookCover{width:56px!important;min-width:56px!important;max-width:56px!important}
+  #view-home.s17Home .s28BookTitle{max-width:75%!important;font-size:8.4px!important}
+  #view-home.s17Home .s28BookAuthor{max-width:75%!important}
+  #view-home.s17Home .s28BookActions button{min-height:30px!important}
+  #view-home.s17Home .s28Streak,
+  #view-home.s17Home .s17Streak{
+    background-size:auto,40% auto!important;
+    background-position:center,right 54%!important;
+  }
+}
+</style>
+<script id="sirius-v22246-version">
+(function(){
+  const VERSION='v2.22.46';
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // LIVRO MENOR E PERSONAGENS REENQUADRADOS`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
