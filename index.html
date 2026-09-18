@@ -1797,7 +1797,7 @@ button:active{
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.24</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.25</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -2089,8 +2089,8 @@ button:active{
 
     <section class="dashView" id="view-data">
       <div class="dashPanel"><div class="dashPanelTitle">PROTEÇÃO DE DADOS</div><div class="dashPanelSub">BACKUP DO JOGADOR</div>
-        <div class="bookActions"><button class="primary" onclick="exportSiriusBackup()">EXPORTAR BACKUP</button><button onclick="document.getElementById('siriusBackupInput').click()">IMPORTAR BACKUP</button></div>
-        <div class="small" style="margin-top:10px">Exporte antes de trocar de aparelho, limpar dados ou alterar grandes versões do sistema.</div>
+        <div class="bookActions"><button class="primary" onclick="exportSiriusBackup()">EXPORTAR BACKUP</button><button onclick="document.getElementById('siriusBackupInput').click()">IMPORTAR BACKUP</button><button onclick="restoreSiriusPreviousBackup()">RESTAURAR ANTERIOR</button></div>
+        <div class="small" style="margin-top:10px">O backup completo inclui progresso, biblioteca, capas e arquivos EPUB locais. Antes de importar, o SIRIUS cria uma cópia automática recuperável.</div>
       </div>
       <div class="dashPanel" style="margin-top:10px"><div class="dashPanelTitle">LOG DE VERSÕES</div><div class="dashPanelSub">ATUALIZAÇÕES REGISTRADAS NESTE APARELHO</div><div id="dataVersionLog" class="versionLogList" style="margin-top:10px"></div></div>
       <div class="testLab"><div class="testLabTitle">LABORATÓRIO // MODO DE TESTE</div><div class="testLabState" id="testModeState">Teste novas telas sem alterar XP, atributos, sequência, livros ou missões reais.</div><div class="bookActions" style="margin-top:9px"><button class="primary" onclick="toggleSiriusTestMode()" id="testModeToggle">ATIVAR TESTE</button><button onclick="runSiriusTestMission()">TESTAR MISSÃO</button><button onclick="clearSiriusTestData()">LIMPAR TESTES</button></div><div class="testBadge" id="testModeBadge">MODO REAL ATIVO</div></div>
@@ -2167,11 +2167,12 @@ button:active{
   <div class="row"><b class="sectionTitle">PROTECAO DE DADOS</b><span class="small">BACKUP DO JOGADOR</span></div>
   <div class="dataGuardNote">
     Exporte seu progresso antes de remover o SIRIUS da Tela de Inicio, trocar de aparelho ou limpar dados do navegador.
-    O backup inclui atributos, missoes, biblioteca, progresso de leitura e configuracoes salvas.
+    O backup inclui atributos, missoes, biblioteca, capas, progresso de leitura, configuracoes e arquivos EPUB locais.
   </div>
   <div class="dataGuardGrid">
     <button class="dataGuardBtn primary" onclick="exportSiriusBackup()">[ EXPORTAR BACKUP ]</button>
     <button class="dataGuardBtn" onclick="document.getElementById('siriusBackupInput').click()">[ IMPORTAR BACKUP ]</button>
+    <button class="dataGuardBtn" onclick="restoreSiriusPreviousBackup()">[ RESTAURAR ANTERIOR ]</button>
   </div>
   <input id="siriusBackupInput" type="file" accept=".json,application/json" style="display:none" onchange="importSiriusBackup(event)">
   <div class="dataGuardState" id="dataGuardState">BACKUP MANUAL RECOMENDADO</div>
@@ -3391,14 +3392,47 @@ function ensureBundledLibraryMaterial(){
  }
 }
 
-function exportSiriusBackup(){
+function blobToDataUrl(blob){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=()=>resolve(String(reader.result||""));
+  reader.onerror=()=>reject(reader.error||new Error("falha_ao_ler_arquivo"));
+  reader.readAsDataURL(blob);
+ });
+}
+
+function dataUrlToFile(entry){
+ const raw=String(entry?.dataUrl||"");
+ const comma=raw.indexOf(",");
+ if(comma<0)throw new Error("epub_invalido");
+ const header=raw.slice(0,comma);
+ const mime=String(entry?.type||header.match(/^data:([^;,]+)/)?.[1]||"application/epub+zip");
+ const binary=atob(raw.slice(comma+1));
+ const bytes=new Uint8Array(binary.length);
+ for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+ return new File([bytes],String(entry?.name||"livro.epub"),{type:mime,lastModified:Number(entry?.lastModified)||Date.now()});
+}
+
+async function exportSiriusBackup(){
  try{
+  const localEpubs=await getAllLocalEpubs();
+  const serializedEpubs=[];
+  for(const entry of localEpubs){
+   serializedEpubs.push({
+    id:entry.id,
+    name:entry.file?.name||"livro.epub",
+    type:entry.file?.type||"application/epub+zip",
+    lastModified:Number(entry.file?.lastModified)||Date.now(),
+    dataUrl:await blobToDataUrl(entry.file)
+   });
+  }
   const payload={
    app:"SIRIUS",
-   schemaVersion:1,
+   schemaVersion:2,
    exportedAt:new Date().toISOString(),
    storageKey:STORAGE_KEY,
-   data:data
+   data:data,
+   localFiles:{epubs:serializedEpubs}
   };
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
@@ -3411,8 +3445,8 @@ function exportSiriusBackup(){
   a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1500);
   const el=document.getElementById("dataGuardState");
-  if(el)el.textContent="BACKUP EXPORTADO // GUARDE ESTE ARQUIVO";
-  showToast("BACKUP SIRIUS EXPORTADO");
+  if(el)el.textContent=`BACKUP COMPLETO // ${serializedEpubs.length} EPUB(S) INCLUÍDO(S)`;
+  showToast("BACKUP COMPLETO SIRIUS EXPORTADO");
  }catch(err){
   console.error(err);
   alert("Nao foi possivel exportar o backup.");
@@ -3422,40 +3456,56 @@ function exportSiriusBackup(){
 function validateSiriusBackup(parsed){
  if(!parsed||typeof parsed!=="object")throw new Error("backup_invalido");
  if(parsed.app!=="SIRIUS")throw new Error("backup_de_outro_aplicativo");
- if(Number(parsed.schemaVersion)!==1)throw new Error("versao_de_backup_incompativel");
+ const schema=Number(parsed.schemaVersion);
+ if(schema!==1&&schema!==2)throw new Error("versao_de_backup_incompativel");
  const incoming=parsed.data;
  if(!incoming||typeof incoming!=="object"||Array.isArray(incoming))throw new Error("dados_ausentes");
  if(!Number.isFinite(Number(incoming.xp))||!Number.isFinite(Number(incoming.streak)))throw new Error("progresso_invalido");
  if(!incoming.attrs||typeof incoming.attrs!=="object"||Array.isArray(incoming.attrs))throw new Error("atributos_invalidos");
  if(!Array.isArray(incoming.missions))throw new Error("missoes_invalidas");
  if(incoming.knowledgeArchive!==undefined&&(!incoming.knowledgeArchive||typeof incoming.knowledgeArchive!=="object"||Array.isArray(incoming.knowledgeArchive)))throw new Error("biblioteca_invalida");
- return incoming;
+ const epubs=schema===2?(parsed.localFiles?.epubs||[]):null;
+ if(epubs!==null&&!Array.isArray(epubs))throw new Error("arquivos_locais_invalidos");
+ if(Array.isArray(epubs))for(const item of epubs){
+  if(!item||typeof item!=="object"||!String(item.id||"")||!String(item.dataUrl||"").startsWith("data:"))throw new Error("epub_invalido");
+ }
+ return {data:incoming,epubs,schema};
 }
 
 function importSiriusBackup(event){
  const file=event?.target?.files?.[0];
  if(!file)return;
  const reader=new FileReader();
- reader.onload=()=>{
+ reader.onload=async()=>{
   try{
    const parsed=JSON.parse(String(reader.result||""));
-   const incoming=validateSiriusBackup(parsed);
+   const validated=validateSiriusBackup(parsed);
+   const incoming=validated.data;
    if(!confirm("Importar este backup vai substituir os dados atuais do SIRIUS neste aparelho. Continuar?"))return;
    const previousData=structuredClone(data);
    const previousRaw=JSON.stringify(previousData);
+   const previousEpubs=await getAllLocalEpubs();
+   await saveSiriusRecoverySnapshot(previousData,previousEpubs);
    try{localStorage.setItem("SIRIUS_BACKUP_BEFORE_IMPORT",previousRaw)}catch(e){console.warn("SIRIUS // cópia de recuperação mantida apenas nesta sessão",e)}
    try{
     data=structuredClone(incoming);
     migrateData();
+    if(Array.isArray(validated.epubs)){
+     const restored=[];
+     for(const entry of validated.epubs)restored.push({id:String(entry.id),file:dataUrlToFile(entry)});
+     await replaceAllLocalEpubs(restored);
+    }
     if(!save())throw new Error("falha_ao_persistir_backup");
    }catch(importError){
     data=previousData;
+    try{await replaceAllLocalEpubs(previousEpubs)}catch(e){console.error("SIRIUS // falha ao restaurar EPUBs após importação",e)}
     try{localStorage.setItem(STORAGE_KEY,previousRaw)}catch(e){}
     throw importError;
    }
    const el=document.getElementById("dataGuardState");
    if(el)el.textContent="BACKUP IMPORTADO // DADOS RESTAURADOS";
-   showSystemEvent("BACKUP RESTAURADO","Os dados do jogador foram importados com sucesso.");
+   const fileNote=Array.isArray(validated.epubs)?` ${validated.epubs.length} EPUB(s) local(is) também foram restaurados.`:" Backup antigo importado; os EPUBs atuais foram preservados.";
+   showSystemEvent("BACKUP RESTAURADO",`Os dados do jogador foram importados com sucesso.${fileNote}`);
    render();refreshDashboard();
   }catch(err){
    console.error(err);
@@ -4001,8 +4051,12 @@ function pickLocalEpub(){
 
 function openSiriusDb(){
  return new Promise((resolve,reject)=>{
-  const req=indexedDB.open("SIRIUS_LOCAL_FILES",1);
-  req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains("epubs"))db.createObjectStore("epubs")};
+  const req=indexedDB.open("SIRIUS_LOCAL_FILES",2);
+  req.onupgradeneeded=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains("epubs"))db.createObjectStore("epubs");
+   if(!db.objectStoreNames.contains("recovery"))db.createObjectStore("recovery");
+  };
   req.onsuccess=()=>resolve(req.result);
   req.onerror=()=>reject(req.error);
  });
@@ -4026,6 +4080,85 @@ async function getLocalEpub(id){
   req.onsuccess=()=>{const v=req.result;db.close();resolve(v||null)};
   req.onerror=()=>{const e=req.error;db.close();reject(e)};
  });
+}
+
+async function getAllLocalEpubs(){
+ const db=await openSiriusDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction("epubs","readonly");
+  const store=tx.objectStore("epubs");
+  const entries=[];
+  const req=store.openCursor();
+  req.onsuccess=()=>{
+   const cursor=req.result;
+   if(cursor){entries.push({id:String(cursor.key),file:cursor.value});cursor.continue()}
+  };
+  tx.oncomplete=()=>{db.close();resolve(entries)};
+  tx.onerror=()=>{const error=tx.error;db.close();reject(error)};
+ });
+}
+
+async function replaceAllLocalEpubs(entries){
+ const db=await openSiriusDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction("epubs","readwrite");
+  const store=tx.objectStore("epubs");
+  store.clear();
+  for(const entry of entries||[])store.put(entry.file,String(entry.id));
+  tx.oncomplete=()=>{db.close();resolve(true)};
+  tx.onerror=()=>{const error=tx.error;db.close();reject(error)};
+  tx.onabort=()=>{const error=tx.error;db.close();reject(error)};
+ });
+}
+
+async function saveSiriusRecoverySnapshot(playerData,epubs){
+ const db=await openSiriusDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction("recovery","readwrite");
+  tx.objectStore("recovery").put({createdAt:new Date().toISOString(),data:structuredClone(playerData),epubs:epubs||[]},"beforeImport");
+  tx.oncomplete=()=>{db.close();resolve(true)};
+  tx.onerror=()=>{const error=tx.error;db.close();reject(error)};
+  tx.onabort=()=>{const error=tx.error;db.close();reject(error)};
+ });
+}
+
+async function getSiriusRecoverySnapshot(){
+ const db=await openSiriusDb();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction("recovery","readonly");
+  const req=tx.objectStore("recovery").get("beforeImport");
+  req.onsuccess=()=>{const value=req.result||null;db.close();resolve(value)};
+  req.onerror=()=>{const error=req.error;db.close();reject(error)};
+ });
+}
+
+async function restoreSiriusPreviousBackup(){
+ try{
+  const snapshot=await getSiriusRecoverySnapshot();
+  if(!snapshot?.data){alert("Ainda não existe uma cópia anterior para restaurar.");return}
+  const when=snapshot.createdAt?new Date(snapshot.createdAt).toLocaleString("pt-BR"):"antes da última importação";
+  if(!confirm(`Restaurar a cópia automática criada em ${when}? Os dados atuais serão substituídos.`))return;
+  const currentData=structuredClone(data);
+  const currentEpubs=await getAllLocalEpubs();
+  try{
+   data=structuredClone(snapshot.data);
+   migrateData();
+   await replaceAllLocalEpubs(snapshot.epubs||[]);
+   if(!save())throw new Error("falha_ao_salvar_restauracao");
+  }catch(error){
+   data=currentData;
+   try{await replaceAllLocalEpubs(currentEpubs)}catch(e){}
+   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(currentData))}catch(e){}
+   throw error;
+  }
+  const el=document.getElementById("dataGuardState");
+  if(el)el.textContent="CÓPIA ANTERIOR RESTAURADA";
+  showSystemEvent("RECUPERAÇÃO CONCLUÍDA","Dados, biblioteca, capas, progresso e EPUBs voltaram ao estado anterior à última importação.");
+  render();refreshDashboard();
+ }catch(error){
+  console.error(error);
+  alert("Não foi possível restaurar a cópia anterior do SIRIUS.");
+ }
 }
 
 async function extractEpubMetadata(file){
@@ -7090,8 +7223,8 @@ button,a,[role="button"]{touch-action:manipulation}
 </style>
 <script id="sirius-v22222-version-log-script">
 (function(){
- const VERSION='v2.22.24';
- const VERSION_NOTE='ESTABILIZAÇÃO DE DADOS, HISTÓRICO, RETENÇÃO E MISSÕES';
+ const VERSION='v2.22.25';
+ const VERSION_NOTE='BACKUP COMPLETO COM EPUBS E RECUPERAÇÃO ANTES DA IMPORTAÇÃO';
  function formatDate(value){
   const d=new Date(value);if(Number.isNaN(d.getTime()))return 'DATA NÃO DISPONÍVEL';
   try{return new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(d)}catch(e){return d.toLocaleString('pt-BR')}
