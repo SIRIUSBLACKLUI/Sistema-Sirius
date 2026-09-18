@@ -7387,4 +7387,169 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
 </script>
 <!-- v2.22.29: corrige somente Missão Principal, Prioritária, Missões do Dia, Livro e Sequência. Resumo Semanal/STATUS preservados. -->
 
+
+<!-- ===== SIRIUS v2.22.30 // MISSÕES SEM PERSONAGENS + LAYOUT COMPACTO ===== -->
+<style id="sirius-v22230-missions-clean">
+/* HOME ONLY — STATUS, STATS, LIVRO, SEQUÊNCIA E RESUMO SEMANAL NÃO SÃO ALTERADOS. */
+#view-home.s17Home .s17MainQuestPanel{
+  background-image:linear-gradient(145deg,rgba(5,17,32,.99),rgba(6,20,38,.96))!important;
+  background-color:#071326!important;
+}
+#view-home.s17Home .s17MainQuestPanel::before,
+#view-home.s17Home .s17MainQuestPanel::after{background-image:none!important}
+#view-home.s17Home .s17MainQuestPanel .mainQuestCard{
+  background:linear-gradient(135deg,rgba(7,23,43,.98),rgba(6,18,34,.94))!important;
+  border-color:#2d7fb1!important;
+  box-shadow:inset 0 0 24px rgba(70,190,255,.035)!important;
+}
+
+#view-home.s17Home .s17Priority{
+  background-image:none!important;
+  background:linear-gradient(145deg,rgba(18,12,38,.98),rgba(8,18,35,.98))!important;
+  border-color:#a95cff!important;
+  min-height:0!important;
+}
+#view-home.s17Home .s17Priority::before,
+#view-home.s17Home .s17Priority::after{background-image:none!important}
+
+/* MISSÕES DO DIA — sem personagem e com leitura mais limpa */
+#view-home.s17Home #dashMissionList{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:12px!important;
+}
+#view-home.s17Home .s17MissionCard{
+  --s17art:none!important;
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:64px minmax(0,1fr) 152px!important;
+  min-height:142px!important;
+  overflow:hidden!important;
+  border:1px solid color-mix(in srgb,var(--s17c) 76%,#2c6c93 24%)!important;
+  background:linear-gradient(135deg,rgba(6,17,32,.99),rgba(7,21,39,.96))!important;
+  box-shadow:inset 0 0 22px rgba(58,177,255,.025)!important;
+  cursor:pointer!important;
+}
+#view-home.s17Home .s17MissionCard::before,
+#view-home.s17Home .s17MissionCard::after{
+  background-image:none!important;
+  content:""!important;
+}
+#view-home.s17Home .s17MissionCard::before{
+  position:absolute;inset:0 auto 0 0;width:3px;background:var(--s17c)!important;
+  box-shadow:0 0 16px color-mix(in srgb,var(--s17c) 55%,transparent)!important;
+}
+#view-home.s17Home .s17MissionIcon{
+  display:grid!important;place-items:center!important;
+  border-right:1px solid rgba(66,151,205,.24)!important;
+  background:rgba(4,14,27,.72)!important;
+  color:var(--s17c)!important;
+  font-size:27px!important;font-weight:800!important;
+}
+#view-home.s17Home .s17MissionBody{
+  padding:16px 16px 14px!important;
+  min-width:0!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+}
+#view-home.s17Home .s17MissionTop{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;margin-bottom:7px!important;
+}
+#view-home.s17Home .s17MissionName{
+  font-size:17px!important;line-height:1.15!important;font-weight:950!important;color:#f5fbff!important;
+}
+#view-home.s17Home .s17MissionStatus{
+  flex:0 0 auto!important;padding:6px 9px!important;border:1px solid var(--s17c)!important;
+  color:var(--s17c)!important;background:rgba(4,16,30,.74)!important;
+  font-size:8px!important;letter-spacing:1.55px!important;font-weight:900!important;
+}
+#view-home.s17Home .s17MissionDesc{
+  margin:0!important;max-width:680px!important;color:#b9cae0!important;
+  font-size:10px!important;line-height:1.45!important;
+  display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;
+}
+#view-home.s17Home .s17MissionMeta{
+  display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:10px!important;
+}
+#view-home.s17Home .s17MissionMeta span{
+  padding:5px 8px!important;border:1px solid #315d82!important;background:#061526!important;
+  color:#c7d9ec!important;font-size:8px!important;letter-spacing:.35px!important;
+}
+/* O fluxo completo continua disponível no painel de detalhes; na Home fica compacto. */
+#view-home.s17Home .s17MissionBody .missionStateFlow{display:none!important}
+#view-home.s17Home .s17MissionActions{
+  display:grid!important;grid-template-rows:1fr 1fr!important;gap:8px!important;
+  padding:12px!important;border-left:1px solid rgba(66,151,205,.24)!important;
+  background:rgba(5,16,30,.74)!important;
+}
+#view-home.s17Home .s17MissionActions button{
+  min-height:48px!important;padding:10px 8px!important;
+  border:1px solid var(--s17c)!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--s17c) 78%,#0b1a2c 22%),color-mix(in srgb,var(--s17c) 58%,#091828 42%))!important;
+  color:#fff!important;font-size:10px!important;font-weight:950!important;letter-spacing:1.7px!important;
+}
+#view-home.s17Home .s17MissionActions button.secondary{
+  background:#071628!important;color:#eaf6ff!important;border-color:color-mix(in srgb,var(--s17c) 72%,#3c7ba3 28%)!important;
+}
+
+@media(max-width:640px){
+  #view-home.s17Home .s17MissionCard{
+    grid-template-columns:52px minmax(0,1fr)!important;
+    min-height:0!important;
+  }
+  #view-home.s17Home .s17MissionIcon{font-size:22px!important}
+  #view-home.s17Home .s17MissionBody{padding:13px 12px 11px!important}
+  #view-home.s17Home .s17MissionName{font-size:13px!important}
+  #view-home.s17Home .s17MissionStatus{font-size:6.4px!important;padding:5px 6px!important;letter-spacing:1.1px!important}
+  #view-home.s17Home .s17MissionDesc{font-size:7.4px!important;line-height:1.42!important}
+  #view-home.s17Home .s17MissionMeta{margin-top:8px!important;gap:5px!important}
+  #view-home.s17Home .s17MissionMeta span{font-size:6.2px!important;padding:4px 6px!important}
+  #view-home.s17Home .s17MissionActions{
+    grid-column:1/-1!important;grid-template-columns:1fr 1fr!important;grid-template-rows:none!important;
+    gap:8px!important;padding:9px 10px 10px!important;border-left:none!important;border-top:1px solid rgba(66,151,205,.2)!important;
+  }
+  #view-home.s17Home .s17MissionActions button{min-height:44px!important;font-size:7.5px!important;letter-spacing:1.25px!important}
+}
+</style>
+<script id="sirius-v22230-missions-clean-js">
+(function(){
+  function esc30(s){return typeof escapeHtml==='function'?escapeHtml(String(s??'')):String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  function type30(m){const t=((m?.name||'')+' '+(m?.attr||'')+' '+(m?.validation||'')).toLowerCase();return t.includes('comunica')?'communication':'study'}
+  function state30(m){try{return missionStateName(m)}catch(e){return m?.startedAt?'EM EXECUÇÃO':'PROPOSTA'}}
+  function glyph30(t){return t==='communication'?'≋':'□'}
+  function missionCard30(x){
+    const m=x.m,n=x.n,t=type30(m),comm=t==='communication',c=comm?'#24e5ce':'#ff5a62';
+    const primary=comm?'ANALISAR':(m.startedAt?'CONTINUAR':'INICIAR');
+    return `<div class="s17MissionCard" style="--s17c:${c}" onclick="openMissionPanel(${n})">
+      <div class="s17MissionIcon">${glyph30(t)}</div>
+      <div class="s17MissionBody">
+        <div class="s17MissionTop"><div class="s17MissionName">${esc30(m.name||(comm?'Prática de comunicação':'Estudo'))}</div><div class="s17MissionStatus">${esc30(state30(m))}</div></div>
+        <div class="s17MissionDesc">${esc30((m.desc||'Missão ativa do sistema.').slice(0,180))}</div>
+        <div class="s17MissionMeta"><span>${esc30(m.attr||'Geral')}</span><span>◷ ${Number(m.durationMin)||0} min</span><span>${esc30(m.difficulty||'Normal')}</span></div>
+      </div>
+      <div class="s17MissionActions"><button onclick="event.stopPropagation();openMissionPanel(${n})">${primary}</button><button class="secondary" onclick="event.stopPropagation();openMissionPanel(${n})">DETALHES</button></div>
+    </div>`;
+  }
+  function pick30(){
+    const es=(data?.missions||[]).map((m,n)=>({m,n})).filter(x=>!x.m.done&&!x.m.queued);
+    const study=es.find(x=>type30(x.m)==='study'), comm=es.find(x=>type30(x.m)==='communication');
+    const out=[]; if(study)out.push(study); if(comm&&comm!==study)out.push(comm);
+    for(const x of es){if(out.length>=2)break;if(!out.includes(x))out.push(x)}
+    return out.slice(0,2);
+  }
+  function apply30(){
+    const home=document.getElementById('view-home'); if(!home)return;
+    const list=home.querySelector('#dashMissionList');
+    if(list){const chosen=pick30();list.innerHTML=chosen.length?chosen.map(missionCard30).join(''):'<div class="small">Nenhuma missão ativa.</div>';}
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // v2.22.30');
+  }
+  let pending=false;
+  const run30=()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;apply30()})};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run30,150),{once:true});else setTimeout(run30,150);
+  setTimeout(run30,500);setTimeout(run30,1000);
+  const home=document.getElementById('view-home');if(home)new MutationObserver(run30).observe(home,{childList:true,subtree:true});
+})();
+</script>
+<!-- v2.22.30: remove personagens de Missão Principal, Prioritária e Missões do Dia; melhora somente o layout das missões diárias. -->
+
 </body></html>
