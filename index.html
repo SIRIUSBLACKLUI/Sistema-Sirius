@@ -8415,4 +8415,65 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+<!-- ===== SIRIUS v2.22.41 // DOCK INFERIOR LIMPO E FLUIDO ===== -->
+<style id="sirius-v22241-dock-clean">
+.bottomDock{
+  left:8px!important;
+  right:8px!important;
+  width:auto!important;
+  gap:2px!important;
+  padding:9px 5px calc(8px + env(safe-area-inset-bottom))!important;
+  border:1px solid rgba(71,207,255,.82)!important;
+  border-bottom:0!important;
+  border-radius:27px 27px 0 0!important;
+  background:linear-gradient(180deg,rgba(5,25,45,.985),rgba(2,10,20,.995))!important;
+  box-shadow:0 -9px 25px rgba(0,0,0,.42),inset 0 1px 0 rgba(130,229,255,.12)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.bottomDock::before{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+}
+.bottomDock::after{
+  left:44px!important;
+  right:44px!important;
+  top:6px!important;
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,#58ddff 18% 42%,#338fd5 42% 58%,#58ddff 58% 82%,transparent)!important;
+  box-shadow:0 0 10px rgba(89,227,255,.24)!important;
+}
+.bottomDock button{
+  min-height:54px!important;
+  padding:7px 1px 4px!important;
+  border-radius:17px!important;
+  transition:background-color .12s ease,color .12s ease,transform .12s ease!important;
+}
+.bottomDock button.active,.bottomDock .active{
+  background:linear-gradient(180deg,rgba(35,132,225,.92),rgba(12,59,116,.94))!important;
+  box-shadow:0 0 16px rgba(46,170,255,.25),inset 0 0 12px rgba(95,220,255,.10)!important;
+  transform:none!important;
+}
+.bottomDock button:active{transform:scale(.97)!important}
+@media(max-width:380px){
+  .bottomDock{left:5px!important;right:5px!important;padding-left:3px!important;padding-right:3px!important}
+  .bottomDock button{min-height:52px!important}
+}
+</style>
+<script id="sirius-v22241-version">
+(function(){
+  const VERSION='v2.22.41';
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // BARRA INFERIOR MAIS LIMPA E FLUIDA`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
