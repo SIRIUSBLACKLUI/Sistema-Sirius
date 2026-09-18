@@ -1797,7 +1797,7 @@ button:active{
 
 
 </div>
-<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.25</div>
+<div class="scanline"></div><div class="versionMark">SIRIUS // v2.22.27</div>
 <div class="learningOverlay" id="learningOverlay">
   <div class="learningWindow">
     <div class="learningHeaderSticky"><button class="learningCloseX" onclick="closeLearningProtocol()" aria-label="Fechar protocolo">×</button><div class="systemKicker">[ SIRIUS // PROTOCOLO DE APRENDIZAGEM ]</div><h3 id="learningMissionTitle">MISS&#195;O DE APRENDIZAGEM</h3><div class="draftState" id="learningDraftState">RASCUNHO AUTOMÁTICO ATIVO</div></div>
@@ -7057,4 +7057,30 @@ button,a,[role="button"]{touch-action:manipulation}
 </script>
 
 <!-- SIRIUS v2.22.25: backup/restauracao completa de EPUBs locais; STATUS e HOME visual preservados da v2.22.17. -->
+
+<!-- ===== SIRIUS v2.22.27 // PERFORMANCE SEGURA ===== -->
+<style id="sirius-v22227-performance-safe">
+/* Somente otimizações que não alteram renderização/estrutura da HOME ou STATUS. */
+button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{touch-action:manipulation}
+html.siriusPaused .scanline,
+html.siriusPaused [class*="pulse"],
+html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
+</style>
+<script id="sirius-v22227-performance-safe-script">
+(function(){
+  const VERSION='v2.22.27';
+  function syncVisibility(){
+    document.documentElement.classList.toggle('siriusPaused',document.hidden);
+  }
+  document.addEventListener('visibilitychange',syncVisibility,{passive:true});
+  syncVisibility();
+  const boot=()=>{
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script>
+<!-- v2.22.27: sem wrapper em refreshDashboard, sem alterar ordem de renderização. -->
+
 </body></html>
