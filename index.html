@@ -8558,4 +8558,112 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+<!-- ===== SIRIUS v2.22.43 // CORREÇÃO DEFINITIVA DO LIVRO ===== -->
+<style id="sirius-v22243-book-layout-fix">
+/* Somente o Livro em leitura. A Sequência permanece igual à v2.22.42. */
+#view-home.s17Home .s28BookPanel,
+#view-home.s17Home .s17BookPanel{
+  padding:12px!important;
+  background-size:auto,38% auto!important;
+  background-position:center,right 18%!important;
+  background-repeat:no-repeat!important;
+}
+#view-home.s17Home .s28BookPanel::after,
+#view-home.s17Home .s17BookPanel::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(180deg,transparent 0 48%,rgba(3,13,25,.46) 67%,rgba(3,13,25,.91) 100%),
+    linear-gradient(90deg,rgba(3,13,25,.12) 0 55%,rgba(3,13,25,.32) 72%,rgba(3,13,25,.12) 100%)!important;
+}
+#view-home.s17Home .s28BookPanel .dashPanelHead,
+#view-home.s17Home .s17BookPanel .dashPanelHead,
+#view-home.s17Home .s28BookHero,
+#view-home.s17Home .s17BookHero{position:relative!important;z-index:2!important}
+#view-home.s17Home .s28BookHero,
+#view-home.s17Home .s17BookHero{
+  grid-template-columns:76px minmax(0,1fr)!important;
+  gap:13px!important;
+  align-items:center!important;
+  padding:6px 2px 1px!important;
+}
+#view-home.s17Home .s28BookHero .bookCover,
+#view-home.s17Home .s17BookHero .bookCover{
+  width:72px!important;
+  max-width:72px!important;
+  position:relative!important;
+  z-index:3!important;
+}
+#view-home.s17Home .s28BookHero>div:last-child,
+#view-home.s17Home .s17BookHero>div:last-child{
+  min-width:0!important;
+  position:relative!important;
+  z-index:3!important;
+}
+#view-home.s17Home .s17BookTitle{
+  max-width:72%!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.18!important;
+}
+#view-home.s17Home .s17BookAuthor{max-width:72%!important}
+#view-home.s17Home .s17BookBar{
+  position:relative!important;
+  z-index:4!important;
+  background:rgba(4,17,32,.96)!important;
+}
+#view-home.s17Home .s17BookActions{
+  position:relative!important;
+  z-index:4!important;
+  margin-top:7px!important;
+  gap:7px!important;
+}
+#view-home.s17Home .s17BookActions button{
+  min-height:36px!important;
+  padding:8px 5px!important;
+  background:rgba(4,18,34,.96)!important;
+}
+#view-home.s17Home .s17BookActions .primary{
+  background:linear-gradient(180deg,#1b9cff,#116cd7)!important;
+}
+@media(max-width:640px){
+  #view-home.s17Home .s28BookPanel,
+  #view-home.s17Home .s17BookPanel{
+    padding:10px!important;
+    background-size:auto,36% auto!important;
+    background-position:center,right 16%!important;
+  }
+  #view-home.s17Home .s28BookHero,
+  #view-home.s17Home .s17BookHero{
+    grid-template-columns:68px minmax(0,1fr)!important;
+    gap:12px!important;
+    padding:5px 1px 0!important;
+  }
+  #view-home.s17Home .s28BookHero .bookCover,
+  #view-home.s17Home .s17BookHero .bookCover{width:66px!important;max-width:66px!important}
+  #view-home.s17Home .s17BookTitle{max-width:70%!important;font-size:8.7px!important}
+  #view-home.s17Home .s17BookAuthor{max-width:70%!important;font-size:5.4px!important}
+  #view-home.s17Home .s17BookProgress{margin-top:6px!important}
+  #view-home.s17Home .s17BookBar{height:9px!important;margin-top:5px!important}
+  #view-home.s17Home .s17BookActions{margin-top:6px!important;gap:6px!important}
+  #view-home.s17Home .s17BookActions button{min-height:34px!important;padding:7px 4px!important;font-size:5.2px!important}
+}
+</style>
+<script id="sirius-v22243-version">
+(function(){
+  const VERSION='v2.22.43';
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO DO ENQUADRAMENTO DO LIVRO`);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
