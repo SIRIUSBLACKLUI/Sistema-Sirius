@@ -7830,7 +7830,7 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
     home.querySelectorAll('.s28BookPanel,.s17BookPanel,.s28Streak,.s17Streak').forEach(el=>{
       el.style.backgroundImage='none';
     });
-    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // v2.22.32');
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // v2.22.33');
   }
   let raf=0;
   const run=()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;cleanTargetBackgrounds()})};
@@ -7840,5 +7840,96 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
 })();
 </script>
 <!-- v2.22.32: remove anime de Missões do Dia, Livro em Leitura e Sequência; melhora layout das missões. STATUS e demais áreas preservados. -->
+
+
+<!-- ===== SIRIUS v2.22.33 // STATUS FLUIDEZ FIX ===== -->
+<style id="sirius-v22233-status-fluid-fix">
+/* Evita o efeito de "encolher" no toque e reduz custo de composição no iPhone. */
+#view-status .statusArtCard,
+#view-status .statusArtCard:active{
+  transform:none!important;
+  transition:none!important;
+  filter:none!important;
+  -webkit-tap-highlight-color:transparent;
+  contain:layout paint;
+}
+#view-status .statusArtCard img{
+  transform:none!important;
+  transition:none!important;
+  filter:none!important;
+  backface-visibility:hidden;
+}
+#view-status .statusAttrGrid{contain:layout paint;}
+#view-status .statusGeneralCard{contain:layout paint;}
+</style>
+<script id="sirius-v22233-status-fluid-script">
+(function(){
+  const VERSION='v2.22.33';
+  const COLORS={"Físico":"#ff6072","Intelecto":"#38e2c1","Disciplina":"#ffb143","Comunicação":"#ae5bff","Foco":"#58dfff","Relacionamento":"#ff70b9"};
+  const CORE=["Físico","Intelecto","Disciplina","Comunicação","Foco","Relacionamento"];
+
+  function esc(s){
+    try{return typeof escapeHtml==='function'?escapeHtml(String(s??'')):String(s??'');}catch(e){return String(s??'');}
+  }
+
+  /* Renderizador estável: cria as imagens uma única vez e só atualiza números/textos depois.
+     Isso evita recriar/decodificar seis imagens grandes a cada refreshDashboard. */
+  window.renderStatusHud=function(){
+    const o=document.getElementById('statusOverview');
+    const attrs=document.getElementById('dashAttrs');
+    if(!o||!attrs)return;
+    let li; try{li=levelInfo();}catch(e){li={level:1,cur:0,needed:100,percent:0};}
+    let rk='E'; try{rk=rank(li.level);}catch(e){}
+    o.innerHTML=`<div class="hudStatusTop" style="grid-template-columns:88px 1fr 64px">
+      <div class="hudLevelRing" style="width:88px;height:88px"><div><div class="ringLabel">LEVEL</div><div class="ringNumber">${Number(li.level)||1}</div></div></div>
+      <div><div class="level">LEVEL ${Number(li.level)||1}</div><div class="small">${Number(li.cur)||0} / ${Number(li.needed)||0} XP</div><div class="xp" style="margin-top:7px"><div class="bar" style="width:${Math.max(0,Math.min(100,Number(li.percent)||0))}%"></div></div><div class="small" style="margin-top:6px">XP TOTAL // ${Number(data?.xp)||0}</div></div>
+      <div class="hudRankBox"><span>RANK</span><b>${esc(rk)}</b></div>
+    </div>`;
+
+    const needsBuild=attrs.querySelectorAll('.statusArtCard').length!==CORE.length;
+    if(needsBuild){
+      attrs.innerHTML=CORE.map(name=>{
+        const a=data?.attrs?.[name]||{level:1,pd:0};
+        const src=(typeof SIRIUS_ATTR_ART!=='undefined'&&SIRIUS_ATTR_ART[name])?SIRIUS_ATTR_ART[name]:'';
+        return `<div class="statusArtCard" data-status-attr="${esc(name)}" style="--sc:${COLORS[name]}">
+          <img src="${src}" alt="${esc(name)}" decoding="async">
+          <div class="statusArtMeta"><span class="n">${esc(name.toUpperCase())}</span><span class="v">LV ${Number(a.level)||1} // ${Number(a.pd)||0} PD</span></div>
+        </div>`;
+      }).join('');
+    }else{
+      CORE.forEach(name=>{
+        const card=attrs.querySelector(`[data-status-attr="${name}"]`);
+        if(!card)return;
+        const a=data?.attrs?.[name]||{level:1,pd:0};
+        const v=card.querySelector('.v');
+        if(v)v.textContent=`LV ${Number(a.level)||1} // ${Number(a.pd)||0} PD`;
+      });
+    }
+    try{renderStatusGeneralStats();}catch(e){}
+  };
+
+  /* Entrar em STATUS não dispara o refresh global inteiro. Isso remove o travamento
+     causado pela cadeia de renderizações acumuladas nas versões antigas. */
+  const previousOpenDockView=window.openDockView;
+  window.openDockView=function(view,btn){
+    if(view!=='status'){
+      return typeof previousOpenDockView==='function'?previousOpenDockView(view,btn):undefined;
+    }
+    document.querySelectorAll('.dashView').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById('view-status');
+    if(target)target.classList.add('active');
+    const shell=document.getElementById('dashboardShell');
+    if(shell)shell.classList.remove('home-active');
+    try{setDockActive('status');}catch(e){
+      document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='status'));
+    }
+    try{closeMoreSheet();}catch(e){}
+    try{renderStatusHud();}catch(e){console.error(e);}
+    try{window.scrollTo({top:0,left:0,behavior:'auto'});}catch(e){window.scrollTo(0,0);}
+  };
+
+  document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+})();
+</script>
 
 </body></html>
