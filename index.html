@@ -11634,4 +11634,137 @@ html.s75-app .s74Diag{display:none!important}
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.76 // iOS APP HIT-TEST RECOVERY ===== -->
+<style id="sirius-v22276-hit-test-style">
+/* Esta versão NÃO muda o visual: corrige somente camadas invisíveis que bloqueiam toque no PWA iOS. */
+html.s76-app,html.s76-app body{pointer-events:auto!important;touch-action:pan-y!important}
+html.s76-app .dashboardShell,html.s76-app .dashboardMain,html.s76-app .dashView.active{pointer-events:auto!important}
+html.s76-app #bottomDock,html.s76-app #bottomDock button{pointer-events:auto!important;touch-action:manipulation!important}
+html.s76-app .s76-hit-disabled{pointer-events:none!important}
+/* Overlays fechados saem COMPLETAMENTE do hit-test. */
+html.s76-app #moreSheet:not(.show),
+html.s76-app #missionOverlay:not(.show),
+html.s76-app #journeyOverlay:not(.show),
+html.s76-app #s61EventOverlay:not(.show),
+html.s76-app #s62SystemOverlay:not(.show),
+html.s76-app #validationOverlay:not(.show),
+html.s76-app #learningOverlay:not(.show),
+html.s76-app #aiChatOverlay:not(.show),
+html.s76-app #penaltyOverlay:not(.show),
+html.s76-app #epubOverlay:not(.show),
+html.s76-app #systemOverlay:not(.show),
+html.s76-app .systemOverlay:not(.show),
+html.s76-app .validationOverlay:not(.show),
+html.s76-app .learningOverlay:not(.show),
+html.s76-app .aiChatOverlay:not(.show),
+html.s76-app .penaltyOverlay:not(.show),
+html.s76-app .epubOverlay:not(.show){pointer-events:none!important;visibility:hidden!important}
+html.s76-app .systemGate{pointer-events:none!important;display:none!important}
+html.s76-app .s74Diag,html.s76-app .s75Diag{display:none!important}
+.s76Diag{position:fixed;right:7px;top:calc(7px + env(safe-area-inset-top));z-index:2147483646;padding:4px 7px;border:1px solid #2c789c;background:#03101de6;color:#8cecff;font:800 7px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.55px;border-radius:3px;pointer-events:none;opacity:.78}
+</style>
+<script id="sirius-v22276-hit-test-script">
+(function(){
+  'use strict';
+  const VERSION='v2.22.76';
+  const isStandalone=()=>{try{return !!(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches)}catch(_){return false}};
+  const KNOWN=['moreSheet','missionOverlay','journeyOverlay','s61EventOverlay','s62SystemOverlay','validationOverlay','learningOverlay','aiChatOverlay','penaltyOverlay','epubOverlay','systemOverlay'];
+  const openOverlay=el=>!!(el&&el.classList&&el.classList.contains('show'));
+  function diag(msg){
+    let d=document.getElementById('s76Diag');
+    if(!d){d=document.createElement('div');d.id='s76Diag';d.className='s76Diag';document.body.appendChild(d)}
+    d.textContent='SIRIUS '+VERSION+' // APP'+(msg?' // '+msg:'');
+  }
+  function closeHitGhosts(){
+    KNOWN.forEach(id=>{
+      const el=document.getElementById(id);if(!el)return;
+      if(!openOverlay(el)){
+        el.classList.add('s76-closed');
+        el.style.setProperty('pointer-events','none','important');
+        el.setAttribute('aria-hidden','true');
+      }else{
+        el.classList.remove('s76-closed');
+        el.style.removeProperty('pointer-events');
+        el.setAttribute('aria-hidden','false');
+      }
+    });
+    document.querySelectorAll('.systemOverlay,.validationOverlay,.learningOverlay,.aiChatOverlay,.penaltyOverlay,.epubOverlay').forEach(el=>{
+      if(!openOverlay(el)){
+        el.style.setProperty('pointer-events','none','important');
+        el.setAttribute('aria-hidden','true');
+      }
+    });
+  }
+  function approved(el){
+    if(!el||el===document.documentElement||el===document.body)return true;
+    if(el.closest?.('#bottomDock'))return true;
+    if(el.closest?.('.dashView.active'))return true;
+    if(el.closest?.('.heroDash'))return true;
+    if(KNOWN.some(id=>{const o=document.getElementById(id);return o&&openOverlay(o)&&o.contains(el)}))return true;
+    return false;
+  }
+  function suspicious(el){
+    if(!el||approved(el))return false;
+    let cs,r;try{cs=getComputedStyle(el);r=el.getBoundingClientRect()}catch(_){return false}
+    if(cs.display==='none'||cs.visibility==='hidden'||cs.pointerEvents==='none')return false;
+    const vw=Math.max(1,window.innerWidth),vh=Math.max(1,window.innerHeight);
+    const covers=r.width>=vw*.82&&r.height>=vh*.82;
+    const fixedish=cs.position==='fixed'||cs.position==='absolute';
+    const hiddenish=parseFloat(cs.opacity||'1')<.08||el.getAttribute('aria-hidden')==='true';
+    return covers&&fixedish&&(hiddenish||!el.matches('input,textarea,button,select,a'));
+  }
+  function healHitTesting(){
+    if(!isStandalone())return;
+    document.documentElement.classList.add('s76-app');
+    closeHitGhosts();
+    const pts=[
+      [innerWidth*.5,innerHeight*.22],[innerWidth*.5,innerHeight*.48],[innerWidth*.5,innerHeight*.72],
+      [innerWidth*.18,innerHeight*.5],[innerWidth*.82,innerHeight*.5]
+    ];
+    let fixed=[];
+    for(const [x,y] of pts){
+      let list=[];try{list=document.elementsFromPoint(x,y)||[]}catch(_){continue}
+      for(const el of list){
+        if(suspicious(el)&&!el.classList.contains('s76-hit-disabled')){
+          el.classList.add('s76-hit-disabled');
+          el.style.setProperty('pointer-events','none','important');
+          fixed.push('#'+(el.id||'')+'.'+String(el.className||'').trim().replace(/\s+/g,'.').slice(0,45));
+        }
+      }
+    }
+    const dock=document.getElementById('bottomDock');
+    if(dock){dock.style.setProperty('pointer-events','auto','important');dock.querySelectorAll('button').forEach(b=>b.style.setProperty('pointer-events','auto','important'))}
+    document.body.style.setProperty('pointer-events','auto','important');
+    document.documentElement.style.setProperty('pointer-events','auto','important');
+    diag(fixed.length?'HIT FIX '+fixed.length:'HIT OK');
+  }
+  function boot(){
+    if(!isStandalone())return;
+    document.documentElement.classList.add('s76-app');
+    healHitTesting();
+    [60,180,500,1200,2500].forEach(ms=>setTimeout(healHitTesting,ms));
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+  window.addEventListener('pageshow',()=>setTimeout(healHitTesting,0));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(healHitTesting,0)});
+  window.addEventListener('orientationchange',()=>setTimeout(healHitTesting,120));
+  window.addEventListener('resize',()=>{if(isStandalone())setTimeout(healHitTesting,100)});
+  /* Um toque em qualquer lugar dispara nova checagem sem cancelar o evento original. */
+  window.addEventListener('touchstart',()=>{if(isStandalone())healHitTesting()},{capture:true,passive:true});
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // RECUPERAÇÃO DE HIT-TEST DO PWA iOS: CAMADAS INVISÍVEIS NÃO BLOQUEIAM TOQUES.');
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(_){ }
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
 </body></html>
