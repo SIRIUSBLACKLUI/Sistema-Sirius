@@ -10638,4 +10638,83 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.65 // NEW SYSTEM ACCEPT PANELS ===== -->
+<style id="sirius-v22265-accept-panels-style">
+.s65AcceptWrap{position:relative;z-index:4;margin-top:10px}
+.s65AcceptOverline{font-family:Impact,"Arial Narrow",sans-serif;font-size:14px;letter-spacing:2.8px;text-transform:uppercase;color:#76ebff;opacity:.92;margin-bottom:8px}
+.s65AcceptTitle{font-family:Impact,"Arial Narrow",sans-serif;font-size:36px;line-height:.95;letter-spacing:.8px;text-transform:uppercase;color:#f8fcff;text-shadow:0 3px 4px #00162a,0 0 14px rgba(255,255,255,.12);margin:0 auto 14px;max-width:360px}
+.s65AcceptMission{font-family:Impact,"Arial Narrow",sans-serif;font-size:19px;line-height:1.1;letter-spacing:.4px;text-transform:uppercase;color:#7cefff;margin:0 auto 10px;max-width:360px;text-shadow:0 2px 3px #001226}
+.s65AcceptCopy{font-family:Impact,"Arial Narrow",sans-serif;font-size:18px;line-height:1.28;letter-spacing:.15px;text-transform:uppercase;color:#f0f7ff;max-width:390px;margin:0 auto;text-shadow:0 2px 3px #001226}
+.s65AcceptCopy .cyan{color:#67ebff}.s65AcceptCopy .green{color:#74e54b}.s65AcceptCopy .yellow{color:#ffd339}
+.s65AcceptRule{width:min(88%,420px);height:1px;background:linear-gradient(90deg,transparent,#70e8ff 18%,#70e8ff 82%,transparent);box-shadow:0 0 9px rgba(99,232,255,.5);margin:16px auto 14px}
+.s65AcceptFooter{font-family:Impact,"Arial Narrow",sans-serif;font-size:12px;line-height:1.32;letter-spacing:.9px;text-transform:uppercase;color:#dceeff;opacity:.95;max-width:390px;margin:14px auto 0}
+@media(max-width:420px){.s65AcceptTitle{font-size:30px}.s65AcceptMission{font-size:17px}.s65AcceptCopy{font-size:16px}.s65AcceptFooter{font-size:11px}}
+</style>
+<script id="sirius-v22265-accept-panels-script">
+(function(){
+  const VERSION='v2.22.65';
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function parseMissionAccepted(detail){
+    const raw=String(detail||'').trim();
+    let mission='MISSÃO';
+    let note=raw;
+    if(raw.includes('//')){
+      const parts=raw.split('//');
+      mission=(parts.shift()||'MISSÃO').trim()||'MISSÃO';
+      note=parts.join('//').trim();
+    }else{
+      const added=raw.match(/^(.+?)\s+foi adicionada às suas missões\.?$/i);
+      if(added){mission=added[1].trim();note='Foi adicionada às suas missões.'}
+    }
+    if(!note)note='A ação foi registrada pelo sistema.';
+    return {mission,note};
+  }
+  function buildAcceptMarkup(title,detail){
+    const info=parseMissionAccepted(detail);
+    const isSecret=String(title||'').trim().toUpperCase()==='MISSÃO SECRETA ACEITA';
+    const mainTitle=isSecret?'MISSÃO SECRETA ACEITA':'MISSÃO ACEITA';
+    const overline=isSecret?'REGISTRO DE QUEST SECRETA':'REGISTRO DE MISSÃO';
+    const footer=isSecret?'A quest foi vinculada ao seu painel de missões e poderá ser acompanhada normalmente.':'A missão entrou em estado ativo e seguirá disponível até execução e validação.';
+    return `
+      <div class="s65AcceptWrap">
+        <div class="s65AcceptOverline">${overline}</div>
+        <div class="s65AcceptTitle">${mainTitle}</div>
+        <div class="s65AcceptMission">${esc(info.mission)}</div>
+        <div class="s65AcceptRule"></div>
+        <div class="s65AcceptCopy">${esc(info.note).replace(/(bloqueada|adicionada|registrada)/gi,'<span class="cyan">$1</span>')}</div>
+        <div class="s65AcceptFooter">${footer}</div>
+      </div>`;
+  }
+
+  const previousShowSystemEvent=window.showSystemEvent;
+  window.showSystemEvent=function(title,detail){
+    const normalized=String(title||'').trim().toUpperCase();
+    if((normalized==='MISSÃO ACEITA' || normalized==='MISSÃO SECRETA ACEITA') && typeof window.s62ShowSystemPanel==='function'){
+      try{document.getElementById('systemOverlay')?.classList.remove('show')}catch(e){}
+      window.s62ShowSystemPanel({
+        type:'notice',
+        title: normalized==='MISSÃO SECRETA ACEITA' ? 'AVISO' : 'AVISO',
+        icon:'!',
+        html: buildAcceptMarkup(title,detail),
+        actions:[{label:'CONTINUAR'}]
+      });
+      return;
+    }
+    if(typeof previousShowSystemEvent==='function')return previousShowSystemEvent(title,detail);
+  };
+
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // JANELAS DE MISSÃO ACEITA E MISSÃO SECRETA ACEITA MIGRADAS PARA O NOVO SISTEMA VISUAL.`);
+      if(typeof save==='function')save();
+    }
+  }catch(e){console.warn('SIRIUS version log unavailable',e)}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
 </body></html>
