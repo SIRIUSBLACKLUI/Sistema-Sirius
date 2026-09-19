@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json?v=22274">
 <link rel="apple-touch-icon" href="sirius-apple-touch-icon.png">
 <title>SIRIUS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -1792,6 +1792,29 @@ button:active{
 }
 </style>
 
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SIRIUS">
+<script id="sirius-v22274-early-pwa-reset">
+(function(){
+  /* v2.22.74: não simula toques. O objetivo é fazer o app instalado usar a mesma página do Safari. */
+  try{
+    var standalone=!!(window.navigator.standalone||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches));
+    document.documentElement.dataset.siriusMode=standalone?'app':'safari';
+    if(standalone){
+      /* Remove Service Workers antigos que possam estar servindo um index/cache diferente no ícone da Tela de Início. */
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){try{r.unregister()}catch(_){}})}).catch(function(){});
+      }
+      /* CacheStorage sobrevive à remoção do ícone no iOS. Limpa caches web antigos sem tocar no localStorage/progresso. */
+      if(window.caches&&caches.keys){
+        caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k)}))}).catch(function(){});
+      }
+    }
+  }catch(_){}
+})();
+</script>
 </head>
 <body>
 
@@ -11415,175 +11438,53 @@ body{pointer-events:auto!important}
 
 
 
-<!-- ===== SIRIUS v2.22.73 // iOS STANDALONE TOUCH RECOVERY ===== -->
-<style id="sirius-v22273-standalone-touch-style">
-html.s73-standalone,html.s73-standalone body{
-  min-height:100dvh!important;
-  background:#050814!important;
-  -webkit-text-size-adjust:100%;
-}
-html.s73-standalone body{
-  touch-action:pan-y!important;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior-y:none;
-  pointer-events:auto!important;
-}
-html.s73-standalone .dashboardShell,
-html.s73-standalone .dashboardMain,
-html.s73-standalone .dashView.active{
-  pointer-events:auto!important;
-}
-html.s73-standalone .dashView:not(.active){pointer-events:none!important}
-html.s73-standalone #bottomDock{
-  z-index:2147483000!important;
-  pointer-events:auto!important;
-  touch-action:manipulation!important;
-  -webkit-user-select:none!important;
-  user-select:none!important;
-  transform:translateZ(0);
-}
-html.s73-standalone #bottomDock button,
-html.s73-standalone button,
-html.s73-standalone [role="button"]{
-  pointer-events:auto!important;
-  touch-action:manipulation!important;
-  -webkit-tap-highlight-color:rgba(78,218,255,.16)!important;
-}
-/* No modo instalado, qualquer overlay fechado é removido do hit-test do WebKit. */
-html.s73-standalone #moreSheet:not(.show),
-html.s73-standalone #missionOverlay:not(.show),
-html.s73-standalone #journeyOverlay:not(.show),
-html.s73-standalone #s61EventOverlay:not(.show),
-html.s73-standalone #s62SystemOverlay:not(.show),
-html.s73-standalone #validationOverlay:not(.show),
-html.s73-standalone #learningOverlay:not(.show),
-html.s73-standalone #aiChatOverlay:not(.show),
-html.s73-standalone #penaltyOverlay:not(.show),
-html.s73-standalone #epubOverlay:not(.show),
-html.s73-standalone #systemOverlay:not(.show){
-  display:none!important;
-  visibility:hidden!important;
-  opacity:0!important;
-  pointer-events:none!important;
-}
-html.s73-standalone #moreSheet.show,
-html.s73-standalone #missionOverlay.show,
-html.s73-standalone #journeyOverlay.show,
-html.s73-standalone #s61EventOverlay.show,
-html.s73-standalone #s62SystemOverlay.show,
-html.s73-standalone #validationOverlay.show,
-html.s73-standalone #learningOverlay.show,
-html.s73-standalone #aiChatOverlay.show,
-html.s73-standalone #penaltyOverlay.show,
-html.s73-standalone #epubOverlay.show,
-html.s73-standalone #systemOverlay.show{
-  visibility:visible!important;
-  pointer-events:auto!important;
-}
-/* Camadas puramente decorativas nunca recebem toque. */
-html.s73-standalone body::before,
-html.s73-standalone body::after,
-html.s73-standalone .scanline,
-html.s73-standalone .heroArtWrap::before,
-html.s73-standalone .heroArtWrap::after,
-html.s73-standalone .dashPanel::before,
-html.s73-standalone .dashPanel::after,
-html.s73-standalone #bottomDock::before,
-html.s73-standalone #bottomDock::after{
-  pointer-events:none!important;
-}
+
+
+
+
+<!-- ===== SIRIUS v2.22.74 // PWA RESET + DIAGNOSTIC ===== -->
+<style id="sirius-v22274-pwa-style">
+/* Sem listeners globais de touch. Safari e app instalado usam os mesmos handlers do SIRIUS. */
+html,body{pointer-events:auto!important}
+#bottomDock{pointer-events:auto!important}
+#bottomDock button{pointer-events:auto!important;touch-action:manipulation!important}
+/* Overlays realmente fechados ficam fora do hit-test sem alterar os abertos. */
+#moreSheet:not(.show),#missionOverlay:not(.show),#journeyOverlay:not(.show),#s61EventOverlay:not(.show),
+#s62SystemOverlay:not(.show),#validationOverlay:not(.show),#learningOverlay:not(.show),#aiChatOverlay:not(.show),
+#penaltyOverlay:not(.show),#epubOverlay:not(.show),#systemOverlay:not(.show){pointer-events:none!important}
+.s74Diag{position:fixed;right:7px;top:calc(7px + env(safe-area-inset-top));z-index:2147483646;padding:4px 7px;border:1px solid #2c789c;background:#03101de6;color:#8cecff;font:800 7px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.55px;border-radius:3px;pointer-events:none;opacity:.78}
 </style>
-<script id="sirius-v22273-standalone-touch-script">
+<script id="sirius-v22274-pwa-script">
 (function(){
   'use strict';
-  const VERSION='v2.22.73';
-  const isStandalone=()=>{
-    try{return !!(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches)}catch(_){return false}
-  };
-  const HIDDEN_OVERLAYS=['moreSheet','missionOverlay','journeyOverlay','s61EventOverlay','s62SystemOverlay','validationOverlay','learningOverlay','aiChatOverlay','penaltyOverlay','epubOverlay','systemOverlay'];
-  let lastSyntheticAt=0;
-  let lastSyntheticEl=null;
-
-  function markMode(){
-    const on=isStandalone();
-    document.documentElement.classList.toggle('s73-standalone',on);
-    document.documentElement.classList.toggle('s73-browser',!on);
-    return on;
+  const VERSION='v2.22.74';
+  const isStandalone=()=>{try{return !!(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches)}catch(_){return false}};
+  function diagnostic(){
+    let d=document.getElementById('s74Diag');
+    if(!d){d=document.createElement('div');d.id='s74Diag';d.className='s74Diag';document.body.appendChild(d)}
+    d.textContent='SIRIUS '+VERSION+' // '+(isStandalone()?'APP':'SAFARI');
   }
-  function cleanClosedOverlays(){
-    HIDDEN_OVERLAYS.forEach(id=>{
-      const el=document.getElementById(id);if(!el)return;
-      const open=el.classList.contains('show');
-      if(!open){
-        el.style.setProperty('pointer-events','none','important');
-        el.setAttribute('aria-hidden','true');
-      }else{
-        el.style.removeProperty('pointer-events');
-        el.setAttribute('aria-hidden','false');
-      }
-    });
+  function normalize(){
+    /* Não cria clicks sintéticos e não cancela touchend. */
+    document.documentElement.style.removeProperty('pointer-events');
+    document.body.style.removeProperty('pointer-events');
+    const dock=document.getElementById('bottomDock');
+    if(dock){dock.style.removeProperty('pointer-events');dock.querySelectorAll('button').forEach(b=>{b.style.removeProperty('pointer-events')})}
+    diagnostic();
   }
-  function healStandalone(){
-    if(!markMode())return;
-    try{
-      document.documentElement.style.pointerEvents='auto';
-      document.body.style.pointerEvents='auto';
-      document.getElementById('dashboardShell')?.style.setProperty('pointer-events','auto','important');
-      document.getElementById('dashboardMain')?.style.setProperty('pointer-events','auto','important');
-      const dock=document.getElementById('bottomDock');
-      if(dock){
-        dock.style.setProperty('pointer-events','auto','important');
-        dock.style.setProperty('z-index','2147483000','important');
-      }
-      cleanClosedOverlays();
-    }catch(e){console.error('SIRIUS standalone heal',e)}
-  }
-  function activate(el){
-    if(!el || el.disabled || el.getAttribute('aria-disabled')==='true')return;
-    lastSyntheticAt=Date.now(); lastSyntheticEl=el;
-    try{el.click()}catch(e){console.error('SIRIUS standalone click',e)}
-  }
-  function touchFallback(ev){
-    if(!isStandalone())return;
-    const el=ev.target.closest?.('button,[role="button"]');
-    if(!el)return;
-    /* Só converte touch em click no app instalado. No Safari, fluxo nativo fica intacto. */
-    if(ev.cancelable)ev.preventDefault();
-    ev.stopPropagation();
-    activate(el);
-    setTimeout(healStandalone,0);
-  }
-  function suppressDuplicateClick(ev){
-    if(!isStandalone())return;
-    if(lastSyntheticEl && ev.target.closest?.('button,[role="button"]')===lastSyntheticEl && Date.now()-lastSyntheticAt<650){
-      ev.preventDefault();
-      ev.stopImmediatePropagation();
-      lastSyntheticEl=null;
-    }
-  }
-  function bind(){
-    if(document.documentElement.dataset.s73Bound==='1')return;
-    document.documentElement.dataset.s73Bound='1';
-    /* WebKit de PWA às vezes perde o click depois de touchend. Este fallback só existe em standalone. */
-    document.addEventListener('touchend',touchFallback,{passive:false,capture:true});
-    document.addEventListener('click',suppressDuplicateClick,true);
-    window.addEventListener('pageshow',()=>setTimeout(healStandalone,0));
-    window.addEventListener('focus',()=>setTimeout(healStandalone,0));
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(healStandalone,0)});
-    window.visualViewport?.addEventListener('resize',()=>setTimeout(cleanClosedOverlays,0));
-  }
-  function boot(){markMode();bind();healStandalone();setTimeout(healStandalone,250);setTimeout(healStandalone,1200)}
+  function boot(){normalize();setTimeout(normalize,250);setTimeout(normalize,1200)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-
+  window.addEventListener('pageshow',normalize);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)normalize()});
   try{
     if(typeof data!=='undefined'){
       data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
       if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
-        if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // RECUPERAÇÃO ESPECÍFICA PARA iOS STANDALONE/PWA E TOQUES.');
+        if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // RESET DE PWA/CACHE + DIAGNÓSTICO APP/SAFARI, SEM CLICK SINTÉTICO.');
         if(typeof save==='function')save();else if(typeof persist==='function')persist();
       }
     }
-  }catch(_){ }
+  }catch(_){}
   const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
   mark();setTimeout(mark,350);setTimeout(mark,1600);
 })();
