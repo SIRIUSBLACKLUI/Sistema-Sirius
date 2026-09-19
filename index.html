@@ -11642,4 +11642,183 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.86 // INTERACTION STABILITY + MORE POLISH ===== -->
+<style id="sirius-v22286-interaction-style">
+/* Controles locais: resposta rápida e área de toque estável no iPhone. */
+#moreSheet .moreGrid button,
+#moreSheet .moreAnimeClose,
+#s62TestControls .s62TestControlsGrid button,
+#s53CosmeticsPanel .s56CosmeticAction{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:rgba(79,218,255,.16)!important;
+  -webkit-user-select:none!important;user-select:none!important;
+  cursor:pointer!important;
+}
+#s62TestControls .s62TestControlsGrid button:disabled{opacity:1!important}
+#s62TestControls .s62TestControlsGrid button.s86-needs-test{opacity:.72!important}
+
+/* CENTRAL e DUNGEONS passam a usar exatamente o mesmo acabamento dos demais cards do MAIS. */
+#s66EventsCard,#s67DungeonCard{
+  min-height:104px!important;
+  border:1px solid #2cb2ff!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  position:relative!important;
+  background:#041426!important;
+  box-shadow:0 0 18px rgba(34,147,255,.12),inset 0 0 18px rgba(34,147,255,.07)!important;
+}
+#s66EventsCard::before,#s67DungeonCard::before{opacity:.9!important;background-size:cover!important;background-position:center!important}
+#s66EventsCard::after,#s67DungeonCard::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(2,8,16,.18),rgba(2,8,16,.42) 45%,rgba(2,8,16,.78))}
+#s66EventsCard span,#s67DungeonCard span{position:relative;z-index:2}
+
+/* Histórico compacto: somente cinco builds, sem lista longa. */
+#dashHistory .s86VersionItem{border:1px solid #285b82;background:#061426;padding:11px 12px;margin-bottom:7px}
+#dashHistory .s86VersionItem.current{border-color:#56dfff;box-shadow:inset 3px 0 0 #56dfff,0 0 14px rgba(86,223,255,.08)}
+#dashHistory .s86VersionTitle{font-size:11px;font-weight:1000;color:#eefaff}
+#dashHistory .s86VersionMeta{font-size:8px;color:#9db8d5;line-height:1.45;margin-top:4px}
+</style>
+<script id="sirius-v22286-interaction-script">
+(function(){
+  const VERSION='v2.22.86';
+
+  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+
+  function versionNumber(s){
+    const m=String(s||'').match(/v2\.22\.(\d+)/i);return m?Number(m[1]):-1;
+  }
+  function renderRecentVersions(){
+    const hist=document.getElementById('dashHistory');if(!hist||typeof data==='undefined')return;
+    const logs=Array.isArray(data.systemLog)?data.systemLog:[];
+    const unique=new Map();
+    logs.forEach(x=>{
+      const msg=String(x?.text||x?.message||'');const n=versionNumber(msg);if(n<0)return;
+      const key=`v2.22.${n}`;
+      if(!unique.has(key)) unique.set(key,{version:key,msg});
+    });
+    if(!unique.has(VERSION)) unique.set(VERSION,{version:VERSION,msg:`VERSÃO INSTALADA: ${VERSION} // INTERAÇÃO ESTÁVEL, HISTÓRICO COMPACTO E MAIS PADRONIZADO.`});
+    const list=[...unique.values()].sort((a,b)=>versionNumber(b.version)-versionNumber(a.version)).slice(0,5);
+    hist.innerHTML=list.map((x,i)=>`<div class="s86VersionItem ${x.version===VERSION?'current':''}"><div class="s86VersionTitle">${x.version===VERSION?'VERSÃO ATUAL':'VERSÃO'}</div><div class="s86VersionMeta">${esc(x.msg)}</div></div>`).join('');
+  }
+
+  function decorateMore(){
+    const central=document.getElementById('s66EventsCard');
+    if(central){central.classList.add('moreHistory');central.querySelector('span')&&(central.querySelector('span').textContent='CENTRAL')}
+    const dungeon=document.getElementById('s67DungeonCard');
+    if(dungeon){dungeon.classList.add('moreAchievements');dungeon.querySelector('span')&&(dungeon.querySelector('span').textContent='DUNGEONS')}
+    wireMore();
+  }
+
+  const moreActions={
+    'ADAPTATIVO':()=>window.openMoreView?.('adaptive'),
+    'APRENDER':()=>window.openMoreView?.('learning'),
+    'SIRIUS IA':()=>window.openMoreView?.('ai'),
+    'HISTÓRICO':()=>window.openMoreView?.('history'),
+    'CONQUISTAS':()=>window.openMoreView?.('achievements'),
+    'DADOS':()=>window.openMoreView?.('data'),
+    'CENTRAL':()=>window.s66OpenEventCenter?.(),
+    'DUNGEONS':()=>window.s67OpenDungeonHub?.()
+  };
+  function prepareMoreButtons(){
+    document.querySelectorAll('#moreSheet .moreGrid button').forEach(b=>{
+      const label=(b.querySelector('span')?.textContent||b.textContent||'').trim().toUpperCase();
+      if(moreActions[label]){b.dataset.s86More=label;b.onclick=null}
+    });
+    const close=document.querySelector('#moreSheet .moreAnimeClose,#moreSheet .moreClose');if(close){close.dataset.s86Close='1';close.onclick=null}
+  }
+  function wireMore(){
+    const sheet=document.getElementById('moreSheet');if(!sheet||sheet.dataset.s86Wired==='1')return;
+    sheet.dataset.s86Wired='1';
+    let lastTouch=0;
+    const act=target=>{
+      const b=target?.closest?.('[data-s86-more],[data-s86-close]');if(!b||!sheet.contains(b))return false;
+      if(b.dataset.s86Close){window.closeMoreSheet?.();return true}
+      const fn=moreActions[b.dataset.s86More];if(fn){fn();return true}return false;
+    };
+    sheet.addEventListener('touchend',ev=>{if(act(ev.target)){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation()}},{passive:false});
+    sheet.addEventListener('click',ev=>{
+      const b=ev.target.closest?.('[data-s86-more],[data-s86-close]');if(!b)return;
+      if(Date.now()-lastTouch<650){ev.preventDefault();ev.stopPropagation();return}
+      ev.preventDefault();ev.stopPropagation();act(ev.target);
+    });
+    prepareMoreButtons();
+  }
+
+  function testEnabled(){try{return typeof window.s62IsTestMode==='function'&&window.s62IsTestMode()}catch(e){return false}}
+  const testMap={
+    'ORIENTAÇÃO DE QUEST':'s62TestQuestOrientation','MENSAGEM':'s62TestMessage','AVISO DO SISTEMA':'s62TestNoticeGrowth',
+    'RECOMPENSA':'s62TestRewards','QUEST SECRETA':'s62TestSecret','RECUPERAÇÃO':'s62TestPenaltyZone',
+    'PENALIDADE':'s62TestNoticePenalty','TEMPORIZADOR':'s62TestRewardsTimer',
+    'CENTRAL / MENSAGEM':'s66TestInbox','RECOMPENSA PENDENTE':'s66TestReward','TEMPORIZADOR REAL':'s66TestTimer'
+  };
+  function requireTestNotice(){
+    if(typeof window.s62ShowSystemPanel==='function')window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]});
+    else if(typeof showToast==='function')showToast('ATIVE O MODO DE TESTE');
+  }
+  function prepareTestControls(){
+    const box=document.getElementById('s62TestControls');if(!box)return;
+    box.querySelectorAll('.s62TestControlsGrid button').forEach(b=>{
+      b.disabled=false;
+      b.classList.toggle('s86-needs-test',!testEnabled());
+      const label=(b.textContent||'').trim().toUpperCase();
+      if(testMap[label]){b.dataset.s86Test=testMap[label];b.onclick=null}
+    });
+    if(box.dataset.s86Wired==='1')return;box.dataset.s86Wired='1';
+    let lastTouch=0;
+    const act=t=>{
+      const b=t?.closest?.('[data-s86-test]');if(!b||!box.contains(b))return false;
+      if(!testEnabled()){requireTestNotice();return true}
+      const fn=window[b.dataset.s86Test];if(typeof fn==='function')fn();return true;
+    };
+    box.addEventListener('touchend',ev=>{if(act(ev.target)){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation()}},{passive:false});
+    box.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s86-test]');if(!b)return;if(Date.now()-lastTouch<650){ev.preventDefault();ev.stopPropagation();return}ev.preventDefault();ev.stopPropagation();act(ev.target)});
+  }
+
+  function prepareCosmetics(){
+    const panel=document.getElementById('s53CosmeticsPanel');if(!panel)return;
+    panel.querySelectorAll('.s56CosmeticAction').forEach(b=>{
+      const src=b.getAttribute('onclick')||'';const m=src.match(/s56ToggleIconReward\(['"]([^'"]+)['"]\)/);
+      if(m){b.dataset.s86Cosmetic=m[1];b.onclick=null;b.removeAttribute('onclick')}
+    });
+    if(panel.dataset.s86Wired==='1')return;panel.dataset.s86Wired='1';
+    let lastTouch=0;
+    const act=t=>{const b=t?.closest?.('[data-s86-cosmetic]');if(!b||!panel.contains(b))return false;window.s56ToggleIconReward?.(b.dataset.s86Cosmetic);setTimeout(prepareCosmetics,30);return true};
+    panel.addEventListener('touchend',ev=>{if(act(ev.target)){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation()}},{passive:false});
+    panel.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s86-cosmetic]');if(!b)return;if(Date.now()-lastTouch<650){ev.preventDefault();ev.stopPropagation();return}ev.preventDefault();ev.stopPropagation();act(ev.target)});
+  }
+
+  /* Mantém os hooks localizados: nada de listener global de toque. */
+  const prevRefresh=window.refreshDashboard;
+  window.refreshDashboard=function(){const r=typeof prevRefresh==='function'?prevRefresh.apply(this,arguments):undefined;renderRecentVersions();prepareCosmetics();return r};
+  const prevMoreSheet=window.openMoreSheet;
+  window.openMoreSheet=function(){const r=typeof prevMoreSheet==='function'?prevMoreSheet.apply(this,arguments):undefined;setTimeout(()=>{decorateMore();prepareMoreButtons()},0);return r};
+  const prevDock=window.openDockView;
+  window.openDockView=function(view){const r=typeof prevDock==='function'?prevDock.apply(this,arguments):undefined;if(view==='status')setTimeout(prepareCosmetics,30);return r};
+  const prevMoreView=window.openMoreView;
+  window.openMoreView=function(view){const r=typeof prevMoreView==='function'?prevMoreView.apply(this,arguments):undefined;if(view==='history')setTimeout(renderRecentVersions,20);return r};
+  const prevToggle=window.toggleSiriusTestMode;
+  window.toggleSiriusTestMode=function(){const r=typeof prevToggle==='function'?prevToggle.apply(this,arguments):undefined;setTimeout(prepareTestControls,40);return r};
+
+  function init(){
+    decorateMore();prepareMoreButtons();prepareTestControls();prepareCosmetics();renderRecentVersions();
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // INTERAÇÃO ESTÁVEL, HISTÓRICO COM 5 VERSÕES E CENTRAL/DUNGEONS PADRONIZADOS.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);else data.systemLog.push({type:'version',text:msg,at:new Date().toISOString()});
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(e){console.warn('SIRIUS 2.22.86 log',e)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);
+  window.addEventListener('load',()=>setTimeout(init,180),{once:true});
+  [500,1200,2400].forEach(ms=>setTimeout(init,ms));
+})();
+</script>
+
 </body></html>
