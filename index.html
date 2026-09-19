@@ -10454,4 +10454,188 @@ body.s62-test-active::after{content:"MODO DE TESTE";position:fixed;top:calc(8px 
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.64 // MODO DE TESTE EM MEMÓRIA ===== -->
+<style id="sirius-v22264-test-memory-style">
+body.s64-test-active #testModeBadge{
+  border-color:#52efff!important;
+  color:#7af5ff!important;
+  box-shadow:0 0 16px rgba(71,228,255,.22),inset 0 0 12px rgba(71,228,255,.06)!important;
+}
+body.s64-test-active #testModeToggle{
+  background:linear-gradient(180deg,#7a30e8,#4a1598)!important;
+  border-color:#ae64ff!important;
+  box-shadow:0 0 16px rgba(164,80,255,.28)!important;
+}
+body.s64-test-active #s62TestControls [data-test]{
+  opacity:1!important;
+  filter:none!important;
+}
+</style>
+<script id="sirius-v22264-test-memory-script">
+(function(){
+  const VERSION='v2.22.64';
+  const REAL_KEY=(typeof STORAGE_KEY==='string'?STORAGE_KEY:'siriusSystem');
+  const currentGet=Storage.prototype.getItem;
+  const currentSet=Storage.prototype.setItem;
+  const currentRemove=Storage.prototype.removeItem;
+  let active=false;
+  let realSnapshot=null;
+  let runs=[];
+
+  function clone(v){
+    try{return structuredClone(v)}catch(e){return JSON.parse(JSON.stringify(v))}
+  }
+  function fullTestData(source){
+    const t=clone(source||{});
+    t.xp=Math.max(Number(t.xp)||0,10000);
+    t.streak=Math.max(Number(t.streak)||0,30);
+    t.completedMissions=Math.max(Number(t.completedMissions)||0,999);
+    if(Array.isArray(t.missions)) t.missions=t.missions.map(m=>({...m,done:true,state:m.state==='pending'?'approved':m.state}));
+    if(t.attrs&&typeof t.attrs==='object'){
+      Object.keys(t.attrs).forEach(k=>{
+        t.attrs[k]=t.attrs[k]||{};
+        t.attrs[k].pd=Math.max(Number(t.attrs[k].pd)||0,100);
+        t.attrs[k].level=Math.max(Number(t.attrs[k].level)||1,10);
+      });
+    }
+    t.cosmetics=t.cosmetics||{};
+    t.cosmetics.unlocked=Array.from(new Set([...(t.cosmetics.unlocked||[]),'icon_awakened','frame_routine','title_ascending','banner_specialist']));
+    t.cosmetics.iconRewards=Array.from(new Set([...(t.cosmetics.iconRewards||[]),'icon_nuvem_bobona','icon_fruta_ardente','icon_adaga_rubra','icon_kitsune_sakura','icon_mao_maldita','icon_nuvem_vermelha']));
+    t.cosmetics.equipped=t.cosmetics.equipped||{icon:null,frame:null,title:null,banner:null};
+    t.systemLog=Array.isArray(t.systemLog)?t.systemLog:[];
+    return t;
+  }
+
+  /* Durante o teste, o estado principal só existe na memória. */
+  Storage.prototype.getItem=function(key){
+    if(this===localStorage && active && key===REAL_KEY){
+      try{return JSON.stringify(data)}catch(e){return currentGet.call(this,key)}
+    }
+    return currentGet.call(this,key);
+  };
+  Storage.prototype.setItem=function(key,val){
+    if(this===localStorage && active && key===REAL_KEY){
+      return; // nunca grava progresso de teste
+    }
+    return currentSet.call(this,key,val);
+  };
+  Storage.prototype.removeItem=function(key){
+    if(this===localStorage && active && key===REAL_KEY){
+      return; // protege o progresso real
+    }
+    return currentRemove.call(this,key);
+  };
+
+  function renderLab(){
+    const state=document.getElementById('testModeState');
+    const badge=document.getElementById('testModeBadge');
+    const btn=document.getElementById('testModeToggle');
+    if(state) state.textContent=active
+      ? `Sandbox em memória ativo // tudo liberado temporariamente. ${runs.length} simulação(ões). Nada será salvo no histórico real.`
+      : 'Teste novas telas em um sandbox temporário. Ao desativar, todo o estado de teste é descartado e o progresso real permanece intacto.';
+    if(badge) badge.textContent=active?'MODO DE TESTE ATIVO // MEMÓRIA':'MODO REAL ATIVO';
+    if(btn) btn.textContent=active?'DESATIVAR TESTE':'ATIVAR TESTE';
+    document.querySelectorAll('#s62TestControls [data-test]').forEach(b=>b.disabled=!active);
+    document.body.classList.toggle('s64-test-active',active);
+  }
+
+  function showError(err){
+    console.error('SIRIUS TEST MODE',err);
+    const msg='Não foi possível ativar o modo de teste. O progresso real não foi alterado.';
+    try{
+      if(typeof s62ShowSystemPanel==='function') s62ShowSystemPanel({type:'notice',title:'ERRO DE TESTE',body:msg,actions:[{label:'OK'}]});
+      else if(typeof showSystemEvent==='function') showSystemEvent('ERRO DE TESTE',msg);
+      else alert(msg);
+    }catch(e){alert(msg)}
+  }
+
+  function activate(){
+    if(active)return;
+    try{
+      realSnapshot=clone(data);
+      data=fullTestData(realSnapshot);
+      active=true;
+      runs=[];
+      renderLab();
+      try{if(typeof render==='function')render()}catch(e){}
+      renderLab();
+      if(typeof s62ShowSystemPanel==='function'){
+        s62ShowSystemPanel({type:'notice',title:'AVISO',body:'<span class="green">MODO DE TESTE ATIVO.</span><br><br>TODOS OS REQUISITOS FORAM LIBERADOS TEMPORARIAMENTE.<br><br>NADA DESTE MODO SERÁ GRAVADO NO PROGRESSO REAL.',actions:[{label:'CONTINUAR'}]});
+      }else if(typeof showSystemEvent==='function'){
+        showSystemEvent('MODO DE TESTE ATIVO','Tudo liberado temporariamente. Nenhum progresso real será salvo.');
+      }
+    }catch(err){
+      active=false;
+      if(realSnapshot){try{data=clone(realSnapshot)}catch(e){}}
+      realSnapshot=null;
+      renderLab();
+      showError(err);
+    }
+  }
+
+  function deactivate(){
+    if(!active){renderLab();return;}
+    try{
+      active=false; // libera acesso ao armazenamento real antes de restaurar UI
+      if(realSnapshot) data=clone(realSnapshot);
+      realSnapshot=null;
+      runs=[];
+      try{if(typeof render==='function')render()}catch(e){}
+      renderLab();
+      if(typeof s62ShowSystemPanel==='function'){
+        s62ShowSystemPanel({type:'notice',title:'AVISO',body:'MODO DE TESTE ENCERRADO.<br><br><span class="green">O PROGRESSO REAL PERMANECEU INTACTO.</span>',actions:[{label:'OK'}]});
+      }else if(typeof showSystemEvent==='function'){
+        showSystemEvent('MODO REAL RESTAURADO','Os dados temporários de teste foram descartados.');
+      }
+    }catch(err){
+      active=false;realSnapshot=null;runs=[];renderLab();showError(err);
+    }
+  }
+
+  window.toggleSiriusTestMode=function(){active?deactivate():activate()};
+  window.s62IsTestMode=function(){return active};
+  window.renderTestMode=renderLab;
+  window.runSiriusTestMission=function(){
+    if(!active){
+      if(typeof s62ShowSystemPanel==='function') s62ShowSystemPanel({type:'notice',title:'AVISO',body:'ATIVE O <span class="pink">MODO DE TESTE</span> PRIMEIRO.',actions:[{label:'OK'}]});
+      else alert('Ative o Modo de Teste primeiro.');
+      return;
+    }
+    runs.push({id:'mem_'+Date.now(),name:'Quest diária simulada'});
+    renderLab();
+    if(typeof s62TestQuestOrientation==='function')s62TestQuestOrientation();
+  };
+  window.clearSiriusTestData=function(){
+    if(active)deactivate();
+    runs=[];
+    renderLab();
+    if(typeof showToast==='function')showToast('TESTES TEMPORÁRIOS LIMPOS');
+  };
+
+  /* Evita que o modo de teste sobreviva a recarregamentos. */
+  window.addEventListener('pagehide',()=>{
+    if(active){active=false;realSnapshot=null;runs=[];}
+  });
+
+  const prevRender=render;
+  render=function(){
+    prevRender();
+    setTimeout(renderLab,0);
+  };
+  renderLab();
+  setTimeout(renderLab,250);
+  setTimeout(renderLab,1000);
+
+  try{
+    if(Array.isArray(data.systemLog) && !data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // MODO DE TESTE CORRIGIDO PARA SANDBOX SOMENTE EM MEMÓRIA.`);
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
