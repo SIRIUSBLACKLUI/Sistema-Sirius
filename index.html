@@ -11059,4 +11059,209 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.68 // SYSTEM PANEL TOUCH FIX ===== -->
+<style id="sirius-v22268-touch-fix-style">
+/* iPhone/iOS: garante que a camada visual nunca bloqueie os controles do popup. */
+.s62SystemOverlay{z-index:12000!important}
+.s62SystemOverlay.show{pointer-events:auto!important}
+.s62SystemPanel{pointer-events:auto!important;isolation:isolate}
+.s62SystemPanel::before,.s62SystemPanel::after,.s62Corners,.s62Corner,.s62Ornament,.s62TopRule{pointer-events:none!important}
+.s62Close,.s62Actions,.s62Actions button{pointer-events:auto!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.s62Close{min-width:44px;min-height:44px;display:grid;place-items:center;right:10px!important;top:8px!important;z-index:30!important}
+.s62Actions{z-index:30!important}
+.s62Actions button{min-height:50px!important;cursor:pointer;position:relative;z-index:31}
+</style>
+<script id="sirius-v22268-touch-fix-script">
+(function(){
+  const VERSION='v2.22.68';
+  const overlay=document.getElementById('s62SystemOverlay');
+  const closeBtn=document.getElementById('s62SystemClose');
+  const actionsHost=document.getElementById('s62SystemActions');
+  if(!overlay||!closeBtn||!actionsHost)return;
+
+  let currentActions=[];
+  let lastTouchAt=0;
+  const els=()=>({
+    overlay:document.getElementById('s62SystemOverlay'),
+    head:document.getElementById('s62HeaderText'),
+    icon:document.getElementById('s62HeaderIcon'),
+    content:document.getElementById('s62SystemContent'),
+    actions:document.getElementById('s62SystemActions')
+  });
+  function closePanel(){
+    const e=els();
+    e.overlay?.classList.remove('show');
+    e.overlay?.setAttribute('aria-hidden','true');
+  }
+  function runAction(index){
+    const a=currentActions[index];
+    closePanel();
+    if(a&&typeof a.onClick==='function')setTimeout(()=>{try{a.onClick()}catch(err){console.error('SIRIUS panel action',err)}},90);
+  }
+  function activateControl(ev){
+    const target=ev.target.closest?.('button');
+    if(!target)return;
+    if(target.id==='s62SystemClose'){
+      if(ev.type==='touchend'){ev.preventDefault();lastTouchAt=Date.now()}
+      else if(Date.now()-lastTouchAt<650)return;
+      ev.stopPropagation();closePanel();return;
+    }
+    if(target.closest('#s62SystemActions')){
+      const idx=Number(target.dataset.i);
+      if(!Number.isFinite(idx))return;
+      if(ev.type==='touchend'){
+        ev.preventDefault();lastTouchAt=Date.now();ev.stopPropagation();
+        /* Compatibilidade com popups antigos da v2.22.67 que guardaram a função anterior. */
+        if(typeof target.onclick==='function'){try{target.onclick.call(target,ev)}catch(err){console.error('SIRIUS legacy panel action',err)}}
+        else runAction(idx);
+        return;
+      }
+      if(Date.now()-lastTouchAt<650)return;
+      ev.stopPropagation();
+      if(typeof target.onclick==='function'){try{target.onclick.call(target,ev)}catch(err){console.error('SIRIUS legacy panel action',err)}}
+      else runAction(idx);
+    }
+  }
+
+  /* Captura no overlay: funciona mesmo quando o iOS perde o onclick após uma renderização. */
+  overlay.addEventListener('touchend',activateControl,{passive:false,capture:true});
+  overlay.addEventListener('click',activateControl,true);
+  overlay.addEventListener('click',ev=>{if(ev.target===overlay)closePanel()});
+
+  window.s62CloseSystemPanel=closePanel;
+  window.s62ShowSystemPanel=function(cfg={}){
+    const e=els();if(!e.overlay)return;
+    e.head.textContent=cfg.title||'AVISO';
+    e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');
+    e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;
+    currentActions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'OK'}];
+    e.actions.className='s62Actions'+(currentActions.length===1?' one':'');
+    e.actions.innerHTML=currentActions.map((a,i)=>`<button type="button" data-i="${i}" aria-label="${String(a.label||'OK').replace(/[<>\"]/g,'')}">${String(a.label||'OK').replace(/[<>]/g,'')}</button>`).join('');
+    e.overlay.classList.add('show');
+    e.overlay.setAttribute('aria-hidden','false');
+  };
+
+  /* Atualiza wrappers que capturaram a função anterior na v2.22.67. */
+  try{
+    if(typeof window.s67ShowRewardArrival==='function'){
+      // Os popups novos passam a usar a função corrigida por meio de chamadas futuras ao painel global.
+    }
+  }catch(e){}
+
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO DE TOQUE DOS POPUPS NO IPHONE.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);
+        if(typeof save==='function')save(); else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
+
+
+<!-- ===== SIRIUS v2.22.69 // REWARD MESSAGE CONTEXT + TOUCH FLOW FIX ===== -->
+<style id="sirius-v22269-reward-fix-style">
+/* Mantém a estética aprovada e reforça as áreas interativas da mensagem de recompensa. */
+#s62SystemOverlay .s62Actions button,#s62SystemOverlay #s62SystemClose{pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(96,229,255,.14)}
+#s62SystemOverlay .s62Actions button{min-height:54px!important}
+#s62SystemOverlay #s62SystemClose{min-width:48px!important;min-height:48px!important}
+</style>
+<script id="sirius-v22269-reward-fix-script">
+(function(){
+  const VERSION='v2.22.69';
+  const fixedPanel=window.s62ShowSystemPanel;
+  if(typeof fixedPanel!=='function')return;
+  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  function rewards(){
+    try{
+      data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};
+      data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];
+      return data.eventCenter.rewards;
+    }catch(e){return[]}
+  }
+  function pendingReward(id){
+    const list=rewards();
+    return id?list.find(r=>String(r.id)===String(id)&&!r.claimed):list.find(r=>!r.claimed);
+  }
+  function arrivalLine(r){
+    const mission=String(r?.mission||'').trim();
+    const punishment=/PUNI(?:C|Ç)(?:A|Ã)O/i.test(mission);
+    if(punishment)return '[AS RECOMPENSAS PELA CONCLUSÃO DA SUA QUEST DE PUNIÇÃO CHEGARAM.]';
+    if(mission && !/^MISS(?:A|Ã)O$/i.test(mission))return `[AS RECOMPENSAS PELA CONCLUSÃO DE “${esc(mission)}” CHEGARAM.]`;
+    return '[AS RECOMPENSAS PELA CONCLUSÃO DA SUA QUEST CHEGARAM.]';
+  }
+  function altLabel(r){
+    return Number(r?.pd)>0?`+${Number(r.pd)||0} PD // ${esc(r.attr||'ATRIBUTO')}`:'RECUPERAÇÃO // RECURSO';
+  }
+  function rewardChoiceHtml(r){
+    return `<div class="s67RewardChoiceIntro"><b>ESCOLHA SUA RECOMPENSA.</b><span>[VOCÊ PODE ESCOLHER UMA DAS RECOMPENSAS ABAIXO.]</span></div>
+    <div class="s67RewardOptions" data-reward="${esc(r.id)}" data-choice="xp">
+      <button type="button" class="s67RewardOption selected" data-choice="xp" onclick="s67SelectRewardChoice('${esc(r.id)}','xp',this)">RECOMPENSA #1 // +${Number(r.xp)||0} XP<small>Progressão direta de nível.</small></button>
+      <button type="button" class="s67RewardOption" data-choice="alt" onclick="s67SelectRewardChoice('${esc(r.id)}','alt',this)">RECOMPENSA #2 // ${altLabel(r)}<small>Recompensa contextual ligada à missão concluída.</small></button>
+      <button type="button" class="s67RewardOption" data-choice="box" onclick="s67SelectRewardChoice('${esc(r.id)}','box',this)">RECOMPENSA #3 // CAIXA ALEATÓRIA +1<small>Pode conter XP, recurso, item raro ou Chave de Dungeon.</small></button>
+    </div><div class="s67AcceptQuestion">VOCÊ ACEITA?</div>`;
+  }
+  function refreshBadges(){try{if(typeof window.s67RenderDungeonHub==='function')window.s67RenderDungeonHub();if(typeof window.s66RenderHub==='function')window.s66RenderHub()}catch(e){}}
+  function openRewardChoice(id){
+    const r=pendingReward(id);if(!r){refreshBadges();return}
+    fixedPanel({type:'message',title:'RECOMPENSAS DA QUEST',icon:'◇',html:rewardChoiceHtml(r),actions:[
+      {label:'ACEITAR',onClick:()=>{if(typeof window.s67ConfirmReward==='function')window.s67ConfirmReward(r.id)}},
+      {label:'REJEITAR',onClick:()=>{refreshBadges();if(typeof showToast==='function')showToast('RECOMPENSA MANTIDA NA CENTRAL')}}
+    ]});
+  }
+  function showRewardArrival(id){
+    const r=pendingReward(id);if(!r)return;
+    fixedPanel({type:'message',title:'MENSAGEM',icon:'✉',html:`<div class="s67RewardMessage"><div class="line">${arrivalLine(r)}</div><div class="line question">[VOCÊ GOSTARIA DE ACEITÁ-LAS?]</div></div>`,actions:[
+      {label:'ACEITAR',onClick:()=>openRewardChoice(r.id)},
+      {label:'RECUSAR',onClick:()=>{refreshBadges();if(typeof showToast==='function')showToast('RECOMPENSA MANTIDA NA CENTRAL')}}
+    ]});
+  }
+  window.s67ShowRewardArrival=showRewardArrival;
+  window.s67OpenRewardChoice=openRewardChoice;
+
+  /* Restaura o fluxo da recompensa da v2.22.67 sem voltar ao painel antigo: agora usa o painel touch-safe da v2.22.68. */
+  window.s62ShowSystemPanel=function(cfg={}){
+    const body=String(cfg?.body||cfg?.html||'');
+    if(/MISSÃO CONCLUÍDA/i.test(body)&&/RECOMPENSA/i.test(body)){
+      const r=pendingReward();if(r){showRewardArrival(r.id);return}
+    }
+    return fixedPanel(cfg);
+  };
+
+  /* Delegação extra para iOS: caso um toque termine num filho visual do botão, sobe até o controle real. */
+  const overlay=document.getElementById('s62SystemOverlay');
+  if(overlay&&!overlay.dataset.s69Touch){
+    overlay.dataset.s69Touch='1';
+    overlay.addEventListener('pointerup',function(ev){
+      const btn=ev.target.closest?.('#s62SystemClose,#s62SystemActions button');
+      if(!btn||ev.pointerType==='mouse')return;
+      if(btn.dataset.s69Busy==='1')return;
+      btn.dataset.s69Busy='1';setTimeout(()=>{delete btn.dataset.s69Busy},500);
+      try{btn.click()}catch(e){}
+    },true);
+  }
+
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // RECOMPENSA COM TEXTO DINÂMICO E FLUXO DE TOQUE CORRIGIDO.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
 </body></html>
