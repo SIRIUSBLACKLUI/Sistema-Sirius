@@ -7,6 +7,24 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="sirius-apple-touch-icon.png">
 <title>SIRIUS</title>
+<!-- ===== SIRIUS v2.22.81 // BOOT CONSOLIDATION ===== -->
+<script id="sirius-v22281-boot-head">
+(function(){
+  document.documentElement.classList.add('s81-booting');
+  window.__SIRIUS_BOOT_81__={started:Date.now(),ready:false};
+  /* Failsafe: never leave the app hidden if a later module throws. */
+  setTimeout(function(){document.documentElement.classList.remove('s81-booting')},4500);
+})();
+</script>
+<style id="sirius-v22281-boot-style">
+html.s81-booting body{background:#020712!important;overflow:hidden!important}
+html.s81-booting .dashboardShell{visibility:hidden!important;pointer-events:none!important}
+#s81BootSplash{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#020712;color:#dff8ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;pointer-events:none}
+#s81BootSplash .s81BootCore{text-align:center;letter-spacing:2px;font-weight:900;font-size:12px;color:#78e7ff;text-shadow:0 0 18px #54dcff66}
+#s81BootSplash .s81BootCore:before{content:"✦";display:block;font-size:32px;margin-bottom:12px}
+html:not(.s81-booting) #s81BootSplash{display:none!important}
+</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
 <style>
@@ -1794,6 +1812,7 @@ button:active{
 
 </head>
 <body>
+<div id="s81BootSplash"><div class="s81BootCore">SIRIUS // INICIALIZANDO NÚCLEO</div></div>
 
 
 </div>
@@ -10952,12 +10971,28 @@ body.s64-test-active #s62TestControls [data-test]{
   if(typeof window.sendSiriusAI==='function'&&!window.sendSiriusAI.__s67Wrapped){const old=window.sendSiriusAI;const fn=async function(){try{return await old.apply(this,arguments)}finally{setTimeout(syncProposalDock,30)}};fn.__s67Wrapped=true;window.sendSiriusAI=fn}
 
   /* ===== 2) BADGES: MAIS -> CENTRAL -> aba específica ===== */
-  function setInnerBadge(el,n){if(!el)return;el.querySelector('.s67InnerBadge')?.remove();if(n>0)el.insertAdjacentHTML('beforeend',`<span class="s67InnerBadge">${Math.min(n,99)}</span>`)}
+  function setInnerBadge(el,n){
+    if(!el)return;
+    n=Math.max(0,Number(n)||0);
+    const cur=el.querySelector('.s67InnerBadge');
+    if(!n){if(cur)cur.remove();return}
+    const value=String(Math.min(n,99));
+    if(cur){if(cur.textContent!==value)cur.textContent=value;return}
+    el.insertAdjacentHTML('beforeend',`<span class="s67InnerBadge">${value}</span>`);
+  }
   function refreshSubBadges(){
     const unread=countUnread(),rewards=countPendingRewards(),timers=countActiveTimers();
     setInnerBadge(document.getElementById('s66EventsCard'),unread+rewards+timers);
     const tabs=[...document.querySelectorAll('.s66HubTab')];
-    tabs.forEach(btn=>{btn.querySelector('.s67TabBadge')?.remove();const t=btn.textContent.trim().toUpperCase();let n=0;if(t.startsWith('MENSAGENS'))n=unread;else if(t.startsWith('RECOMPENSAS'))n=rewards;else if(t.startsWith('PRAZOS'))n=timers;if(n)btn.insertAdjacentHTML('beforeend',`<span class="s67TabBadge">${Math.min(n,99)}</span>`)})
+    tabs.forEach(btn=>{
+      const t=btn.childNodes[0]?.textContent?.trim().toUpperCase()||btn.textContent.trim().toUpperCase();
+      let n=0;if(t.startsWith('MENSAGENS'))n=unread;else if(t.startsWith('RECOMPENSAS'))n=rewards;else if(t.startsWith('PRAZOS'))n=timers;
+      const cur=btn.querySelector('.s67TabBadge');
+      if(!n){if(cur)cur.remove();return}
+      const value=String(Math.min(n,99));
+      if(cur){if(cur.textContent!==value)cur.textContent=value;return}
+      btn.insertAdjacentHTML('beforeend',`<span class="s67TabBadge">${value}</span>`);
+    })
   }
 
   /* ===== 3) POPUP DE MENSAGEM + ESCOLHA DE RECOMPENSA ===== */
@@ -11052,8 +11087,10 @@ body.s64-test-active #s62TestControls [data-test]{
   window.s67OpenDungeonHub=function(){ensureDungeonView();ensureDungeonCard();if(typeof openMoreView==='function')openMoreView('dungeons');document.getElementById('moreSheet')?.classList.remove('show');setTimeout(renderDungeonHub,30)};
 
   ensureDungeon();ensureProposalDock();ensureDungeonView();ensureDungeonCard();syncProposalDock();refreshSubBadges();renderDungeonHub();
-  const observer=new MutationObserver(()=>{refreshSubBadges();syncProposalDock()});const more=document.getElementById('moreSheet');if(more)observer.observe(more,{childList:true,subtree:true});
-  setInterval(()=>{refreshSubBadges();syncProposalDock();renderDungeonHub()},1200);
+  /* v2.22.81: removido observer autorrecursivo do MAIS.
+     O refresh abaixo é idempotente e suficiente para manter badges/propostas atualizados. */
+  setTimeout(()=>{refreshSubBadges();syncProposalDock();renderDungeonHub()},120);
+  setInterval(()=>{refreshSubBadges();syncProposalDock();renderDungeonHub()},1800);
   try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // PROPOSTAS VISÍVEIS, BADGES INTERNOS, ESCOLHA DE RECOMPENSAS, CAIXAS E DUNGEONS.`);persist()}}catch(e){}
   const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);mark();setTimeout(mark,350);setTimeout(mark,1600);
 })();
@@ -11061,16 +11098,140 @@ body.s64-test-active #s62TestControls [data-test]{
 
 
 
-
-
-
-<!-- ===== SIRIUS v2.22.80 // NATIVE INPUT RECOVERY ===== -->
-<script id="sirius-v22280-release">
+<!-- ===== SIRIUS v2.22.68 // SYSTEM PANEL TOUCH FIX ===== -->
+<style id="sirius-v22268-touch-fix-style">
+/* iPhone/iOS: garante que a camada visual nunca bloqueie os controles do popup. */
+.s62SystemOverlay{z-index:12000!important}
+.s62SystemOverlay.show{pointer-events:auto!important}
+.s62SystemPanel{pointer-events:auto!important;isolation:isolate}
+.s62SystemPanel::before,.s62SystemPanel::after,.s62Corners,.s62Corner,.s62Ornament,.s62TopRule{pointer-events:none!important}
+.s62Close,.s62Actions,.s62Actions button{pointer-events:auto!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.s62Close{min-width:44px;min-height:44px;display:grid;place-items:center;right:10px!important;top:8px!important;z-index:30!important}
+.s62Actions{z-index:30!important}
+.s62Actions button{min-height:50px!important;cursor:pointer;position:relative;z-index:31}
+</style>
+<script id="sirius-v22268-touch-fix-script">
 (function(){
-  const VERSION='v2.22.80';
+  const VERSION='v2.22.68';
+  const overlay=document.getElementById('s62SystemOverlay');
+  const closeBtn=document.getElementById('s62SystemClose');
+  const actionsHost=document.getElementById('s62SystemActions');
+  if(!overlay||!closeBtn||!actionsHost)return;
+
+  let currentActions=[];
+  let lastTouchAt=0;
+  const els=()=>({
+    overlay:document.getElementById('s62SystemOverlay'),
+    head:document.getElementById('s62HeaderText'),
+    icon:document.getElementById('s62HeaderIcon'),
+    content:document.getElementById('s62SystemContent'),
+    actions:document.getElementById('s62SystemActions')
+  });
+  function closePanel(){
+    const e=els();
+    e.overlay?.classList.remove('show');
+    e.overlay?.setAttribute('aria-hidden','true');
+  }
+  function runAction(index){
+    const a=currentActions[index];
+    closePanel();
+    if(a&&typeof a.onClick==='function')setTimeout(()=>{try{a.onClick()}catch(err){console.error('SIRIUS panel action',err)}},90);
+  }
+  function activateControl(ev){
+    const target=ev.target.closest?.('button');
+    if(!target)return;
+    if(target.id==='s62SystemClose'){
+      if(ev.type==='touchend'){ev.preventDefault();lastTouchAt=Date.now()}
+      else if(Date.now()-lastTouchAt<650)return;
+      ev.stopPropagation();closePanel();return;
+    }
+    if(target.closest('#s62SystemActions')){
+      const idx=Number(target.dataset.i);
+      if(!Number.isFinite(idx))return;
+      if(ev.type==='touchend'){
+        ev.preventDefault();lastTouchAt=Date.now();ev.stopPropagation();
+        /* Compatibilidade com popups antigos da v2.22.67 que guardaram a função anterior. */
+        if(typeof target.onclick==='function'){try{target.onclick.call(target,ev)}catch(err){console.error('SIRIUS legacy panel action',err)}}
+        else runAction(idx);
+        return;
+      }
+      if(Date.now()-lastTouchAt<650)return;
+      ev.stopPropagation();
+      if(typeof target.onclick==='function'){try{target.onclick.call(target,ev)}catch(err){console.error('SIRIUS legacy panel action',err)}}
+      else runAction(idx);
+    }
+  }
+
+  /* Captura no overlay: funciona mesmo quando o iOS perde o onclick após uma renderização. */
+  overlay.addEventListener('touchend',activateControl,{passive:false,capture:true});
+  overlay.addEventListener('click',activateControl,true);
+  overlay.addEventListener('click',ev=>{if(ev.target===overlay)closePanel()});
+
+  window.s62CloseSystemPanel=closePanel;
+  window.s62ShowSystemPanel=function(cfg={}){
+    const e=els();if(!e.overlay)return;
+    e.head.textContent=cfg.title||'AVISO';
+    e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');
+    e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;
+    currentActions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'OK'}];
+    e.actions.className='s62Actions'+(currentActions.length===1?' one':'');
+    e.actions.innerHTML=currentActions.map((a,i)=>`<button type="button" data-i="${i}" aria-label="${String(a.label||'OK').replace(/[<>\"]/g,'')}">${String(a.label||'OK').replace(/[<>]/g,'')}</button>`).join('');
+    e.overlay.classList.add('show');
+    e.overlay.setAttribute('aria-hidden','false');
+  };
+
+  /* Atualiza wrappers que capturaram a função anterior na v2.22.67. */
+  try{
+    if(typeof window.s67ShowRewardArrival==='function'){
+      // Os popups novos passam a usar a função corrigida por meio de chamadas futuras ao painel global.
+    }
+  }catch(e){}
+
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO DE TOQUE DOS POPUPS NO IPHONE.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);
+        if(typeof save==='function')save(); else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(e){}
   const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mark,{once:true});else mark();
-  setTimeout(mark,500);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
+
+
+<!-- ===== SIRIUS v2.22.81 // FINAL BOOT UNLOCK ===== -->
+<script id="sirius-v22281-final-boot">
+(function(){
+  const VERSION='v2.22.81';
+  let done=false;
+  function finish(){
+    if(done)return;done=true;
+    try{
+      /* Only the active view participates in layout/hit-testing. */
+      document.querySelectorAll('.dashView').forEach(v=>{
+        if(v.classList.contains('active')){v.style.removeProperty('display');v.removeAttribute('aria-hidden')}
+        else{v.style.display='none';v.setAttribute('aria-hidden','true')}
+      });
+      /* Closed overlays must never consume taps. */
+      document.querySelectorAll('[class*=Overlay],[class*=overlay]').forEach(el=>{
+        if(!el.classList.contains('show')){el.style.pointerEvents='none'}
+        else el.style.removeProperty('pointer-events');
+      });
+      document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+      if(window.__SIRIUS_BOOT_81__){window.__SIRIUS_BOOT_81__.ready=true;window.__SIRIUS_BOOT_81__.finished=Date.now()}
+    }catch(e){console.error('SIRIUS v2.22.81 boot finalize',e)}
+    document.documentElement.classList.remove('s81-booting');
+    document.documentElement.classList.add('s81-ready');
+  }
+  function schedule(){requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(finish,140)))}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
+  window.addEventListener('load',()=>setTimeout(finish,40),{once:true});
+  setTimeout(finish,2800);
 })();
 </script>
 
