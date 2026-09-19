@@ -11266,15 +11266,16 @@ body.s64-test-active #s62TestControls [data-test]{
 
 
 
-<!-- ===== SIRIUS v2.22.71 // RECOVERY STABILITY ===== -->
-<style id="sirius-v22271-recovery-style">
-/* Recuperação: preserva a Home atual e impede camadas fechadas de capturarem toque. */
-.heroDash.heroArtHeader{background-image:none!important}
-.dashboardShell.home-active .heroDash.heroArtHeader{background:#07030e!important}
-.heroSiriusArt{pointer-events:none!important}
-.bottomDock{z-index:15000!important;pointer-events:auto!important;touch-action:manipulation!important}
-.bottomDock button{pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(88,220,255,.12)!important}
-#moreSheet.show{visibility:visible!important;pointer-events:auto!important}
+<!-- ===== SIRIUS v2.22.72 // HARD RECOVERY ===== -->
+<style id="sirius-v22272-hard-recovery-style">
+/* HARD RECOVERY: estabilidade de toque e renderização no iPhone. */
+html,body{background:#050814!important;min-height:100%!important}
+body{pointer-events:auto!important}
+.dashboardShell,.dashboardMain,.dashView.active{pointer-events:auto!important}
+.bottomDock{z-index:20000!important;pointer-events:auto!important;touch-action:manipulation!important}
+.bottomDock button{pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(88,220,255,.15)!important}
+.heroSiriusArt,.heroArtWrap:before,.heroArtWrap:after,.dashPanel:before,.dashPanel:after,.bottomDock:before,.bottomDock:after{pointer-events:none!important}
+/* Fechado = nunca captura toque. Aberto = volta a interagir. */
 #moreSheet:not(.show),
 .s62SystemOverlay:not(.show),
 .validationOverlay:not(.show),
@@ -11283,94 +11284,130 @@ body.s64-test-active #s62TestControls [data-test]{
 .penaltyOverlay:not(.show),
 .epubOverlay:not(.show),
 .systemOverlay:not(.show){pointer-events:none!important;visibility:hidden!important}
-.s62SystemOverlay.show,.validationOverlay.show,.learningOverlay.show,.aiChatOverlay.show,.penaltyOverlay.show,.epubOverlay.show,.systemOverlay.show{visibility:visible!important}
-/* Elementos puramente decorativos nunca devem bloquear navegação. */
-.heroArtWrap:before,.heroArtWrap:after,.dashPanel:before,.dashPanel:after,.bottomDock:before,.bottomDock:after{pointer-events:none!important}
+#moreSheet.show,
+.s62SystemOverlay.show,
+.validationOverlay.show,
+.learningOverlay.show,
+.aiChatOverlay.show,
+.penaltyOverlay.show,
+.epubOverlay.show,
+.systemOverlay.show{visibility:visible!important}
+/* Os seis atributos usam IMG real em vez de data-URL dentro de variável CSS. */
+#view-home #homeAttrCards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+#view-home #homeAttrCards .homeAttrCard.artAttr{display:grid!important;grid-template-rows:1fr auto!important;min-width:0!important;overflow:hidden!important}
+#view-home #homeAttrCards .artAttrVisual{position:relative!important;background-image:none!important;overflow:hidden!important;min-height:0!important}
+#view-home #homeAttrCards .artAttrVisual img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;pointer-events:none!important}
+@media(max-width:420px){#view-home #homeAttrCards{gap:8px!important}}
 </style>
-<script id="sirius-v22271-recovery-script">
+<script id="sirius-v22272-hard-recovery-script">
 (function(){
-  const VERSION='v2.22.71';
-  const overlayIds=['moreSheet','s62SystemOverlay','validationOverlay','learningOverlay','aiChatOverlay','penaltyOverlay','epubOverlay'];
-  function clearClosedLayers(){
-    overlayIds.forEach(id=>{
-      const el=document.getElementById(id);if(!el)return;
-      if(!el.classList.contains('show')){
-        el.style.pointerEvents='none';
-        el.setAttribute('aria-hidden','true');
-      }else{
-        el.style.pointerEvents='';
-        el.setAttribute('aria-hidden','false');
-      }
-    });
-    document.querySelectorAll('.systemOverlay').forEach(el=>{
-      if(!el.classList.contains('show'))el.style.pointerEvents='none';
-    });
+  'use strict';
+  const VERSION='v2.22.72';
+  const CORE=['Físico','Intelecto','Disciplina','Comunicação','Foco','Relacionamento'];
+  const COLORS={'Físico':'#ff6072','Intelecto':'#38e2c1','Disciplina':'#ffb143','Comunicação':'#ae5bff','Foco':'#58dfff','Relacionamento':'#ff70b9'};
+  const OVERLAYS=['moreSheet','s62SystemOverlay','validationOverlay','learningOverlay','aiChatOverlay','penaltyOverlay','epubOverlay'];
+
+  function esc(v){
+    try{return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'');}catch(_){return String(v??'');}
   }
-  function forceHomeIfBlank(){
-    const active=document.querySelectorAll('.dashView.active');
-    if(active.length)return;
-    const home=document.getElementById('view-home');
-    if(home){
+
+  function unlockUI(){
+    try{
+      document.documentElement.style.pointerEvents='auto';
+      document.body.style.pointerEvents='auto';
+      const shell=document.getElementById('dashboardShell');
+      if(shell)shell.style.pointerEvents='auto';
+      const dock=document.getElementById('bottomDock');
+      if(dock){dock.style.pointerEvents='auto';dock.style.zIndex='20000';}
+      OVERLAYS.forEach(id=>{
+        const el=document.getElementById(id);if(!el)return;
+        const open=el.classList.contains('show');
+        if(!open){
+          if(el.style.pointerEvents!=='none')el.style.pointerEvents='none';
+          el.setAttribute('aria-hidden','true');
+        }else{
+          if(el.style.pointerEvents==='none')el.style.removeProperty('pointer-events');
+          el.setAttribute('aria-hidden','false');
+        }
+      });
+      document.querySelectorAll('.systemOverlay').forEach(el=>{
+        if(!el.classList.contains('show') && el.style.pointerEvents!=='none')el.style.pointerEvents='none';
+      });
+    }catch(e){console.error('SIRIUS unlockUI',e);}
+  }
+
+  function restoreAttributeCards(){
+    try{
+      const target=document.getElementById('homeAttrCards');
+      if(!target || typeof SIRIUS_ATTR_ART==='undefined')return;
+      const attrs=(typeof data!=='undefined'&&data&&data.attrs)?data.attrs:{};
+      target.innerHTML='';
+      CORE.forEach(name=>{
+        const a=attrs[name]||{level:1,pd:0};
+        const card=document.createElement('div');
+        card.className='homeAttrCard artAttr';
+        card.dataset.homeAttr=name;
+        card.style.setProperty('--ac',COLORS[name]);
+        const visual=document.createElement('div');
+        visual.className='artAttrVisual';
+        visual.setAttribute('role','img');
+        visual.setAttribute('aria-label',name);
+        const img=document.createElement('img');
+        img.alt=name;
+        img.loading='eager';
+        img.decoding='async';
+        img.draggable=false;
+        const src=SIRIUS_ATTR_ART[name]||'';
+        if(src)img.src=src;
+        visual.appendChild(img);
+        const meta=document.createElement('div');
+        meta.className='artAttrMeta';
+        meta.innerHTML='<span class="n">'+esc(name.toUpperCase())+'</span><span class="v">LV '+(Number(a.level)||1)+' // '+(Number(a.pd)||0)+' PD</span>';
+        card.appendChild(visual);card.appendChild(meta);target.appendChild(card);
+      });
+    }catch(e){console.error('SIRIUS restoreAttributeCards',e);}
+  }
+
+  function ensureActiveView(){
+    try{
+      const active=document.querySelector('.dashView.active');
+      if(active)return;
+      const home=document.getElementById('view-home');
+      if(!home)return;
       document.querySelectorAll('.dashView').forEach(v=>v.classList.remove('active'));
       home.classList.add('active');
       document.getElementById('dashboardShell')?.classList.add('home-active');
       document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='home'));
-    }
+    }catch(e){console.error('SIRIUS ensureActiveView',e);}
   }
-  function navigate(view,btn){
-    clearClosedLayers();
-    try{
-      if(typeof window.openDockView==='function')window.openDockView(view,btn||null);
-      else if(typeof window.openDashView==='function')window.openDashView(view,btn||null);
-    }catch(err){
-      console.error('SIRIUS recovery navigation',err);
-      document.querySelectorAll('.dashView').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));
-      document.getElementById('dashboardShell')?.classList.toggle('home-active',view==='home');
-      document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-    }
+
+  function bootRecovery(){
+    unlockUI();
+    ensureActiveView();
+    restoreAttributeCards();
+    document.documentElement.classList.add('s72-ready');
   }
-  function openMore(){
-    clearClosedLayers();
-    const sheet=document.getElementById('moreSheet');
-    if(sheet){sheet.style.pointerEvents='';sheet.style.visibility='visible';sheet.classList.add('show');sheet.setAttribute('aria-hidden','false')}
-  }
-  const dock=document.getElementById('bottomDock');
-  if(dock&&!dock.dataset.s71Recovery){
-    dock.dataset.s71Recovery='1';
-    let lastTouch=0;
-    dock.addEventListener('touchend',function(ev){
-      const b=ev.target.closest?.('button');if(!b||!dock.contains(b))return;
-      ev.preventDefault();ev.stopPropagation();lastTouch=Date.now();
-      const view=b.dataset.view;
-      if(view)navigate(view,b);else openMore();
-    },{passive:false,capture:true});
-    dock.addEventListener('click',function(ev){
-      if(Date.now()-lastTouch<700){ev.preventDefault();ev.stopPropagation();return}
-      const b=ev.target.closest?.('button');if(!b||!dock.contains(b))return;
-      ev.preventDefault();ev.stopPropagation();
-      const view=b.dataset.view;
-      if(view)navigate(view,b);else openMore();
-    },true);
-  }
-  function boot(){
-    clearClosedLayers();forceHomeIfBlank();
-    document.documentElement.classList.add('s71-ready');
-    const header=document.querySelector('.heroDash.heroArtHeader');if(header)header.style.backgroundImage='none';
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-  window.addEventListener('pageshow',()=>{setTimeout(boot,0)});
-  window.addEventListener('focus',clearClosedLayers);
-  const observer=new MutationObserver(()=>clearClosedLayers());
-  document.querySelectorAll('#moreSheet,#s62SystemOverlay,.validationOverlay,.learningOverlay,.aiChatOverlay,.penaltyOverlay,.epubOverlay,.systemOverlay').forEach(el=>observer.observe(el,{attributes:true,attributeFilter:['class','style']}));
+
+  /* Usa os handlers originais do app. Não instala listeners capture/touch globais. */
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootRecovery,{once:true});else bootRecovery();
+  window.addEventListener('pageshow',()=>setTimeout(bootRecovery,0));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>{unlockUI();ensureActiveView();restoreAttributeCards();},0)});
+  window.addEventListener('focus',unlockUI);
+  setTimeout(()=>{unlockUI();restoreAttributeCards();},250);
+  setTimeout(()=>{unlockUI();restoreAttributeCards();},1200);
+
+  /* Se uma navegação normal ocorrer, somente libera camadas fechadas depois. */
+  document.getElementById('bottomDock')?.addEventListener('click',()=>setTimeout(unlockUI,0),false);
+
   try{
     if(typeof data!=='undefined'){
       data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
       if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
-        if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // RECUPERAÇÃO DA NAVEGAÇÃO, CAMADAS DE TOQUE E CABEÇALHO.`);
+        if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // HARD RECOVERY DE TOQUE, NAVEGAÇÃO E CARDS DE ATRIBUTOS.');
         if(typeof save==='function')save();else if(typeof persist==='function')persist();
       }
     }
-  }catch(e){}
+  }catch(_){ }
   const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
   mark();setTimeout(mark,350);setTimeout(mark,1600);
 })();
