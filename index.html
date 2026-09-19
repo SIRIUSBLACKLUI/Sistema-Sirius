@@ -11061,7 +11061,7 @@ body.s64-test-active #s62TestControls [data-test]{
 
 
 
-<!-- ===== SIRIUS v2.22.77 // RECOVERY BASED ON LAST STABLE v2.22.68 ===== -->
+<!-- ===== SIRIUS v2.22.78 // SYSTEM PANEL TOUCH FIX ===== -->
 <style id="sirius-v22268-touch-fix-style">
 /* iPhone/iOS: garante que a camada visual nunca bloqueie os controles do popup. */
 .s62SystemOverlay{z-index:12000!important}
@@ -11075,7 +11075,7 @@ body.s64-test-active #s62TestControls [data-test]{
 </style>
 <script id="sirius-v22268-touch-fix-script">
 (function(){
-  const VERSION='v2.22.77';
+  const VERSION='v2.22.78';
   const overlay=document.getElementById('s62SystemOverlay');
   const closeBtn=document.getElementById('s62SystemClose');
   const actionsHost=document.getElementById('s62SystemActions');
@@ -11153,7 +11153,7 @@ body.s64-test-active #s62TestControls [data-test]{
   try{
     if(typeof data!=='undefined'){
       data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-      const msg=`VERSÃO INSTALADA: ${VERSION} // RECOVERY: BASE FUNCIONAL v2.22.68 RESTAURADA SEM PATCHES POSTERIORES.`;
+      const msg=`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO DE TOQUE DOS POPUPS NO IPHONE.`;
       if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
         if(typeof addSystemLog==='function')addSystemLog('version',msg);
         if(typeof save==='function')save(); else if(typeof persist==='function')persist();
