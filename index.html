@@ -11490,4 +11490,148 @@ html,body{pointer-events:auto!important}
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.75 // iOS APP LAYOUT RECOVERY ===== -->
+<style id="sirius-v22275-app-layout-style">
+/* Corrige especificamente o WebKit em modo standalone sem alterar o Safari. */
+html.s75-app,html.s75-app body{
+  min-height:100%!important;height:auto!important;overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;background:#050814!important;
+}
+html.s75-app .dashboardShell{
+  display:block!important;min-height:100dvh!important;height:auto!important;overflow:visible!important;
+  pointer-events:auto!important;transform:none!important;contain:none!important;
+}
+html.s75-app .dashboardMain{
+  min-height:100dvh!important;height:auto!important;overflow:visible!important;position:relative!important;
+  pointer-events:auto!important;transform:none!important;contain:none!important;isolation:auto!important;
+  background-attachment:scroll!important;
+}
+html.s75-app .dashboardShell.home-active .dashboardMain{
+  background-attachment:scroll!important;
+  background-position:center top!important;
+}
+html.s75-app .dashboardShell.home-active .dashboardMain:before{
+  position:absolute!important;pointer-events:none!important;transform:none!important;
+}
+html.s75-app .dashView{
+  position:relative!important;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+  min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;
+  transform:none!important;contain:none!important;content-visibility:visible!important;
+}
+html.s75-app .dashView:not(.active){display:none!important;visibility:hidden!important;pointer-events:none!important}
+html.s75-app .dashView.active{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+html.s75-app #view-home{
+  min-height:0!important;height:auto!important;max-height:none!important;margin-top:0!important;padding-top:10px!important;
+  overflow:visible!important;visibility:visible!important;opacity:1!important;
+}
+html.s75-app #view-home > .dashPanel,
+html.s75-app #view-home > .homeMetaGrid,
+html.s75-app #view-home .homeMetaGrid > *{
+  min-height:0!important;height:auto!important;max-height:none!important;visibility:visible!important;opacity:1!important;
+  transform:none!important;contain:none!important;content-visibility:visible!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.s75-app #view-home > .dashPanel{display:block!important;overflow:visible!important}
+html.s75-app #view-home #homeAttrCards{height:auto!important;min-height:0!important;overflow:visible!important}
+html.s75-app #view-home #homeAttrCards .homeAttrCard,
+html.s75-app #view-home #homeAttrCards .artAttrVisual{
+  visibility:visible!important;opacity:1!important;content-visibility:visible!important;contain:none!important;
+}
+html.s75-app #view-home #homeAttrCards .artAttrVisual img{
+  visibility:visible!important;opacity:1!important;transform:none!important;-webkit-transform:none!important;
+}
+html.s75-app .heroDash.heroArtHeader,
+html.s75-app .heroArtWrap{
+  min-height:164px!important;height:164px!important;max-height:164px!important;overflow:hidden!important;
+  transform:none!important;contain:none!important;
+}
+html.s75-app .heroSiriusArt{transform:none!important;-webkit-transform:none!important;backface-visibility:visible!important}
+html.s75-app .bottomDock{
+  position:fixed!important;left:14px!important;right:14px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;
+  z-index:20000!important;pointer-events:auto!important;touch-action:manipulation!important;
+}
+html.s75-app .bottomDock button,
+html.s75-app button,
+html.s75-app [onclick]{pointer-events:auto!important;touch-action:manipulation!important}
+html.s75-app .heroSiriusArt,
+html.s75-app .heroArtWrap:before,
+html.s75-app .heroArtWrap:after,
+html.s75-app .dashPanel:before,
+html.s75-app .dashPanel:after,
+html.s75-app .bottomDock:before,
+html.s75-app .bottomDock:after{pointer-events:none!important}
+/* Camadas fechadas nunca participam do hit-test nem do layout interativo. */
+html.s75-app #moreSheet:not(.show),
+html.s75-app #missionOverlay:not(.show),
+html.s75-app #journeyOverlay:not(.show),
+html.s75-app #s61EventOverlay:not(.show),
+html.s75-app #s62SystemOverlay:not(.show),
+html.s75-app #validationOverlay:not(.show),
+html.s75-app #learningOverlay:not(.show),
+html.s75-app #aiChatOverlay:not(.show),
+html.s75-app #penaltyOverlay:not(.show),
+html.s75-app #epubOverlay:not(.show),
+html.s75-app #systemOverlay:not(.show){
+  pointer-events:none!important;visibility:hidden!important;
+}
+html.s75-app .s74Diag{display:none!important}
+.s75Diag{position:fixed;right:7px;top:calc(7px + env(safe-area-inset-top));z-index:2147483646;padding:4px 7px;border:1px solid #2c789c;background:#03101de6;color:#8cecff;font:800 7px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.55px;border-radius:3px;pointer-events:none;opacity:.78}
+</style>
+<script id="sirius-v22275-app-layout-script">
+(function(){
+  'use strict';
+  const VERSION='v2.22.75';
+  const isStandalone=()=>{try{return !!(window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches)}catch(_){return false}};
+  function markMode(){
+    const app=isStandalone();
+    document.documentElement.classList.toggle('s75-app',app);
+    let d=document.getElementById('s75Diag');
+    if(!d){d=document.createElement('div');d.id='s75Diag';d.className='s75Diag';document.body.appendChild(d)}
+    d.textContent='SIRIUS '+VERSION+' // '+(app?'APP':'SAFARI');
+  }
+  function normalizeAppLayout(){
+    markMode();
+    if(!isStandalone())return;
+    const shell=document.getElementById('dashboardShell');
+    const main=document.querySelector('.dashboardMain');
+    const home=document.getElementById('view-home');
+    if(shell){shell.style.removeProperty('height');shell.style.removeProperty('max-height');shell.style.pointerEvents='auto'}
+    if(main){main.style.removeProperty('height');main.style.removeProperty('max-height');main.style.pointerEvents='auto'}
+    document.querySelectorAll('.dashView').forEach(v=>{
+      v.style.removeProperty('height');v.style.removeProperty('min-height');v.style.removeProperty('max-height');
+      v.style.removeProperty('top');v.style.removeProperty('bottom');
+      if(v.classList.contains('active')){v.style.pointerEvents='auto';v.style.visibility='visible';v.style.opacity='1'}
+    });
+    if(home&&home.classList.contains('active')){
+      home.querySelectorAll(':scope > .dashPanel, :scope > .homeMetaGrid').forEach(el=>{
+        el.style.removeProperty('height');el.style.removeProperty('min-height');el.style.removeProperty('max-height');
+        el.style.visibility='visible';el.style.opacity='1';
+      });
+    }
+    const dock=document.getElementById('bottomDock');
+    if(dock){dock.style.pointerEvents='auto';dock.querySelectorAll('button').forEach(b=>b.style.pointerEvents='auto')}
+  }
+  function boot(){normalizeAppLayout();setTimeout(normalizeAppLayout,80);setTimeout(normalizeAppLayout,350);setTimeout(normalizeAppLayout,1200)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+  window.addEventListener('pageshow',()=>setTimeout(normalizeAppLayout,0));
+  window.addEventListener('orientationchange',()=>setTimeout(normalizeAppLayout,120));
+  window.addEventListener('resize',()=>{if(isStandalone())setTimeout(normalizeAppLayout,80)});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(normalizeAppLayout,0)});
+  document.getElementById('bottomDock')?.addEventListener('click',()=>setTimeout(normalizeAppLayout,0),false);
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // RECUPERAÇÃO DE LAYOUT DO iOS APP: ALTURA AUTOMÁTICA, SEM BACKGROUND FIXO E SEM BACKDROP-FILTER NA HOME.');
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }
+  }catch(_){ }
+  const version=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  version();setTimeout(version,350);setTimeout(version,1600);
+})();
+</script>
+
 </body></html>
