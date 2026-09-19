@@ -11235,4 +11235,107 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.82 // VIEW ACTIVATION RECOVERY ===== -->
+<style id="sirius-v22282-view-style">
+/* v2.22.81 deixou display:none inline nas views inativas durante o boot.
+   Ao mudar de aba, a classe .active mudava, mas o display:none inline permanecia.
+   Estas regras tornam a classe active a fonte final da visibilidade. */
+.dashView{display:none!important}
+.dashView.active{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  height:auto!important;
+  min-height:0!important;
+}
+.dashView:not(.active){
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+</style>
+<script id="sirius-v22282-view-script">
+(function(){
+  const VERSION='v2.22.82';
+
+  function normalizeViews(requested){
+    const wanted='view-'+requested;
+    let found=false;
+    document.querySelectorAll('.dashView').forEach(v=>{
+      const active=v.id===wanted || (!requested && v.classList.contains('active'));
+      if(active){
+        found=true;
+        v.classList.add('active');
+        v.style.removeProperty('display');
+        v.style.removeProperty('visibility');
+        v.style.removeProperty('opacity');
+        v.style.removeProperty('pointer-events');
+        v.removeAttribute('aria-hidden');
+      }else{
+        v.classList.remove('active');
+        v.style.removeProperty('display');
+        v.style.removeProperty('visibility');
+        v.style.removeProperty('opacity');
+        v.style.removeProperty('pointer-events');
+        v.setAttribute('aria-hidden','true');
+      }
+    });
+    return found;
+  }
+
+  function afterSwitch(view){
+    normalizeViews(view);
+    requestAnimationFrame(()=>{
+      normalizeViews(view);
+      try{
+        if(view==='status' && typeof renderStatusHud==='function') renderStatusHud();
+        else if(typeof refreshDashboard==='function') refreshDashboard();
+      }catch(e){console.error('SIRIUS v2.22.82 render',e)}
+    });
+  }
+
+  const prevDock=window.openDockView;
+  window.openDockView=function(view){
+    let result;
+    try{ if(typeof prevDock==='function') result=prevDock.apply(this,arguments); }
+    finally{ afterSwitch(view); }
+    return result;
+  };
+
+  /* openDashView pode ser chamado por módulos antigos e por botões fora do dock. */
+  const prevDash=window.openDashView;
+  window.openDashView=function(view){
+    let result;
+    try{
+      /* Evita chamar duas vezes quando a versão anterior era apenas um alias para openDockView. */
+      if(typeof prevDash==='function' && prevDash!==prevDock) result=prevDash.apply(this,arguments);
+      else result=window.openDockView.apply(this,arguments);
+    }finally{ afterSwitch(view); }
+    return result;
+  };
+
+  const prevMore=window.openMoreView;
+  window.openMoreView=function(view){
+    let result;
+    try{ if(typeof prevMore==='function') result=prevMore.apply(this,arguments); }
+    finally{ afterSwitch(view); }
+    return result;
+  };
+
+  /* Garante que o estado do boot inicial também fique consistente. */
+  function init(){
+    const current=document.querySelector('.dashView.active')?.id?.replace(/^view-/,'')||'home';
+    normalizeViews(current);
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,40),{once:true});
+  else setTimeout(init,40);
+  window.addEventListener('load',()=>setTimeout(init,120),{once:true});
+  setTimeout(init,900);
+})();
+</script>
+
 </body></html>
