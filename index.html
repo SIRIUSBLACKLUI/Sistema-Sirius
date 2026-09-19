@@ -10717,4 +10717,179 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.66 // CENTRAL DE EVENTOS ===== -->
+<style id="sirius-v22266-events-style">
+.s66EventHub{display:grid;gap:10px}
+.s66HubSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.s66HubStat{border:1px solid #2b5f85;background:#061322;padding:10px;text-align:center}
+.s66HubStat b{display:block;font-size:20px;color:#eefaff}.s66HubStat span{font-size:7px;letter-spacing:1px;color:#7fdfff}
+.s66HubTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.s66HubTab{border:1px solid #295c82;background:#061322;color:#9db9d5;padding:9px 4px;font-size:7px;font-weight:900;letter-spacing:.6px}
+.s66HubTab.active{color:#fff;border-color:#59ddff;background:#0a2b4a;box-shadow:inset 0 -2px 0 #67e7ff}
+.s66HubList{display:grid;gap:7px;margin-top:4px}
+.s66HubItem{border:1px solid #274d70;background:linear-gradient(180deg,#071526,#05101d);padding:10px;position:relative}
+.s66HubItem.unread{border-color:#54dfff;box-shadow:inset 3px 0 0 #5be7ff}
+.s66HubItem.reward{border-color:#80692e}.s66HubItem.timer{border-color:#6b4b9a}.s66HubItem.recovery{border-color:#7a3d51}
+.s66HubKicker{font-size:7px;letter-spacing:1.2px;color:#70e5ff;font-weight:1000}.s66HubItem.reward .s66HubKicker{color:#ffd86a}.s66HubItem.recovery .s66HubKicker{color:#ff9db5}
+.s66HubTitle{font-size:11px;font-weight:1000;color:#f2f8ff;margin-top:4px}.s66HubBody{font-size:8px;line-height:1.45;color:#a9bbd1;margin-top:4px}
+.s66HubMeta{font-size:7px;color:#7088a5;margin-top:6px}.s66HubActions{display:flex;gap:6px;margin-top:8px}.s66HubActions button{flex:1;border:1px solid #2e6d96;background:#081a2c;color:#ddf7ff;padding:8px;font-size:7px;font-weight:900;letter-spacing:.6px}.s66HubActions .primary{border-color:#5be4ff;background:#0b3551}.s66HubActions .rewardBtn{border-color:#a98935;background:#292009;color:#ffe7a1}
+.s66Empty{border:1px dashed #2a4d6c;color:#758da8;padding:14px;text-align:center;font-size:8px;line-height:1.5}
+.s66MoreBadge{position:absolute;right:8px;top:7px;min-width:17px;height:17px;padding:0 4px;border-radius:10px;background:#ff405f;color:white;display:grid;place-items:center;font-size:7px;font-weight:1000;box-shadow:0 0 12px #ff406066}
+.s66MoreCard{position:relative}
+.s66Countdown{font-variant-numeric:tabular-nums;color:#d8c0ff;font-weight:900}
+.s66PlanBox{margin-top:8px;border-top:1px solid #263f5d;padding-top:8px;font-size:7px;color:#8198b5;line-height:1.5}
+@media(max-width:420px){.s66HubSummary{grid-template-columns:repeat(3,1fr)}.s66HubTabs{grid-template-columns:1fr 1fr}.s66HubStat b{font-size:17px}}
+</style>
+<script id="sirius-v22266-events-script">
+(function(){
+  const VERSION='v2.22.66';
+  let activeTab='all';
+  const nowIso=()=>new Date().toISOString();
+  const uid=p=>`${p}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  function isTest(){try{return typeof s62IsTestMode==='function'&&s62IsTestMode()}catch(e){return false}}
+  function ensure(){
+    data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};
+    data.eventCenter.messages=Array.isArray(data.eventCenter.messages)?data.eventCenter.messages:[];
+    data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];
+    data.eventCenter.recoveries=Array.isArray(data.eventCenter.recoveries)?data.eventCenter.recoveries:[];
+    data.eventCenter.timers=Array.isArray(data.eventCenter.timers)?data.eventCenter.timers:[];
+    data.siriusDevelopmentPlan=data.siriusDevelopmentPlan||[
+      {phase:1,name:'CENTRAL DE EVENTOS',state:'active'},
+      {phase:2,name:'BOSSES E ARCOS',state:'planned'},
+      {phase:3,name:'ARQUIVO DE CONHECIMENTO + IA',state:'planned'}
+    ];
+    return data.eventCenter;
+  }
+  function persist(){try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
+  function addMessage(type,title,body,extra={}){
+    const ec=ensure();
+    const msg={id:uid('evt'),type:type||'system',title:String(title||'EVENTO'),body:String(body||''),at:nowIso(),read:false,...extra};
+    ec.messages.unshift(msg);ec.messages=ec.messages.slice(0,80);persist();updateBadge();return msg;
+  }
+  window.s66AddSystemMessage=addMessage;
+  function addReward({mission='',xp=0,pd=0,attr='',source='mission'}={}){
+    const ec=ensure();
+    const r={id:uid('reward'),mission:String(mission||'MISSÃO'),xp:Number(xp)||0,pd:Number(pd)||0,attr:String(attr||''),source,at:nowIso(),claimed:false};
+    ec.rewards.unshift(r);addMessage('reward','RECOMPENSA DISPONÍVEL',`${r.mission} // ${r.xp} XP${r.pd?` + ${r.pd} PD ${r.attr}`:''}`,{rewardId:r.id});persist();return r;
+  }
+  function addTimer(missionIndex,minutes,label){
+    const ec=ensure(); const m=data.missions?.[missionIndex]; if(!m)return null;
+    const end=Date.now()+Math.max(1,Number(minutes)||1)*60000;
+    m.deadlineAt=new Date(end).toISOString();m.timerLabel=label||'PRAZO DA MISSÃO';
+    let t=ec.timers.find(x=>x.missionIndex===missionIndex&&!x.done);
+    if(!t){t={id:uid('timer'),missionIndex,mission:m.name||'MISSÃO',deadlineAt:m.deadlineAt,label:m.timerLabel,done:false,at:nowIso()};ec.timers.unshift(t)}else{t.deadlineAt=m.deadlineAt;t.mission=m.name;t.done=false}
+    addMessage('timer','TEMPORIZADOR INICIADO',`${m.name} // prazo ativo.`);persist();return t;
+  }
+  window.s66StartMissionTimer=addTimer;
+  function createRecovery(sourceMission,reason='Prazo expirado'){
+    ensure();
+    const name=`RECUPERAÇÃO // ${sourceMission?.name||'MISSÃO'}`;
+    if((data.missions||[]).some(m=>m.name===name&&!m.done))return;
+    const m={name,desc:'Missão de recuperação criada pelo Sistema. Complete uma ação reduzida e registre evidência.',xp:Math.max(10,Math.round((Number(sourceMission?.xp)||20)*.5)),pd:Math.max(1,Math.round((Number(sourceMission?.pd)||2)*.5)),attr:sourceMission?.attr||'Disciplina',difficulty:'Recuperação',questRank:'R',validation:'action',evidence:'ação de recuperação concluída',done:false,recovery:true,createdAt:nowIso(),completionCondition:'Concluir a versão reduzida da ação e registrar evidência.'};
+    data.missions=data.missions||[];data.missions.push(m);
+    data.eventCenter.recoveries.unshift({id:uid('rec'),mission:name,reason,at:nowIso(),resolved:false});
+    addMessage('recovery','MISSÃO DE RECUPERAÇÃO LIBERADA',`${name} // ${reason}.`);persist();
+    if(typeof s62ShowSystemPanel==='function')s62ShowSystemPanel({type:'notice',title:'AVISO',body:`UMA <span class="red">MISSÃO DE RECUPERAÇÃO</span> FOI LIBERADA.<br><br>${esc(name)}`,actions:[{label:'CONTINUAR'}]});
+  }
+  window.s66CreateRecoveryMission=createRecovery;
+  function checkTimers(){
+    const ec=ensure();let changed=false;
+    for(const t of ec.timers){
+      if(t.done)continue; const m=data.missions?.[t.missionIndex];
+      if(!m||m.done){t.done=true;changed=true;continue}
+      if(Date.parse(t.deadlineAt)<=Date.now()){
+        t.done=true;m.failedAt=nowIso();m.missionState='recovery';changed=true;createRecovery(m,'Tempo da missão encerrado');
+      }
+    }
+    if(changed)persist();renderHub();
+  }
+  function claimReward(id){
+    const ec=ensure();const r=ec.rewards.find(x=>x.id===id);if(!r||r.claimed)return;
+    const beforeLevel=typeof levelInfo==='function'?levelInfo().level:1;
+    const beforePd=r.attr&&data.attrs?.[r.attr]?Number(data.attrs[r.attr].pd)||0:0;
+    data.xp=(Number(data.xp)||0)+r.xp;
+    if(r.attr&&data.attrs?.[r.attr]&&r.pd)data.attrs[r.attr].pd=Math.min(100,(Number(data.attrs[r.attr].pd)||0)+r.pd);
+    r.claimed=true;r.claimedAt=nowIso();
+    const afterLevel=typeof levelInfo==='function'?levelInfo().level:beforeLevel;
+    const afterPd=r.attr&&data.attrs?.[r.attr]?Number(data.attrs[r.attr].pd)||0:beforePd;
+    addMessage('system','RECOMPENSA RECEBIDA',`${r.mission} // +${r.xp} XP${r.pd?` // +${r.pd} PD ${r.attr}`:''}`);persist();
+    if(r.attr&&beforePd<100&&afterPd>=100&&typeof createEvolutionTrial==='function')createEvolutionTrial(r.attr);
+    if(typeof render==='function')render();renderHub();
+    if(afterLevel>beforeLevel&&typeof showSystemEvent==='function')showSystemEvent('SUBIU DE NÍVEL',`Você alcançou o nível ${afterLevel}. Rank atual: ${rank(afterLevel)}.`);
+    else if(typeof s62ShowSystemPanel==='function')s62ShowSystemPanel({type:'notice',title:'AVISO',body:`SUAS <span class="yellow">RECOMPENSAS</span> FORAM RECEBIDAS.<br><br>+${r.xp} XP${r.pd?` // +${r.pd} PD ${esc(r.attr)}`:''}`,actions:[{label:'CONTINUAR'}]});
+  }
+  window.s66ClaimReward=claimReward;
+  function markAllRead(){const ec=ensure();ec.messages.forEach(m=>m.read=true);persist();updateBadge();renderHub()}
+  window.s66MarkAllRead=markAllRead;
+  function unread(){return ensure().messages.filter(x=>!x.read).length}
+  function updateBadge(){
+    const btn=[...document.querySelectorAll('.bottomDock button')].find(b=>b.textContent.includes('MAIS'));if(!btn)return;
+    btn.style.position='relative';btn.querySelector('.s66MoreBadge')?.remove();const n=unread();if(n)btn.insertAdjacentHTML('beforeend',`<span class="s66MoreBadge">${Math.min(n,99)}</span>`);
+  }
+  function ensureView(){
+    let view=document.getElementById('view-events');if(view)return view;
+    view=document.createElement('section');view.className='dashView';view.id='view-events';view.innerHTML=`<div class="dashPanel"><div class="dashPanelTitle">CENTRAL DO SISTEMA</div><div class="dashPanelSub">EVENTOS, RECOMPENSAS, PRAZOS E RECUPERAÇÃO</div><div id="s66EventHub" style="margin-top:10px"></div></div>`;
+    document.querySelector('.dashboardMain')?.appendChild(view);return view;
+  }
+  function ensureMoreCard(){
+    const grid=document.querySelector('#moreSheet .moreGrid');if(!grid||document.getElementById('s66EventsCard'))return;
+    const b=document.createElement('button');b.id='s66EventsCard';b.className='moreCardAnime s66MoreCard';b.onclick=()=>window.s66OpenEventCenter();b.innerHTML=`<svg viewBox="0 0 24 24"><path d="M4 5h16v13H4z"/><path d="m4 7 8 6 8-6"/><circle cx="18" cy="5" r="2"/></svg><span>CENTRAL</span>`;grid.appendChild(b);
+  }
+  function fmtTime(iso){try{return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+  function remaining(iso){const ms=Date.parse(iso)-Date.now();if(ms<=0)return'ENCERRADO';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);return h?`${h}h ${m}m`:`${m}m ${s}s`}
+  function renderHub(){
+    const host=document.getElementById('s66EventHub');if(!host)return;const ec=ensure();
+    const pending=ec.rewards.filter(x=>!x.claimed).length;const activeTimers=ec.timers.filter(x=>!x.done&&Date.parse(x.deadlineAt)>Date.now()).length;const recs=ec.recoveries.filter(x=>!x.resolved).length;
+    let items=[];
+    if(activeTab==='all'||activeTab==='messages')items.push(...ec.messages.map(x=>({...x,kind:'message'})));
+    if(activeTab==='all'||activeTab==='rewards')items.push(...ec.rewards.filter(x=>!x.claimed).map(x=>({...x,kind:'reward',at:x.at})));
+    if(activeTab==='all'||activeTab==='timers')items.push(...ec.timers.filter(x=>!x.done).map(x=>({...x,kind:'timer',at:x.at})));
+    items.sort((a,b)=>Date.parse(b.at||0)-Date.parse(a.at||0));
+    const html=items.map(x=>{
+      if(x.kind==='reward')return `<div class="s66HubItem reward"><div class="s66HubKicker">RECOMPENSA PENDENTE</div><div class="s66HubTitle">${esc(x.mission)}</div><div class="s66HubBody">${x.xp} XP${x.pd?` + ${x.pd} PD · ${esc(x.attr)}`:''}</div><div class="s66HubActions"><button class="rewardBtn" onclick="s66ClaimReward('${x.id}')">RECEBER</button></div></div>`;
+      if(x.kind==='timer')return `<div class="s66HubItem timer"><div class="s66HubKicker">PRAZO ATIVO</div><div class="s66HubTitle">${esc(x.mission)}</div><div class="s66HubBody s66Countdown">${remaining(x.deadlineAt)}</div><div class="s66HubMeta">${esc(x.label||'TEMPORIZADOR')}</div></div>`;
+      const cls=x.type==='recovery'?' recovery':'';return `<div class="s66HubItem${x.read?'':' unread'}${cls}"><div class="s66HubKicker">${esc(String(x.type||'system').toUpperCase())}</div><div class="s66HubTitle">${esc(x.title)}</div><div class="s66HubBody">${esc(x.body)}</div><div class="s66HubMeta">${fmtTime(x.at)}</div></div>`;
+    }).join('')||`<div class="s66Empty">NENHUM EVENTO NESTA CATEGORIA.</div>`;
+    host.innerHTML=`<div class="s66EventHub"><div class="s66HubSummary"><div class="s66HubStat"><b>${unread()}</b><span>NÃO LIDAS</span></div><div class="s66HubStat"><b>${pending}</b><span>RECOMPENSAS</span></div><div class="s66HubStat"><b>${activeTimers}</b><span>PRAZOS</span></div></div><div class="s66HubTabs"><button class="s66HubTab ${activeTab==='all'?'active':''}" onclick="s66SetTab('all')">TODOS</button><button class="s66HubTab ${activeTab==='messages'?'active':''}" onclick="s66SetTab('messages')">MENSAGENS</button><button class="s66HubTab ${activeTab==='rewards'?'active':''}" onclick="s66SetTab('rewards')">RECOMPENSAS</button><button class="s66HubTab ${activeTab==='timers'?'active':''}" onclick="s66SetTab('timers')">PRAZOS</button></div><div class="s66HubActions"><button onclick="s66MarkAllRead()">MARCAR COMO LIDAS</button></div><div class="s66HubList">${html}</div><div class="s66PlanBox">PRÓXIMAS ETAPAS SALVAS NO SISTEMA: BOSSES & ARCOS → ARQUIVO DE CONHECIMENTO → IA ADAPTATIVA.</div></div>`;
+  }
+  window.s66SetTab=function(tab){activeTab=tab;renderHub()};
+  window.s66OpenEventCenter=function(){ensureView();if(typeof openMoreView==='function')openMoreView('events');markAllRead();renderHub()};
+
+  /* Recompensas de missões passam a ficar pendentes até serem recebidas. */
+  const prevComplete=window.completeMission;
+  if(typeof prevComplete==='function')window.completeMission=function(n,mult=1,score=null,proof=null){
+    const m=data.missions?.[n];if(!m||m.done)return prevComplete(n,mult,score,proof);
+    const xp=Math.max(0,Math.round((Number(m.xp)||0)*mult));const pd=Math.max(0,Math.round((Number(m.pd)||0)*mult));const attr=m.attr||'';const name=m.name||'MISSÃO';
+    const ox=m.xp,op=m.pd; m.xp=0;m.pd=0;
+    const oldToast=window.showToast;window.showToast=function(){};
+    try{prevComplete(n,mult,score,proof)}finally{m.xp=ox;m.pd=op;window.showToast=oldToast}
+    if(m.done&&(xp||pd)){addReward({mission:name,xp,pd,attr});if(typeof s62ShowSystemPanel==='function')setTimeout(()=>s62ShowSystemPanel({type:'notice',title:'AVISO',body:`MISSÃO CONCLUÍDA.<br><br>SUA <span class="yellow">RECOMPENSA</span> ESTÁ DISPONÍVEL NA CENTRAL DO SISTEMA.`,actions:[{label:'CONTINUAR'}]}),100)}
+    persist();renderHub();updateBadge();
+  };
+
+  /* Eventos importantes também entram na caixa de entrada. */
+  const prevShow=window.showSystemEvent;
+  if(typeof prevShow==='function')window.showSystemEvent=function(title,detail){
+    const t=String(title||'');if(!/VERSÃO INSTALADA/i.test(t))addMessage('system',t,String(detail||''));return prevShow(title,detail)
+  };
+
+  /* Laboratório: atalhos para testar os novos recursos sem tocar no progresso real. */
+  function injectTests(){
+    const grid=document.querySelector('#s62TestControls .s62TestControlsGrid');if(!grid||document.getElementById('s66TestInbox'))return;
+    const defs=[['s66TestInbox','CENTRAL / MENSAGEM',()=>addMessage('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.')],['s66TestReward','RECOMPENSA PENDENTE',()=>addReward({mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test'})],['s66TestTimer','TEMPORIZADOR REAL',()=>{if(!Array.isArray(data.missions))data.missions=[];let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}addTimer(i,2,'TESTE // 2 MINUTOS')}],['s66TestRecovery','RECUPERAÇÃO',()=>createRecovery({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório')]];
+    defs.forEach(([id,label,fn])=>{const b=document.createElement('button');b.id=id;b.dataset.test='';b.textContent=label;b.onclick=()=>{if(!isTest()){alert('Ative o Modo de Teste primeiro.');return}fn();renderHub();updateBadge()};grid.appendChild(b)});
+  }
+
+  ensure();ensureView();ensureMoreCard();injectTests();
+  if(!data.eventCenter.messages.some(x=>x.version===VERSION))addMessage('system','CENTRAL DO SISTEMA ATIVADA','Mensagens, recompensas pendentes, prazos e missões de recuperação agora possuem uma central própria.',{version:VERSION});
+  persist();updateBadge();renderHub();
+  const prevRefresh=window.refreshDashboard;if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);ensureMoreCard();injectTests();updateBadge();renderHub();return r};
+  setInterval(()=>{checkTimers();updateBadge();renderHub()},1000);
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
 </body></html>
