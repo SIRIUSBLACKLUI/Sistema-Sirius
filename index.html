@@ -9833,4 +9833,189 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.61 // EVENTOS SECRETOS & DECISÕES ===== -->
+<style id="sirius-v22261-secret-events-style">
+.s61EventOverlay{position:fixed;inset:0;z-index:980;display:none;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 50% 35%,rgba(24,86,160,.28),rgba(2,5,12,.90) 54%,rgba(0,0,0,.95));backdrop-filter:blur(9px)}
+.s61EventOverlay.show{display:flex;animation:s61Fade .18s ease}
+@keyframes s61Fade{from{opacity:0}to{opacity:1}}
+.s61EventPanel{width:min(520px,94vw);position:relative;overflow:hidden;padding:28px 22px 22px;border:1px solid rgba(85,222,255,.72);background:linear-gradient(180deg,rgba(10,49,91,.93),rgba(6,30,58,.95));box-shadow:0 0 0 1px rgba(100,225,255,.10),0 0 50px rgba(49,171,255,.25),inset 0 0 35px rgba(67,205,255,.08)}
+.s61EventPanel:before,.s61EventPanel:after{content:"";position:absolute;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,#6ee9ff,transparent);box-shadow:0 0 12px rgba(110,233,255,.8)}
+.s61EventPanel:before{top:18px}.s61EventPanel:after{bottom:18px;opacity:.55}
+.s61Ornament{position:absolute;width:28px;height:28px;border-color:#54dfff;opacity:.75}
+.s61Ornament.tl{left:10px;top:10px;border-left:2px solid;border-top:2px solid}.s61Ornament.tr{right:10px;top:10px;border-right:2px solid;border-top:2px solid}.s61Ornament.bl{left:10px;bottom:10px;border-left:2px solid;border-bottom:2px solid}.s61Ornament.br{right:10px;bottom:10px;border-right:2px solid;border-bottom:2px solid}
+.s61EventKicker{text-align:center;color:#ebfaff;font-size:10px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase}
+.s61EventKicker span{display:inline-grid;place-items:center;width:20px;height:20px;border:1px solid #b8ecff;border-radius:50%;margin-right:7px;color:#ff9cae;box-shadow:0 0 12px rgba(93,221,255,.30)}
+.s61EventTitle{text-align:center;margin-top:17px;color:#fff;font-size:24px;line-height:1.06;font-weight:1000;letter-spacing:.6px;text-shadow:0 0 16px rgba(142,225,255,.25)}
+.s61EventBody{text-align:center;margin:18px auto 0;max-width:390px;color:#eef8ff;font-size:13px;line-height:1.55;font-weight:700}
+.s61EventSecret{margin-top:8px;color:#f26cff;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}
+.s61EventNote{margin:15px auto 0;max-width:390px;text-align:center;color:#a9c4dc;font-size:9px;line-height:1.5;letter-spacing:.25px}
+.s61EventMeta{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:18px 0 0}
+.s61EventMeta div{border:1px solid rgba(86,193,242,.35);background:rgba(4,24,45,.55);padding:8px;text-align:center}.s61EventMeta b{display:block;color:#66e5ff;font-size:7px;letter-spacing:1.2px}.s61EventMeta span{display:block;margin-top:4px;color:#e8f4ff;font-size:9px;font-weight:900}
+.s61EventActions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.s61EventActions button{min-height:48px;border:1px solid #70dfff;background:rgba(8,36,65,.80);color:#eafaff;font-size:10px;font-weight:1000;letter-spacing:1.2px;box-shadow:inset 0 0 17px rgba(89,213,255,.07),0 0 12px rgba(42,167,234,.08)}
+.s61EventActions button.primary{background:linear-gradient(180deg,rgba(20,113,192,.95),rgba(7,66,122,.95));border-color:#84eaff}.s61EventActions button.reject{border-color:#7993aa;color:#c9d8e5;background:rgba(13,26,42,.82)}
+.s61EventActions button:active{transform:scale(.985)}
+.s61ToastLine{height:2px;background:linear-gradient(90deg,transparent,#63e5ff,transparent);margin:14px 0 0;opacity:.6}
+@media(max-width:640px){.s61EventPanel{padding:26px 18px 21px}.s61EventTitle{font-size:20px}.s61EventBody{font-size:11px}.s61EventActions{gap:10px}.s61EventActions button{min-height:44px;font-size:9px}.s61EventMeta{gap:5px}.s61EventMeta div{padding:7px 4px}}
+</style>
+
+<div class="s61EventOverlay" id="s61EventOverlay" onclick="if(event.target===this)s61CloseEvent()">
+  <div class="s61EventPanel" role="dialog" aria-modal="true" aria-labelledby="s61EventTitle">
+    <i class="s61Ornament tl"></i><i class="s61Ornament tr"></i><i class="s61Ornament bl"></i><i class="s61Ornament br"></i>
+    <div class="s61EventKicker"><span>!</span><span id="s61EventKickerText" style="display:inline;width:auto;height:auto;border:0;border-radius:0;margin:0;box-shadow:none;color:inherit">AVISO</span></div>
+    <div class="s61EventTitle" id="s61EventTitle">EVENTO DO SISTEMA</div>
+    <div class="s61EventBody" id="s61EventBody"></div>
+    <div class="s61EventSecret" id="s61EventSecret"></div>
+    <div class="s61EventMeta" id="s61EventMeta"></div>
+    <div class="s61EventNote" id="s61EventNote"></div>
+    <div class="s61EventActions" id="s61EventActions"></div>
+    <div class="s61ToastLine"></div>
+  </div>
+</div>
+
+<script id="sirius-v22261-secret-events-script">
+(function(){
+  const VERSION='v2.22.61';
+  const SECRET_ID='secret_coragem_do_fraco';
+  const SECRET_MISSION_NAME='A CORAGEM DO FRACO';
+
+  function ensureSecretState(){
+    data.secretEvents=data.secretEvents&&typeof data.secretEvents==='object'?data.secretEvents:{};
+    data.secretEvents[SECRET_ID]=data.secretEvents[SECRET_ID]||{unlocked:false,accepted:false,refused:false,completed:false,shown:false,refusedAtMissions:null};
+    return data.secretEvents[SECRET_ID];
+  }
+  function saveSecret(){
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){}
+  }
+  function completedMissions(){return Math.max(Number(data.completedMissions)||0,Array.isArray(data.missions)?data.missions.filter(m=>m.done).length:0)}
+  function playerLevel(){try{return Number((typeof levelInfo==='function'?levelInfo():{level:1}).level)||1}catch(e){return 1}}
+  function bestPd(){try{return Math.max(0,...officialAttributes.map(n=>Number(data.attrs?.[n]?.pd)||0))}catch(e){return 0}}
+  function requirementsMet(){return completedMissions()>=5 && (Number(data.streak)||0)>=3 && playerLevel()>=2}
+
+  function setEvent({kicker='AVISO',title='',body='',secret='',meta=[],note='',acceptLabel='ACEITAR',rejectLabel='RECUSAR',onAccept=null,onReject=null,onlyContinue=false}={}){
+    const overlay=document.getElementById('s61EventOverlay');if(!overlay)return;
+    document.getElementById('s61EventKickerText').textContent=kicker;
+    document.getElementById('s61EventTitle').textContent=title;
+    document.getElementById('s61EventBody').textContent=body;
+    document.getElementById('s61EventSecret').textContent=secret;
+    document.getElementById('s61EventMeta').innerHTML=(meta||[]).map(x=>`<div><b>${escapeHtml(x.label)}</b><span>${escapeHtml(x.value)}</span></div>`).join('');
+    document.getElementById('s61EventNote').textContent=note||'';
+    const actions=document.getElementById('s61EventActions');
+    if(onlyContinue){
+      actions.style.gridTemplateColumns='1fr';
+      actions.innerHTML='<button class="primary" id="s61AcceptBtn">CONTINUAR</button>';
+      document.getElementById('s61AcceptBtn').onclick=()=>{s61CloseEvent(); if(typeof onAccept==='function')onAccept()};
+    }else{
+      actions.style.gridTemplateColumns='1fr 1fr';
+      actions.innerHTML=`<button class="primary" id="s61AcceptBtn">${escapeHtml(acceptLabel)}</button><button class="reject" id="s61RejectBtn">${escapeHtml(rejectLabel)}</button>`;
+      document.getElementById('s61AcceptBtn').onclick=()=>{s61CloseEvent(); if(typeof onAccept==='function')onAccept()};
+      document.getElementById('s61RejectBtn').onclick=()=>{s61CloseEvent(); if(typeof onReject==='function')onReject()};
+    }
+    overlay.classList.add('show');
+  }
+
+  window.s61CloseEvent=function(){document.getElementById('s61EventOverlay')?.classList.remove('show')};
+
+  function addSecretMission(){
+    const state=ensureSecretState();
+    if(!Array.isArray(data.missions))data.missions=[];
+    if(!data.missions.some(m=>m.name===SECRET_MISSION_NAME)){
+      data.missions.push({
+        name:SECRET_MISSION_NAME,
+        desc:'Complete uma ação que você vinha evitando e registre a evidência do que foi feito.',
+        xp:60,pd:8,attr:'Disciplina',difficulty:'Especial',questRank:'A',validation:'action',evidence:'ação concreta concluída',done:false,
+        secret:true,secretId:SECRET_ID
+      });
+    }
+    state.accepted=true;state.refused=false;state.shown=true;
+    addSystemLog?.('secret','MISSÃO SECRETA ACEITA: '+SECRET_MISSION_NAME);
+    saveSecret();
+    if(typeof render==='function')render();
+    if(typeof showSystemEvent==='function')setTimeout(()=>showSystemEvent('MISSÃO SECRETA ACEITA',`${SECRET_MISSION_NAME} foi adicionada às suas missões.`),120);
+  }
+
+  function refuseSecretMission(){
+    const state=ensureSecretState();
+    state.refused=true;state.accepted=false;state.shown=true;state.refusedAtMissions=completedMissions();
+    addSystemLog?.('secret','MISSÃO SECRETA RECUSADA: '+SECRET_MISSION_NAME);
+    saveSecret();
+    if(typeof showSystemEvent==='function')setTimeout(()=>showSystemEvent('EVENTO ARQUIVADO','A missão secreta poderá reaparecer após novo avanço no sistema.'),120);
+  }
+
+  function offerSecretMission(){
+    setEvent({
+      kicker:'AVISO',
+      title:'QUEST SECRETA DISPONÍVEL',
+      body:'Você completou todos os requisitos necessários para uma missão secreta.',
+      secret:'“A CORAGEM DO FRACO”',
+      meta:[{label:'RANK',value:'A'},{label:'RECOMPENSA',value:'+60 XP'},{label:'ATRIBUTO',value:'+8 PD'}],
+      note:'Se recusar, a oportunidade será arquivada e poderá reaparecer após novo progresso. Nenhuma consequência física ou penalidade real é aplicada.',
+      acceptLabel:'ACEITAR',rejectLabel:'RECUSAR',onAccept:addSecretMission,onReject:refuseSecretMission
+    });
+  }
+
+  function unlockSecretMission(showNow=true){
+    const state=ensureSecretState();
+    if(state.unlocked)return;
+    state.unlocked=true;state.shown=false;
+    addSystemLog?.('secret','QUEST SECRETA DESBLOQUEADA: '+SECRET_MISSION_NAME);
+    saveSecret();
+    const reveal=()=>setEvent({
+      kicker:'AVISO',
+      title:'REQUISITOS CONCLUÍDOS',
+      body:'Você completou todos os requisitos necessários para a Quest Secreta',
+      secret:'“A CORAGEM DO FRACO”',
+      meta:[{label:'MISSÕES',value:'5+'},{label:'SEQUÊNCIA',value:'3 DIAS'},{label:'NÍVEL',value:'2+'}],
+      note:'Um novo evento especial foi liberado.',
+      onlyContinue:true,
+      onAccept:()=>setTimeout(offerSecretMission,170)
+    });
+    if(showNow)setTimeout(reveal,120);
+  }
+
+  function maybeTriggerSecret(){
+    const state=ensureSecretState();
+    if(!state.unlocked && requirementsMet())unlockSecretMission(true);
+    else if(state.unlocked && !state.accepted && state.refused){
+      const gained=completedMissions()-(Number(state.refusedAtMissions)||0);
+      if(gained>=2){state.refused=false;state.shown=false;saveSecret();setTimeout(offerSecretMission,140)}
+    }else if(state.unlocked && !state.accepted && !state.refused && !state.shown){
+      state.shown=true;saveSecret();setTimeout(offerSecretMission,140);
+    }
+  }
+
+  window.siriusOfferSpecialMission=function(config={}){
+    setEvent({
+      kicker:config.kicker||'AVISO',
+      title:config.title||'MISSÃO ESPECIAL',
+      body:config.body||'Um novo evento especial foi detectado pelo SIRIUS.',
+      secret:config.secret||'',
+      meta:Array.isArray(config.meta)?config.meta:[],
+      note:config.note||'Você pode aceitar ou recusar esta missão.',
+      acceptLabel:config.acceptLabel||'ACEITAR',rejectLabel:config.rejectLabel||'RECUSAR',
+      onAccept:typeof config.onAccept==='function'?config.onAccept:null,
+      onReject:typeof config.onReject==='function'?config.onReject:null
+    });
+  };
+  window.siriusUnlockSecretQuest=()=>unlockSecretMission(true);
+  window.siriusOfferSecretQuest=offerSecretMission;
+
+  const prevRender=render;
+  render=function(){prevRender();setTimeout(maybeTriggerSecret,50)};
+  setTimeout(maybeTriggerSecret,450);
+
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      addSystemLog?.('version',`VERSÃO INSTALADA: ${VERSION} // EVENTOS SECRETOS, AVISOS E DECISÕES DE MISSÃO.`);
+      saveSecret();
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
