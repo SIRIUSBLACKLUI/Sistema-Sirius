@@ -10018,4 +10018,243 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.62 // SYSTEM MESSAGE PANELS + SAFE TEST SANDBOX ===== -->
+<style id="sirius-v22262-system-panels-style">
+:root{--s62-cyan:#59e6ff;--s62-blue:#0b4f8d;--s62-deep:#06192f;--s62-line:rgba(90,226,255,.68)}
+body.s62-test-active::after{content:"MODO DE TESTE";position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:9998;padding:5px 8px;border:1px solid #ffd86a;background:#211805e8;color:#ffe28a;font:900 8px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:1.2px;box-shadow:0 0 16px #ffd65a33;pointer-events:none}
+.s62SystemOverlay{position:fixed;inset:0;z-index:9995;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,4,12,.64);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .18s ease}
+.s62SystemOverlay.show{opacity:1;pointer-events:auto}
+.s62SystemPanel{width:min(92vw,520px);position:relative;overflow:hidden;border:1px solid rgba(81,222,255,.62);background:linear-gradient(180deg,rgba(8,54,98,.97),rgba(8,42,79,.97));box-shadow:0 0 32px rgba(58,202,255,.25),inset 0 0 44px rgba(59,180,255,.11);padding:27px 22px 24px;transform:translateY(8px) scale(.985);transition:.18s ease;color:#f6fbff;text-align:center}
+.s62SystemOverlay.show .s62SystemPanel{transform:none}
+.s62SystemPanel::before,.s62SystemPanel::after{content:"";position:absolute;inset:0;pointer-events:none}
+.s62SystemPanel::before{background:linear-gradient(90deg,transparent 3%,rgba(93,230,255,.44) 3.2% 3.5%,transparent 3.7% 96.3%,rgba(93,230,255,.44) 96.5% 96.8%,transparent 97%),linear-gradient(180deg,transparent 13%,rgba(105,225,255,.36) 13.2% 13.5%,transparent 13.8% 85%,rgba(105,225,255,.22) 85.2% 85.4%,transparent 85.7%)}
+.s62SystemPanel::after{background:radial-gradient(circle at 50% -8%,rgba(91,232,255,.20),transparent 31%),linear-gradient(145deg,transparent 0 44%,rgba(255,255,255,.035) 50%,transparent 57%)}
+.s62Corners{position:absolute;inset:8px;pointer-events:none;z-index:3}
+.s62Corner{position:absolute;width:42px;height:42px;opacity:.9}
+.s62Corner::before,.s62Corner::after{content:"";position:absolute;border-color:#58e6ff;border-style:solid;filter:drop-shadow(0 0 4px rgba(88,230,255,.5))}
+.s62Corner::before{width:29px;height:13px;border-width:2px 0 0 2px;border-radius:15px 0 0 0}
+.s62Corner::after{width:16px;height:29px;border-width:2px 0 0 2px;border-radius:15px 0 0 0;left:7px;top:7px}
+.s62Corner.tl{left:0;top:0}.s62Corner.tr{right:0;top:0;transform:scaleX(-1)}.s62Corner.bl{left:0;bottom:0;transform:scaleY(-1)}.s62Corner.br{right:0;bottom:0;transform:scale(-1)}
+.s62Ornament{position:relative;z-index:4;margin:-11px auto 10px;width:115px;height:27px;opacity:.8}
+.s62Ornament::before{content:"◜◝  ◇  ◜◝";position:absolute;inset:0;display:grid;place-items:center;color:#6ce9ff;font-size:17px;letter-spacing:2px;text-shadow:0 0 8px #49ddff}
+.s62TopRule{position:relative;z-index:4;height:1px;background:linear-gradient(90deg,transparent,#61e7ff 25%,#61e7ff 75%,transparent);margin:2px 0 17px;box-shadow:0 0 8px #5ee5ff66}
+.s62Header{position:relative;z-index:4;display:flex;align-items:center;justify-content:center;gap:8px;font-family:Impact,"Arial Narrow",sans-serif;font-stretch:condensed;font-size:28px;letter-spacing:.7px;font-weight:500;text-transform:uppercase;text-shadow:0 2px 3px #00152c,0 0 10px rgba(255,255,255,.14)}
+.s62HeaderIcon{width:31px;height:31px;border-radius:50%;border:2px solid #eefaff;display:grid;place-items:center;font-family:Arial,sans-serif;font-size:20px;box-shadow:0 0 12px rgba(82,222,255,.45);flex:0 0 31px}
+.s62Close{position:absolute;right:18px;top:15px;z-index:7;border:0;background:transparent;color:#dff8ff;font-size:24px;line-height:1;padding:2px 5px;text-shadow:0 0 8px #61e6ff;cursor:pointer}
+.s62Body{position:relative;z-index:4;margin:17px auto 0;max-width:430px;font-family:Impact,"Arial Narrow",sans-serif;font-size:19px;line-height:1.28;letter-spacing:.15px;text-transform:uppercase;text-shadow:0 2px 3px #001226}
+.s62Body.small{font-size:17px}.s62Body .green{color:#74e54b}.s62Body .red{color:#ff4c3d}.s62Body .yellow{color:#ffd339}.s62Body .pink{color:#ff48df}.s62Body .cyan{color:#66ebff}
+.s62QuestTitle{position:relative;z-index:4;margin-top:12px;font-family:Impact,"Arial Narrow",sans-serif;font-size:16px;letter-spacing:.4px;text-transform:uppercase;color:#f7fbff;text-align:left}
+.s62Objectives{position:relative;z-index:4;margin:22px auto 4px;max-width:390px;text-align:left}
+.s62ObjectivesTitle{text-align:center;color:#7cf13e;font-family:Impact,"Arial Narrow",sans-serif;font-size:22px;letter-spacing:.5px;margin-bottom:14px}
+.s62Obj{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:7px 0;font-family:Impact,"Arial Narrow",sans-serif;font-size:17px;text-transform:uppercase;text-shadow:0 2px 3px #00152a}
+.s62Obj .state{color:#f4fbff}.s62Obj .count{font-family:Georgia,serif;font-size:18px;font-weight:400;white-space:nowrap}
+.s62Warning{position:relative;z-index:4;margin:22px auto 0;max-width:400px;font-family:Impact,"Arial Narrow",sans-serif;font-size:16px;line-height:1.35;text-transform:uppercase}.s62Warning b{color:#ff4b3d}
+.s62TimerIcon{position:relative;z-index:4;width:74px;height:74px;border:6px solid currentColor;border-radius:50%;margin:18px auto 0;color:#d8fff1;box-shadow:0 0 17px currentColor,inset 0 0 12px rgba(255,255,255,.15)}
+.s62TimerIcon::before{content:"";position:absolute;width:4px;height:23px;background:currentColor;left:50%;top:12px;transform:translateX(-50%);border-radius:4px;transform-origin:bottom center}.s62TimerIcon::after{content:"";position:absolute;width:15px;height:6px;border:4px solid currentColor;border-bottom:0;left:50%;top:-15px;transform:translateX(-50%);border-radius:5px 5px 0 0}
+.s62TimerIcon i{position:absolute;width:4px;height:17px;background:currentColor;left:50%;top:30px;transform-origin:top center;transform:rotate(118deg);border-radius:3px}
+.s62Actions{position:relative;z-index:4;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:23px auto 0;max-width:320px}.s62Actions.one{grid-template-columns:1fr}.s62Actions button{min-height:44px;border:1px solid #9af3ff;background:linear-gradient(180deg,rgba(33,125,172,.58),rgba(10,65,110,.68));color:#f1fbff;font-family:Impact,"Arial Narrow",sans-serif;font-size:16px;letter-spacing:.6px;text-transform:uppercase;box-shadow:0 0 10px rgba(83,230,255,.25),inset 0 0 12px rgba(255,255,255,.05)}
+.s62MessageStrip{position:relative;z-index:4;margin-top:14px;padding-top:14px;border-top:1px solid rgba(101,229,255,.4)}
+.s62Unread{color:#ff4a3d}
+.s62TestControls{margin-top:10px;border:1px solid #315b80;background:#06111f;padding:10px}
+.s62TestControlsTitle{font-size:8px;letter-spacing:1.4px;color:#7ae7ff;font-weight:1000;margin-bottom:8px}
+.s62TestControlsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.s62TestControlsGrid button{border:1px solid #2d658b;background:#07182a;color:#dff8ff;padding:8px 6px;font-size:7px;font-weight:900;letter-spacing:.6px}.s62TestControlsGrid button:disabled{opacity:.38}
+.s62TestNotice{font-size:7px;line-height:1.45;color:#91a8c7;margin-top:8px}
+@media(max-width:420px){.s62SystemPanel{padding:25px 17px 21px}.s62Header{font-size:24px}.s62Body{font-size:17px}.s62Body.small{font-size:15px}.s62Obj{font-size:15px}.s62ObjectivesTitle{font-size:19px}.s62QuestTitle{font-size:14px}.s62Warning{font-size:14px}.s62Actions button{font-size:14px}.s62TestControlsGrid{grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="s62SystemOverlay" id="s62SystemOverlay" aria-hidden="true">
+  <div class="s62SystemPanel" id="s62SystemPanel" role="dialog" aria-modal="true">
+    <div class="s62Corners"><i class="s62Corner tl"></i><i class="s62Corner tr"></i><i class="s62Corner bl"></i><i class="s62Corner br"></i></div>
+    <button class="s62Close" id="s62SystemClose" aria-label="Fechar">×</button>
+    <div class="s62Ornament"></div>
+    <div class="s62TopRule"></div>
+    <div class="s62Header"><span class="s62HeaderIcon" id="s62HeaderIcon">!</span><span id="s62HeaderText">AVISO</span></div>
+    <div id="s62SystemContent"></div>
+    <div class="s62Actions one" id="s62SystemActions"><button>OK</button></div>
+  </div>
+</div>
+
+<script id="sirius-v22262-system-panels-script">
+(function(){
+  const VERSION='v2.22.62';
+  const TEST_KEY='SIRIUS_TEST_LAB_V1';
+  const TEST_DATA_KEY='SIRIUS_TEST_SANDBOX_V62';
+  const REAL_SNAPSHOT_KEY='SIRIUS_TEST_REAL_SNAPSHOT_V62';
+  const REAL_STORAGE_KEY=typeof STORAGE_KEY==='string'?STORAGE_KEY:'siriusSystem';
+  const originalGet=Storage.prototype.getItem;
+  const originalSet=Storage.prototype.setItem;
+  const originalRemove=Storage.prototype.removeItem;
+  let sandboxActive=false;
+
+  function rawGet(key){return originalGet.call(localStorage,key)}
+  function rawSet(key,val){return originalSet.call(localStorage,key,String(val))}
+  function rawRemove(key){return originalRemove.call(localStorage,key)}
+
+  Storage.prototype.getItem=function(key){
+    if(this===localStorage && sandboxActive && key===REAL_STORAGE_KEY){return rawGet(TEST_DATA_KEY)}
+    return originalGet.call(this,key);
+  };
+  Storage.prototype.setItem=function(key,val){
+    if(this===localStorage && sandboxActive && key===REAL_STORAGE_KEY){return rawSet(TEST_DATA_KEY,val)}
+    return originalSet.call(this,key,val);
+  };
+  Storage.prototype.removeItem=function(key){
+    if(this===localStorage && sandboxActive && key===REAL_STORAGE_KEY){return rawRemove(TEST_DATA_KEY)}
+    return originalRemove.call(this,key);
+  };
+
+  function clone(v){try{return structuredClone(v)}catch(e){return JSON.parse(JSON.stringify(v))}}
+  function readLab(){try{return JSON.parse(rawGet(TEST_KEY)||'null')||{enabled:false,runs:[]}}catch(e){return{enabled:false,runs:[]}}}
+  function writeLab(lab){rawSet(TEST_KEY,JSON.stringify(lab));renderTest62()}
+  function testEnabled(){return sandboxActive===true}
+
+  // Safety: reopening the app always returns to real mode.
+  (function recoverStaleTest(){
+    const lab=readLab();
+    if(lab.enabled){lab.enabled=false;writeLab(lab)}
+    rawRemove(TEST_DATA_KEY);rawRemove(REAL_SNAPSHOT_KEY);
+  })();
+
+  function makeSandboxData(){
+    const t=clone(data);
+    t.xp=Math.max(Number(t.xp)||0,3600);
+    t.streak=Math.max(Number(t.streak)||0,30);
+    t.completedMissions=Math.max(Number(t.completedMissions)||0,999);
+    if(Array.isArray(t.missions))t.missions=t.missions.map(m=>({...m,done:true}));
+    if(t.attrs&&typeof t.attrs==='object')Object.keys(t.attrs).forEach(k=>{t.attrs[k]=t.attrs[k]||{};t.attrs[k].pd=Math.max(Number(t.attrs[k].pd)||0,100);t.attrs[k].level=Math.max(Number(t.attrs[k].level)||1,5)});
+    t.systemLog=Array.isArray(t.systemLog)?t.systemLog:[];
+    t.cosmetics=t.cosmetics||{};
+    t.cosmetics.unlocked=Array.from(new Set([...(t.cosmetics.unlocked||[]),'icon_awakened','frame_routine','title_ascending','banner_specialist']));
+    t.cosmetics.iconRewards=Array.from(new Set([...(t.cosmetics.iconRewards||[]),'icon_nuvem_bobona','icon_fruta_ardente','icon_adaga_rubra','icon_kitsune_sakura','icon_mao_maldita','icon_nuvem_vermelha']));
+    return t;
+  }
+
+  function activateSandbox(){
+    if(sandboxActive)return;
+    const realRaw=rawGet(REAL_STORAGE_KEY)||JSON.stringify(data);
+    rawSet(REAL_SNAPSHOT_KEY,realRaw);
+    const test=makeSandboxData();
+    rawSet(TEST_DATA_KEY,JSON.stringify(test));
+    sandboxActive=true;
+    data=test;
+    const lab=readLab();lab.enabled=true;lab.runs=Array.isArray(lab.runs)?lab.runs:[];writeLab(lab);
+    document.body.classList.add('s62-test-active');
+    try{if(typeof render==='function')render()}catch(e){}
+    renderTest62();
+    showPanel({type:'notice',title:'AVISO',body:`O SISTEMA ENTROU NO <span class="yellow">MODO DE TESTE</span>.<br><br>TODOS OS DESBLOQUEIOS FORAM LIBERADOS TEMPORARIAMENTE.<br>ALTERAÇÕES DE TESTE NÃO SERÃO SALVAS NO PROGRESSO REAL.`,actions:[{label:'CONTINUAR'}]});
+  }
+
+  function deactivateSandbox(){
+    if(!sandboxActive){const lab=readLab();lab.enabled=false;writeLab(lab);return}
+    const realRaw=rawGet(REAL_SNAPSHOT_KEY);
+    sandboxActive=false;
+    if(realRaw){try{data=JSON.parse(realRaw)}catch(e){}}
+    rawRemove(TEST_DATA_KEY);rawRemove(REAL_SNAPSHOT_KEY);
+    const lab=readLab();lab.enabled=false;writeLab(lab);
+    document.body.classList.remove('s62-test-active');
+    try{if(typeof render==='function')render()}catch(e){}
+    renderTest62();
+    showPanel({type:'notice',title:'AVISO',body:'MODO DE TESTE ENCERRADO.<br><br><span class="green">O PROGRESSO REAL FOI RESTAURADO.</span>',actions:[{label:'OK'}]});
+  }
+
+  window.toggleSiriusTestMode=function(){testEnabled()?deactivateSandbox():activateSandbox()};
+  window.clearSiriusTestData=function(){
+    if(testEnabled())deactivateSandbox();
+    rawRemove(TEST_DATA_KEY);rawRemove(REAL_SNAPSHOT_KEY);
+    const lab=readLab();lab.runs=[];lab.enabled=false;writeLab(lab);
+    if(typeof showToast==='function')showToast('DADOS DE TESTE REMOVIDOS');
+  };
+  window.runSiriusTestMission=function(){
+    if(!testEnabled()){alert('Ative o Modo de Teste primeiro.');return}
+    const lab=readLab();lab.runs.push({id:'test_'+Date.now(),name:'Quest diária simulada',createdAt:new Date().toISOString(),result:'simulated'});writeLab(lab);
+    window.s62TestQuestOrientation();
+  };
+
+  function panelEls(){return{overlay:document.getElementById('s62SystemOverlay'),panel:document.getElementById('s62SystemPanel'),head:document.getElementById('s62HeaderText'),icon:document.getElementById('s62HeaderIcon'),content:document.getElementById('s62SystemContent'),actions:document.getElementById('s62SystemActions')}}
+  function closePanel(){const e=panelEls();e.overlay?.classList.remove('show');e.overlay?.setAttribute('aria-hidden','true')}
+  window.s62CloseSystemPanel=closePanel;
+  document.getElementById('s62SystemClose').onclick=closePanel;
+  document.getElementById('s62SystemOverlay').addEventListener('click',e=>{if(e.target.id==='s62SystemOverlay')closePanel()});
+
+  function showPanel(cfg={}){
+    const e=panelEls();if(!e.overlay)return;
+    e.head.textContent=cfg.title||'AVISO';
+    e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');
+    e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;
+    const actions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'OK'}];
+    e.actions.className='s62Actions'+(actions.length===1?' one':'');
+    e.actions.innerHTML=actions.map((a,i)=>`<button data-i="${i}">${String(a.label||'OK').replace(/[<>]/g,'')}</button>`).join('');
+    [...e.actions.querySelectorAll('button')].forEach((b,i)=>b.onclick=()=>{closePanel();const a=actions[i];if(a&&typeof a.onClick==='function')setTimeout(a.onClick,110)});
+    e.overlay.classList.add('show');e.overlay.setAttribute('aria-hidden','false');
+  }
+  window.s62ShowSystemPanel=showPanel;
+
+  window.s62TestNoticeGrowth=function(){showPanel({type:'notice',title:'AVISO',body:`O SISTEMA VAI AJUDAR O <span class="green">JOGADOR</span><br>EM SEU CRESCIMENTO.`,actions:[{label:'OK'}]})};
+  window.s62TestNoticePenalty=function(){showPanel({type:'notice',title:'AVISO',body:`SE O JOGADOR IGNORAR UMA DIRETRIZ DO SISTEMA,<br>PODERÁ HAVER UMA <span class="red">CONSEQUÊNCIA DE JOGO</span>.`,actions:[{label:'ENTENDI'}]})};
+  window.s62TestRewards=function(){showPanel({type:'notice',title:'AVISO',body:`SUAS <span class="yellow">RECOMPENSAS</span> CHEGARAM.`,actions:[{label:'RECEBER'}]})};
+  window.s62TestMessage=function(){showPanel({type:'message',title:'MENSAGEM',html:`<div class="s62MessageStrip"><div class="s62Body small">A [QUEST DIÁRIA: PREPARANDO-SE PARA FICAR MAIS FORTE] CHEGOU <span class="s62Unread">(NÃO LIDA)</span></div></div>`,actions:[{label:'ABRIR QUEST',onClick:()=>window.s62TestQuestOrientation()}]})};
+  window.s62TestPenaltyZone=function(){showPanel({type:'notice',title:'AVISO',body:`VOCÊ NÃO CONCLUIU A QUEST DIÁRIA.<br><br>UMA <span class="red">MISSÃO DE RECUPERAÇÃO</span> FOI LIBERADA POR TEMPO LIMITADO.`,actions:[{label:'VER MISSÃO'}]})};
+  window.s62TestRewardsTimer=function(){showPanel({type:'notice',title:'AVISO',html:`<div class="s62Body">TEMPO RESTANTE DA QUEST</div><div class="s62TimerIcon" style="color:#ffe85f"><i></i></div>`,actions:[{label:'OK'}]})};
+  window.s62TestSecret=function(){
+    if(typeof siriusUnlockSecretQuest==='function')siriusUnlockSecretQuest();
+    else showPanel({type:'notice',title:'AVISO',body:`VOCÊ COMPLETOU OS REQUISITOS PARA UMA <span class="pink">QUEST SECRETA</span>.`,actions:[{label:'CONTINUAR'}]});
+  };
+  window.s62TestQuestOrientation=function(){
+    showPanel({type:'quest',title:'ORIENTAÇÃO DE QUEST',html:`
+      <div class="s62QuestTitle">QUEST DIÁRIA — PREPARANDO-SE PARA FICAR MAIS FORTE</div>
+      <div class="s62Objectives"><div class="s62ObjectivesTitle">OBJETIVOS</div>
+        <div class="s62Obj"><span class="state">[INCOMPLETO] FLEXÕES</span><span class="count">[0/20]</span></div>
+        <div class="s62Obj"><span class="state">[INCOMPLETO] ABDOMINAIS</span><span class="count">[0/20]</span></div>
+        <div class="s62Obj"><span class="state">[INCOMPLETO] AGACHAMENTOS</span><span class="count">[0/20]</span></div>
+        <div class="s62Obj"><span class="state">[INCOMPLETO] CAMINHAR / CORRER</span><span class="count">[0/2 km]</span></div>
+      </div>
+      <div class="s62Warning"><b>ATENÇÃO!</b> — A FALHA NA CONCLUSÃO DESTA QUEST PODERÁ GERAR UMA MISSÃO DE RECUPERAÇÃO ASSOCIADA.</div>
+      <div class="s62TimerIcon"><i></i></div>`,actions:[{label:'ACEITAR'},{label:'FECHAR'}]});
+  };
+
+  function injectControls(){
+    const lab=document.querySelector('#view-data .testLab');if(!lab)return;
+    let box=document.getElementById('s62TestControls');if(!box){
+      box=document.createElement('div');box.id='s62TestControls';box.className='s62TestControls';
+      box.innerHTML=`<div class="s62TestControlsTitle">PAINÉIS DO SISTEMA // TESTE VISUAL</div><div class="s62TestControlsGrid">
+        <button data-test onclick="s62TestQuestOrientation()">ORIENTAÇÃO DE QUEST</button>
+        <button data-test onclick="s62TestMessage()">MENSAGEM</button>
+        <button data-test onclick="s62TestNoticeGrowth()">AVISO DO SISTEMA</button>
+        <button data-test onclick="s62TestRewards()">RECOMPENSA</button>
+        <button data-test onclick="s62TestSecret()">QUEST SECRETA</button>
+        <button data-test onclick="s62TestPenaltyZone()">RECUPERAÇÃO</button>
+        <button data-test onclick="s62TestNoticePenalty()">PENALIDADE</button>
+        <button data-test onclick="s62TestRewardsTimer()">TEMPORIZADOR</button>
+      </div><div class="s62TestNotice">Os botões só ficam ativos no Modo de Teste. As ações são executadas no sandbox e descartadas ao sair do teste.</div>`;
+      lab.appendChild(box);
+    }
+    renderTest62();
+  }
+
+  function renderTest62(){
+    const lab=readLab();
+    const state=document.getElementById('testModeState'),badge=document.getElementById('testModeBadge'),btn=document.getElementById('testModeToggle');
+    if(state)state.textContent=testEnabled()?`Sandbox ativo // tudo liberado temporariamente. ${lab.runs.length||0} simulação(ões). Nada será gravado no progresso real.`:'Teste novas telas em um sandbox separado. Ao desativar, o progresso real é restaurado.';
+    if(badge)badge.textContent=testEnabled()?'MODO DE TESTE ATIVO // SANDBOX':'MODO REAL ATIVO';
+    if(btn)btn.textContent=testEnabled()?'DESATIVAR TESTE':'ATIVAR TESTE';
+    document.querySelectorAll('#s62TestControls [data-test]').forEach(b=>b.disabled=!testEnabled());
+  }
+  window.renderTestMode=function(){renderTest62()};
+  window.s62IsTestMode=()=>testEnabled();
+
+  injectControls();setTimeout(injectControls,350);setTimeout(injectControls,1200);
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(item=>String(item?.text||item?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // PAINÉIS DO SISTEMA + SANDBOX DE TESTE SEGURO.`);
+      if(typeof localStorage!=='undefined')rawSet(REAL_STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1900);
+})();
+</script>
+
 </body></html>
