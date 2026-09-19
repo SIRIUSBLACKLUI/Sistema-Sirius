@@ -10892,4 +10892,171 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.67 // PROPOSTA FIX + BADGES + RECOMPENSAS + DUNGEONS ===== -->
+<style id="sirius-v22267-reward-dungeon-style">
+/* Terminal: a decisão da proposta permanece sempre visível acima do compositor. */
+.s67ProposalDock{display:none;flex:0 0 auto;border-top:1px solid #6e55c8;border-bottom:1px solid #2f6a96;background:linear-gradient(180deg,#120d2b,#061426);padding:9px 11px;box-shadow:0 -5px 20px #0007;position:relative;z-index:6}
+.s67ProposalDock.show{display:block}.s67ProposalDockKicker{font-size:7px;letter-spacing:1.4px;color:#b39aff;font-weight:1000}.s67ProposalDockTitle{font-size:11px;font-weight:1000;color:#f2f5ff;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s67ProposalDockActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}.s67ProposalDockActions button{min-height:38px;border:1px solid #5d4aa5;background:#17102c;color:#fff;font-size:7px;font-weight:1000;letter-spacing:.8px}.s67ProposalDockActions .accept{border-color:#53dfff;background:#0a304d}.s67ProposalDockActions .reject{border-color:#6c3144;background:#1a0c12;color:#ffb6c5}
+.aiMessages .aiProposal{max-height:none!important;overflow:visible!important}.aiMessages .aiProposalActions{position:static!important;bottom:auto!important;background:none!important;padding:0!important;margin:10px 0 0!important}
+/* Badge interno: identifica a aba que contém a pendência. */
+#moreSheet .moreCardAnime{position:relative}.s67InnerBadge{position:absolute;right:8px;top:7px;min-width:18px;height:18px;padding:0 5px;border-radius:10px;background:#ff405f;color:#fff;display:grid;place-items:center;font-size:7px;font-weight:1000;line-height:1;box-shadow:0 0 12px #ff405f77;z-index:9}.s67TabBadge{display:inline-grid;place-items:center;min-width:14px;height:14px;padding:0 4px;border-radius:8px;background:#ff405f;color:white;font-size:6px;margin-left:4px;vertical-align:middle;box-shadow:0 0 8px #ff405f55}
+/* Mensagem de recompensa no modelo visual aprovado. */
+.s67RewardMessage{position:relative;z-index:4;margin:18px auto 0;max-width:430px;font-family:Impact,"Arial Narrow",sans-serif;text-transform:uppercase;text-shadow:0 2px 3px #001226}.s67RewardMessage .line{font-size:19px;line-height:1.3;margin:14px 0}.s67RewardMessage .question{font-size:21px;margin-top:24px}.s67RewardChoiceIntro{position:relative;z-index:4;margin:14px 0 8px;text-align:left}.s67RewardChoiceIntro b{display:block;font-family:Impact,"Arial Narrow",sans-serif;font-size:20px}.s67RewardChoiceIntro span{display:block;font-family:Impact,"Arial Narrow",sans-serif;font-size:14px;margin-top:8px;color:#eef8ff}.s67RewardOptions{display:grid;gap:9px;margin:14px 0 3px;position:relative;z-index:4}.s67RewardOption{width:100%;border:1px solid #58dfff;background:linear-gradient(90deg,#0a5b76aa,#16799aaa);color:#f4ffff;padding:13px 12px;text-align:left;font-family:Impact,"Arial Narrow",sans-serif;font-size:15px;letter-spacing:.3px;text-transform:uppercase;box-shadow:inset 0 0 20px #6ee8ff10}.s67RewardOption.selected{border-color:#bdfbff;box-shadow:0 0 15px #5ce8ff66,inset 0 0 18px #70eeff22}.s67RewardOption small{display:block;margin-top:4px;color:#a8dbe9;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:8px;letter-spacing:.5px;text-transform:none}.s67AcceptQuestion{font-family:Impact,"Arial Narrow",sans-serif;font-size:20px;text-transform:uppercase;margin:18px 0 0;position:relative;z-index:4}
+/* Dungeon / inventário. */
+.s67DungeonHub{display:grid;gap:9px}.s67DungeonSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.s67DungeonStat{border:1px solid #2d658e;background:#061522;padding:9px;text-align:center}.s67DungeonStat b{display:block;font-size:18px;color:#effbff}.s67DungeonStat span{font-size:6px;color:#70e5ff;letter-spacing:.8px}.s67DungeonItem{border:1px solid #32658d;background:linear-gradient(180deg,#071728,#05101d);padding:10px}.s67DungeonItem.key{border-color:#678f35}.s67DungeonKicker{font-size:7px;color:#8de65e;letter-spacing:1.1px;font-weight:1000}.s67DungeonTitle{font-size:11px;font-weight:1000;margin-top:4px}.s67DungeonBody{font-size:8px;line-height:1.45;color:#a8bbd1;margin-top:4px}.s67DungeonActions{display:flex;gap:6px;margin-top:8px}.s67DungeonActions button{flex:1;border:1px solid #50dfff;background:#0a2942;color:#eafcff;padding:8px;font-size:7px;font-weight:1000}.s67KeyCard{display:grid;grid-template-columns:46px 1fr;gap:9px;align-items:center}.s67KeyIcon{height:46px;border:1px solid #6db13b;background:#122416;display:grid;place-items:center;font-size:24px;color:#b7ff70;text-shadow:0 0 10px #8cff55}.s67DropCard{position:relative;z-index:4;border:1px solid #5fdfff;background:#082743;padding:14px;margin:17px auto 0;text-align:left;max-width:390px}.s67DropCard b{font-family:Impact,"Arial Narrow",sans-serif;font-size:18px}.s67DropCard span{display:block;font-size:10px;line-height:1.5;color:#c0d7e7;margin-top:7px}
+@media(max-width:420px){.s67ProposalDockActions{grid-template-columns:1fr 1fr}.s67ProposalDockActions .reject{grid-column:1/-1}.s67RewardMessage .line{font-size:17px}.s67RewardMessage .question{font-size:19px}.s67RewardOption{font-size:14px}.s67DungeonSummary{grid-template-columns:repeat(3,1fr)}}
+</style>
+<script id="sirius-v22267-reward-dungeon-script">
+(function(){
+  const VERSION='v2.22.67';
+  const KEY_CLASSES=['E','D','C','B','A','S'];
+  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  const persist=()=>{try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}};
+  const uid=p=>`${p}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+
+  function ensureDungeon(){
+    data.dungeonSystem=data.dungeonSystem&&typeof data.dungeonSystem==='object'?data.dungeonSystem:{};
+    data.dungeonSystem.keys=Array.isArray(data.dungeonSystem.keys)?data.dungeonSystem.keys:[];
+    data.dungeonSystem.opened=Array.isArray(data.dungeonSystem.opened)?data.dungeonSystem.opened:[];
+    data.dungeonSystem.boxesOpened=Number(data.dungeonSystem.boxesOpened)||0;
+    return data.dungeonSystem;
+  }
+  function eventCenter(){
+    data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};
+    data.eventCenter.messages=Array.isArray(data.eventCenter.messages)?data.eventCenter.messages:[];
+    data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];
+    data.eventCenter.timers=Array.isArray(data.eventCenter.timers)?data.eventCenter.timers:[];
+    return data.eventCenter;
+  }
+  function newestPendingReward(){return eventCenter().rewards.find(r=>!r.claimed)||null}
+  function rewardById(id){return eventCenter().rewards.find(r=>r.id===id)||null}
+  function countUnread(){return eventCenter().messages.filter(m=>!m.read).length}
+  function countPendingRewards(){return eventCenter().rewards.filter(r=>!r.claimed).length}
+  function countActiveTimers(){return eventCenter().timers.filter(t=>!t.done&&Date.parse(t.deadlineAt)>Date.now()).length}
+
+  /* ===== 1) TERMINAL: proposta sempre com controles visíveis ===== */
+  function ensureProposalDock(){
+    const overlay=document.getElementById('aiChatOverlay'),composer=document.getElementById('aiComposer');if(!overlay||!composer)return null;
+    let dock=document.getElementById('s67ProposalDock');if(!dock){dock=document.createElement('div');dock.id='s67ProposalDock';dock.className='s67ProposalDock';composer.parentNode.insertBefore(dock,composer)}return dock;
+  }
+  function syncProposalDock(){
+    const dock=ensureProposalDock();if(!dock)return;const p=data.pendingAiProposal,m=p?.mission||{};
+    if(!p){dock.classList.remove('show');dock.innerHTML='';return}
+    dock.innerHTML=`<div class="s67ProposalDockKicker">[ SIRIUS // PROPOSTA DE MISSÃO ]</div><div class="s67ProposalDockTitle">${esc(m.name||'MISSÃO')} // ${esc(m.attr||'-')} // ${esc(m.difficulty||'-')}</div><div class="s67ProposalDockActions"><button class="accept" onclick="approveAiMissionProposal()">ACEITAR</button><button onclick="openAdjustProposal()">AJUSTAR</button><button class="reject" onclick="rejectAiMissionProposal()">RECUSAR</button></div>`;
+    dock.classList.add('show');
+  }
+  const wrapAfter=(name)=>{const old=window[name];if(typeof old!=='function'||old.__s67Wrapped)return;const fn=function(){const r=old.apply(this,arguments);setTimeout(syncProposalDock,20);return r};fn.__s67Wrapped=true;window[name]=fn};
+  ['renderSiriusAIHistory','openSiriusAI','approveAiMissionProposal','rejectAiMissionProposal','openAdjustProposal'].forEach(wrapAfter);
+  if(typeof window.sendSiriusAI==='function'&&!window.sendSiriusAI.__s67Wrapped){const old=window.sendSiriusAI;const fn=async function(){try{return await old.apply(this,arguments)}finally{setTimeout(syncProposalDock,30)}};fn.__s67Wrapped=true;window.sendSiriusAI=fn}
+
+  /* ===== 2) BADGES: MAIS -> CENTRAL -> aba específica ===== */
+  function setInnerBadge(el,n){if(!el)return;el.querySelector('.s67InnerBadge')?.remove();if(n>0)el.insertAdjacentHTML('beforeend',`<span class="s67InnerBadge">${Math.min(n,99)}</span>`)}
+  function refreshSubBadges(){
+    const unread=countUnread(),rewards=countPendingRewards(),timers=countActiveTimers();
+    setInnerBadge(document.getElementById('s66EventsCard'),unread+rewards+timers);
+    const tabs=[...document.querySelectorAll('.s66HubTab')];
+    tabs.forEach(btn=>{btn.querySelector('.s67TabBadge')?.remove();const t=btn.textContent.trim().toUpperCase();let n=0;if(t.startsWith('MENSAGENS'))n=unread;else if(t.startsWith('RECOMPENSAS'))n=rewards;else if(t.startsWith('PRAZOS'))n=timers;if(n)btn.insertAdjacentHTML('beforeend',`<span class="s67TabBadge">${Math.min(n,99)}</span>`)})
+  }
+
+  /* ===== 3) POPUP DE MENSAGEM + ESCOLHA DE RECOMPENSA ===== */
+  const originalPanel=window.s62ShowSystemPanel;
+  function showRewardArrival(id){
+    const r=rewardById(id)||newestPendingReward();if(!r||typeof originalPanel!=='function')return;
+    originalPanel({type:'message',title:'MENSAGEM',icon:'✉',html:`<div class="s67RewardMessage"><div class="line">[AS RECOMPENSAS PELA CONCLUSÃO DA SUA QUEST DE PUNIÇÃO CHEGARAM.]</div><div class="line question">[VOCÊ GOSTARIA DE ACEITÁ-LAS?]</div></div>`,actions:[{label:'ACEITAR',onClick:()=>window.s67OpenRewardChoice(r.id)},{label:'RECUSAR',onClick:()=>{refreshSubBadges();if(typeof showToast==='function')showToast('RECOMPENSA MANTIDA NA CENTRAL')}}]});
+  }
+  window.s67ShowRewardArrival=showRewardArrival;
+
+  if(typeof originalPanel==='function'){
+    window.s62ShowSystemPanel=function(cfg={}){
+      const body=String(cfg?.body||cfg?.html||'');
+      if(/MISSÃO CONCLUÍDA/i.test(body)&&/RECOMPENSA/i.test(body)){
+        const r=newestPendingReward();if(r){showRewardArrival(r.id);return}
+      }
+      return originalPanel(cfg);
+    };
+  }
+
+  function optionHtml(r){
+    const alt=r.pd>0?`+${r.pd} PD // ${esc(r.attr||'ATRIBUTO')}`:'RECUPERAÇÃO // RECURSO';
+    return `<div class="s67RewardChoiceIntro"><b>ESCOLHA SUA RECOMPENSA.</b><span>[VOCÊ PODE ESCOLHER UMA DAS RECOMPENSAS ABAIXO.]</span></div><div class="s67RewardOptions" data-reward="${esc(r.id)}" data-choice="xp"><button class="s67RewardOption selected" data-choice="xp" onclick="s67SelectRewardChoice('${esc(r.id)}','xp',this)">RECOMPENSA #1 // +${Number(r.xp)||0} XP<small>Progressão direta de nível.</small></button><button class="s67RewardOption" data-choice="alt" onclick="s67SelectRewardChoice('${esc(r.id)}','alt',this)">RECOMPENSA #2 // ${alt}<small>Recompensa contextual ligada à missão concluída.</small></button><button class="s67RewardOption" data-choice="box" onclick="s67SelectRewardChoice('${esc(r.id)}','box',this)">RECOMPENSA #3 // CAIXA ALEATÓRIA +1<small>Pode conter XP, recurso, item raro ou Chave de Dungeon.</small></button></div><div class="s67AcceptQuestion">VOCÊ ACEITA?</div>`;
+  }
+  window.s67SelectRewardChoice=function(id,choice,el){
+    const host=document.querySelector(`.s67RewardOptions[data-reward="${CSS.escape(String(id))}"]`);if(!host)return;host.dataset.choice=choice;host.querySelectorAll('.s67RewardOption').forEach(b=>b.classList.toggle('selected',b.dataset.choice===choice));
+  };
+  window.s67OpenRewardChoice=function(id){
+    const r=rewardById(id);if(!r||r.claimed){refreshSubBadges();return}
+    originalPanel?.({type:'message',title:'RECOMPENSAS DA QUEST',icon:'◇',html:optionHtml(r),actions:[{label:'ACEITAR',onClick:()=>window.s67ConfirmReward(id)},{label:'REJEITAR',onClick:()=>refreshSubBadges()}]});
+  };
+
+  function weightedKeyClass(){const x=Math.random()*100;return x<55?'E':x<76?'D':x<89?'C':x<96?'B':x<99?'A':'S'}
+  function addDungeonKey(cls){
+    const ds=ensureDungeon();const key={id:uid('key'),class:KEY_CLASSES.includes(cls)?cls:'E',type:'CHAVE',name:`CHAVE DE DUNGEON // CLASSE ${cls}`,description:`Uma chave do Núcleo que desbloqueia uma Dungeon de Classe ${cls} com missão exclusiva.`,acquiredAt:new Date().toISOString(),used:false};ds.keys.unshift(key);persist();return key;
+  }
+  window.s67AddDungeonKey=addDungeonKey;
+  function randomBox(r){
+    const ds=ensureDungeon();ds.boxesOpened++;
+    const roll=Math.random()*100;
+    if(roll<22){const cls=weightedKeyClass();const key=addDungeonKey(cls);return{kind:'key',title:`ITEM: CHAVE DE DUNGEON`,detail:`CLASSE DO ITEM: ${cls} // TIPO: CHAVE`,description:key.description}}
+    if(roll<52){const amount=Math.max(5,Math.round((Number(r.xp)||20)*.65));data.xp=(Number(data.xp)||0)+amount;return{kind:'xp',title:`BÔNUS DE XP // +${amount}`,detail:'DROP DA CAIXA ALEATÓRIA',description:'XP aplicado imediatamente ao progresso do jogador.'}}
+    if(roll<78&&r.attr&&data.attrs?.[r.attr]){const p=Math.max(1,Math.round((Number(r.pd)||2)*.75));data.attrs[r.attr].pd=Math.min(100,(Number(data.attrs[r.attr].pd)||0)+p);return{kind:'pd',title:`RECURSO DE ATRIBUTO // +${p} PD`,detail:esc(r.attr),description:'Recurso aplicado ao atributo associado à missão.'}}
+    data.dungeonSystem.fragments=(Number(data.dungeonSystem.fragments)||0)+1;return{kind:'item',title:'FRAGMENTO DO NÚCLEO +1',detail:'ITEM // RARO',description:'Fragmento colecionável do SIRIUS. Futuramente poderá ser usado em recompensas cosméticas e eventos.'}
+  }
+  function showDrop(drop){
+    originalPanel?.({type:'message',title:'ITEM OBTIDO',icon:'◇',html:`<div class="s67DropCard"><b>${esc(drop.title)}</b><span>${esc(drop.detail)}</span><span>${esc(drop.description)}</span></div>`,actions:[{label:drop.kind==='key'?'VER DUNGEONS':'CONTINUAR',onClick:()=>{if(drop.kind==='key')window.s67OpenDungeonHub()}}]});
+  }
+  window.s67ConfirmReward=function(id){
+    const r=rewardById(id);if(!r||r.claimed)return;const host=document.querySelector(`.s67RewardOptions[data-reward="${CSS.escape(String(id))}"]`);const choice=host?.dataset.choice||'xp';const before=typeof levelInfo==='function'?levelInfo().level:1;let drop=null;
+    if(choice==='xp')data.xp=(Number(data.xp)||0)+(Number(r.xp)||0);
+    else if(choice==='alt'){
+      if(r.pd>0&&r.attr&&data.attrs?.[r.attr])data.attrs[r.attr].pd=Math.min(100,(Number(data.attrs[r.attr].pd)||0)+(Number(r.pd)||0));
+      else{ensureDungeon();data.dungeonSystem.recoveryTokens=(Number(data.dungeonSystem.recoveryTokens)||0)+1}
+    }else drop=randomBox(r);
+    r.claimed=true;r.claimedAt=new Date().toISOString();r.choice=choice;persist();try{if(typeof render==='function')render()}catch(e){}refreshSubBadges();renderDungeonHub();
+    const after=typeof levelInfo==='function'?levelInfo().level:before;
+    if(drop){setTimeout(()=>showDrop(drop),90);return}
+    const detail=choice==='xp'?`+${Number(r.xp)||0} XP`:r.pd>0?`+${Number(r.pd)||0} PD // ${esc(r.attr)}`:'TOKEN DE RECUPERAÇÃO +1';
+    originalPanel?.({type:'message',title:'RECOMPENSA RECEBIDA',icon:'◇',html:`<div class="s67RewardMessage"><div class="line">[${detail}]</div>${after>before?`<div class="line question">NÍVEL ${after} ALCANÇADO.</div>`:''}</div>`,actions:[{label:'CONTINUAR'}]});
+  };
+  if(typeof window.s66ClaimReward==='function'){window.s67LegacyClaimReward=window.s66ClaimReward;window.s66ClaimReward=function(id){window.s67OpenRewardChoice(id)}}
+
+  /* ===== 4) DUNGEONS: chaves colecionáveis e missões exclusivas ===== */
+  const templates={
+    E:{xp:35,pd:4,duration:20,title:'PORTÃO DE INICIAÇÃO'},D:{xp:50,pd:5,duration:25,title:'CÂMARA DE DISCIPLINA'},C:{xp:70,pd:7,duration:30,title:'LABIRINTO DE FOCO'},B:{xp:95,pd:9,duration:40,title:'PROVA DO CAÇADOR'},A:{xp:130,pd:12,duration:50,title:'SALÃO DA ASCENSÃO'},S:{xp:200,pd:16,duration:60,title:'DOMÍNIO DO NÚCLEO'}
+  };
+  function exclusiveMissionFor(key){
+    const t=templates[key.class]||templates.E;const attrs=['Físico','Intelecto','Disciplina','Comunicação','Foco','Relacionamento'];const attr=attrs[Math.floor(Math.random()*attrs.length)];
+    const task={Físico:'Complete uma sessão física controlada, com aquecimento, bloco principal e registro de esforço percebido sem dor aguda.',Intelecto:'Estude um tema e produza uma explicação sem consulta, seguida de três perguntas respondidas de memória.',Disciplina:'Execute uma tarefa que vem sendo adiada, do início ao fim, sem trocar de atividade até registrar o resultado.',Comunicação:'Realize uma prática de comunicação objetiva e registre o que foi dito, o resultado e um ponto a melhorar.',Foco:'Complete blocos de foco sem distrações e registre exatamente o que foi produzido em cada bloco.',Relacionamento:'Realize uma ação concreta de cuidado, presença ou comunicação com alguém importante e registre o resultado.'}[attr];
+    return{name:`DUNGEON ${key.class} // ${t.title}`,desc:task,xp:t.xp,pd:t.pd,attr,difficulty:`Dungeon ${key.class}`,questRank:key.class,validation:attr==='Intelecto'?'study':'action',evidence:'evidência observável da execução da Dungeon',completionCondition:`Concluir a missão exclusiva em aproximadamente ${t.duration} minutos e registrar evidência objetiva.`,durationMin:t.duration,dungeon:true,dungeonClass:key.class,dungeonKeyId:key.id,exclusive:true,done:false,createdAt:new Date().toISOString()};
+  }
+  window.s67UseDungeonKey=function(id){
+    const ds=ensureDungeon(),key=ds.keys.find(k=>k.id===id&&!k.used);if(!key)return;
+    if(typeof activeMissionCount==='function'&&typeof MAX_ACTIVE_MISSIONS!=='undefined'&&activeMissionCount()>=MAX_ACTIVE_MISSIONS){if(typeof showSystemEvent==='function')showSystemEvent('LIMITE DE MISSÕES',`Você já possui ${MAX_ACTIVE_MISSIONS} missões ativas.`);return}
+    const m=exclusiveMissionFor(key);data.missions=Array.isArray(data.missions)?data.missions:[];data.missions.push(m);key.used=true;key.usedAt=new Date().toISOString();ds.opened.unshift({keyId:key.id,class:key.class,mission:m.name,at:key.usedAt});persist();try{if(typeof render==='function')render()}catch(e){}renderDungeonHub();
+    originalPanel?.({type:'message',title:`DUNGEON CLASSE ${key.class}`,icon:'◇',html:`<div class="s67RewardMessage"><div class="line">[DUNGEON DESBLOQUEADA]</div><div class="line question">${esc(m.name)}</div></div>`,actions:[{label:'VER MISSÃO',onClick:()=>{try{if(typeof showDashView==='function')showDashView('missions');else if(typeof openDockView==='function')openDockView('missions')}catch(e){}}}]});
+  };
+  function ensureDungeonView(){
+    let view=document.getElementById('view-dungeons');if(view)return view;view=document.createElement('section');view.className='dashView';view.id='view-dungeons';view.innerHTML='<div class="dashPanel"><div class="dashPanelTitle">DUNGEONS</div><div class="dashPanelSub">CHAVES, PORTÕES E MISSÕES EXCLUSIVAS</div><div id="s67DungeonHub" style="margin-top:10px"></div></div>';document.querySelector('.dashboardMain')?.appendChild(view);return view;
+  }
+  function ensureDungeonCard(){
+    const grid=document.querySelector('#moreSheet .moreGrid');if(!grid||document.getElementById('s67DungeonCard'))return;const b=document.createElement('button');b.id='s67DungeonCard';b.className='moreCardAnime';b.onclick=()=>window.s67OpenDungeonHub();b.innerHTML='<svg viewBox="0 0 24 24"><path d="M4 12h10"/><path d="M13 8l4 4-4 4"/><circle cx="6" cy="12" r="3"/><path d="M17 12h3"/></svg><span>DUNGEONS</span>';grid.appendChild(b);
+  }
+  function renderDungeonHub(){
+    const host=document.getElementById('s67DungeonHub');if(!host)return;const ds=ensureDungeon(),available=ds.keys.filter(k=>!k.used),used=ds.keys.filter(k=>k.used).length,active=(data.missions||[]).filter(m=>m.dungeon&&!m.done).length;
+    const keys=available.map(k=>`<div class="s67DungeonItem key"><div class="s67KeyCard"><div class="s67KeyIcon">⌁</div><div><div class="s67DungeonKicker">ITEM // CHAVE DE DUNGEON</div><div class="s67DungeonTitle">CLASSE ${esc(k.class)} // TIPO: CHAVE</div><div class="s67DungeonBody">${esc(k.description)}</div></div></div><div class="s67DungeonActions"><button onclick="s67UseDungeonKey('${esc(k.id)}')">USAR CHAVE // ABRIR DUNGEON</button></div></div>`).join('')||'<div class="s66Empty">NENHUMA CHAVE DISPONÍVEL. CAIXAS ALEATÓRIAS PODEM CONTER CHAVES DE DUNGEON.</div>';
+    host.innerHTML=`<div class="s67DungeonHub"><div class="s67DungeonSummary"><div class="s67DungeonStat"><b>${available.length}</b><span>CHAVES</span></div><div class="s67DungeonStat"><b>${active}</b><span>ATIVAS</span></div><div class="s67DungeonStat"><b>${used}</b><span>ABERTAS</span></div></div>${keys}</div>`;
+    setInnerBadge(document.getElementById('s67DungeonCard'),available.length);
+  }
+  window.s67RenderDungeonHub=renderDungeonHub;
+  window.s67OpenDungeonHub=function(){ensureDungeonView();ensureDungeonCard();if(typeof openMoreView==='function')openMoreView('dungeons');document.getElementById('moreSheet')?.classList.remove('show');setTimeout(renderDungeonHub,30)};
+
+  ensureDungeon();ensureProposalDock();ensureDungeonView();ensureDungeonCard();syncProposalDock();refreshSubBadges();renderDungeonHub();
+  const observer=new MutationObserver(()=>{refreshSubBadges();syncProposalDock()});const more=document.getElementById('moreSheet');if(more)observer.observe(more,{childList:true,subtree:true});
+  setInterval(()=>{refreshSubBadges();syncProposalDock();renderDungeonHub()},1200);
+  try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',`VERSÃO INSTALADA: ${VERSION} // PROPOSTAS VISÍVEIS, BADGES INTERNOS, ESCOLHA DE RECOMPENSAS, CAIXAS E DUNGEONS.`);persist()}}catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);mark();setTimeout(mark,350);setTimeout(mark,1600);
+})();
+</script>
+
 </body></html>
