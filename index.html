@@ -11338,4 +11338,65 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.83 // SECRET QUEST TAP FIX ===== -->
+<style id="sirius-v22283-secret-tap-style">
+/* Correção cirúrgica: o boot da v2.22.81 deixa pointer-events:none inline
+   em overlays fechados. Quando a Quest Secreta abre depois, essa propriedade
+   podia permanecer e impedir ACEITAR / RECUSAR de receber toque no iPhone. */
+#s61EventOverlay.show{pointer-events:auto!important}
+#s61EventOverlay.show .s61EventPanel{pointer-events:auto!important;isolation:isolate}
+#s61EventOverlay.show .s61EventActions{pointer-events:auto!important;position:relative;z-index:20}
+#s61EventOverlay.show .s61EventActions button{
+  pointer-events:auto!important;
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+  position:relative;
+  z-index:21;
+  cursor:pointer;
+}
+#s61EventOverlay.show .s61Ornament,
+#s61EventOverlay.show .s61EventPanel::before,
+#s61EventOverlay.show .s61EventPanel::after,
+#s61EventOverlay.show .s61ToastLine{pointer-events:none!important}
+</style>
+<script id="sirius-v22283-secret-tap-script">
+(function(){
+  const VERSION='v2.22.83';
+  const overlay=document.getElementById('s61EventOverlay');
+  if(overlay){
+    /* Remove apenas o bloqueio inline legado quando ESTE popup estiver aberto. */
+    const releaseSecretOverlay=()=>{
+      if(overlay.classList.contains('show') && overlay.style.pointerEvents==='none'){
+        overlay.style.removeProperty('pointer-events');
+      }
+    };
+    releaseSecretOverlay();
+    const mo=new MutationObserver(releaseSecretOverlay);
+    mo.observe(overlay,{attributes:true,attributeFilter:['class']});
+
+    /* type=button evita qualquer comportamento de submit em WebKit. */
+    overlay.addEventListener('click',function(ev){
+      const b=ev.target.closest && ev.target.closest('#s61EventActions button');
+      if(b && !b.hasAttribute('type')) b.setAttribute('type','button');
+    },true);
+  }
+
+  try{
+    if(typeof data!=='undefined'){
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // CORREÇÃO DE TOQUE DA QUEST SECRETA.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function') addSystemLog('version',msg);
+        if(typeof save==='function') save(); else if(typeof persist==='function') persist();
+      }
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,350);setTimeout(mark,1600);setTimeout(mark,3200);
+})();
+</script>
+
 </body></html>
