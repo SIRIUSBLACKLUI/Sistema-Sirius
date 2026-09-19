@@ -11454,4 +11454,192 @@ body.s64-test-active #s62TestControls [data-test]{
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.22.85 // UNIFIED MESSAGE + FLUIDITY ===== -->
+<style id="sirius-v22285-fluid-ui-style">
+/* Mensagens: um único visual leve, baseado no modelo MENSAGEM aprovado. */
+.s62SystemOverlay{
+  z-index:2147483000!important;
+  background:rgba(0,5,13,.78)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  transition:opacity .10s linear!important;
+}
+.s62SystemOverlay.show{pointer-events:auto!important}
+.s62SystemPanel{
+  width:min(92vw,520px)!important;
+  border:1px solid #5be5ff!important;
+  background:linear-gradient(180deg,#0c4776 0%,#0a365f 47%,#082849 100%)!important;
+  box-shadow:0 0 24px rgba(55,205,255,.20),inset 0 0 26px rgba(83,222,255,.07)!important;
+  transform:translateY(5px) scale(.992)!important;
+  transition:transform .10s ease-out!important;
+  contain:layout paint style;
+}
+.s62SystemOverlay.show .s62SystemPanel{transform:none!important}
+.s62SystemPanel::after{opacity:.35!important}
+.s62Header{font-size:27px!important}
+.s62HeaderIcon{font-family:Arial,sans-serif!important}
+.s62Actions{position:relative!important;z-index:100!important}
+.s62Actions button{
+  min-height:52px!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:rgba(89,230,255,.14)!important;
+  -webkit-user-select:none!important;user-select:none!important;
+  cursor:pointer!important;
+  transition:transform .06s linear,filter .06s linear!important;
+}
+.s62Actions button:active{transform:scale(.985);filter:brightness(1.12)}
+.s62Close{pointer-events:auto!important;touch-action:manipulation!important;z-index:110!important}
+
+/* Quest secreta passa a usar a mesma linguagem visual das mensagens. */
+#s61EventOverlay{
+  z-index:2147482900!important;
+  background:rgba(0,5,13,.78)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#s61EventOverlay.show{pointer-events:auto!important;animation:s85FastIn .10s linear!important}
+#s61EventOverlay .s61EventPanel{
+  border:1px solid #5be5ff!important;
+  background:linear-gradient(180deg,#0c4776 0%,#0a365f 47%,#082849 100%)!important;
+  box-shadow:0 0 24px rgba(55,205,255,.20),inset 0 0 26px rgba(83,222,255,.07)!important;
+  pointer-events:auto!important;
+}
+#s61EventOverlay .s61EventKicker{font-size:0!important}
+#s61EventOverlay .s61EventKicker::after{content:"✉  MENSAGEM";font-size:12px;letter-spacing:2.4px;color:#eefaff}
+#s61EventOverlay .s61EventKicker>span{display:none!important}
+#s61EventOverlay .s61EventActions{position:relative!important;z-index:100!important;pointer-events:auto!important}
+#s61EventOverlay .s61EventActions button{
+  position:relative!important;z-index:101!important;pointer-events:auto!important;
+  touch-action:manipulation!important;min-height:52px!important;cursor:pointer!important;
+  -webkit-tap-highlight-color:rgba(89,230,255,.14)!important;
+}
+#s61EventOverlay .s61Ornament,#s61EventOverlay .s61ToastLine,#s61EventOverlay .s61EventPanel::before,#s61EventOverlay .s61EventPanel::after{pointer-events:none!important}
+
+/* Jornada: mantém a tela, mas o FECHAR nunca pode herdar bloqueio do boot. */
+.journeyOverlay.show{pointer-events:auto!important}
+.journeyWindow,.journeyTop,.journeyClose{pointer-events:auto!important}
+.journeyClose{position:relative;z-index:5;touch-action:manipulation!important;min-width:72px;min-height:44px}
+
+/* Fluidez: resposta imediata ao toque e menos composição pesada no iPhone. */
+.bottomDock,.bottomDock button,.moreGrid button,.dashAction,.missionListRow,.hudMissionRow,.libraryTab,.trainingBtn,.btn{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.bottomDock button,.moreGrid button,.dashAction,.libraryTab,.trainingBtn,.btn{transition:transform .06s linear,filter .06s linear!important}
+.bottomDock button:active,.moreGrid button:active,.dashAction:active,.libraryTab:active,.trainingBtn:active,.btn:active{transform:scale(.985);filter:brightness(1.08)}
+.aiChatOverlay,.learningOverlay,.validationOverlay,.journeyOverlay,.epubOverlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@keyframes s85FastIn{from{opacity:0}to{opacity:1}}
+</style>
+<script id="sirius-v22285-unified-message-script">
+(function(){
+  const VERSION='v2.22.85';
+  let panelActions=[];
+
+  function stripLegacyListeners(id){
+    const old=document.getElementById(id);
+    if(!old||old.dataset.s85Clean==='1') return old;
+    const fresh=old.cloneNode(true);
+    fresh.dataset.s85Clean='1';
+    old.replaceWith(fresh);
+    return fresh;
+  }
+
+  /* Remove as pontes de touch acumuladas nas versões anteriores sem tocar na navegação. */
+  const s62=stripLegacyListeners('s62SystemOverlay');
+  const s61=stripLegacyListeners('s61EventOverlay');
+
+  function panelEls(){return{
+    overlay:document.getElementById('s62SystemOverlay'),
+    head:document.getElementById('s62HeaderText'),
+    icon:document.getElementById('s62HeaderIcon'),
+    content:document.getElementById('s62SystemContent'),
+    actions:document.getElementById('s62SystemActions')
+  }}
+  function closePanel(){
+    const e=panelEls();if(!e.overlay)return;
+    e.overlay.classList.remove('show');
+    e.overlay.setAttribute('aria-hidden','true');
+    e.overlay.style.removeProperty('pointer-events');
+  }
+  function runPanelAction(i){
+    const a=panelActions[i];
+    closePanel();
+    if(a&&typeof a.onClick==='function') requestAnimationFrame(()=>{try{a.onClick()}catch(err){console.error('SIRIUS action',err)}});
+  }
+  window.s62CloseSystemPanel=closePanel;
+  window.s62ShowSystemPanel=function(cfg={}){
+    const e=panelEls();if(!e.overlay)return;
+    e.head.textContent=cfg.title||'MENSAGEM';
+    e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');
+    e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;
+    panelActions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'CONTINUAR'}];
+    e.actions.className='s62Actions'+(panelActions.length===1?' one':'');
+    e.actions.innerHTML=panelActions.map((a,i)=>`<button type="button" data-s85-action="${i}">${String(a.label||'CONTINUAR').replace(/[<>]/g,'')}</button>`).join('');
+    e.overlay.style.removeProperty('pointer-events');
+    e.overlay.classList.add('show');
+    e.overlay.setAttribute('aria-hidden','false');
+  };
+  if(s62){
+    s62.addEventListener('click',function(ev){
+      const btn=ev.target.closest?.('[data-s85-action]');
+      if(btn){runPanelAction(Number(btn.dataset.s85Action));return}
+      if(ev.target.id==='s62SystemClose'){closePanel();return}
+      if(ev.target===s62)closePanel();
+    });
+  }
+
+  /* Todas as mensagens antigas showSystemEvent passam pelo componente aprovado. */
+  window.showSystemEvent=function(title,detail){
+    window.s62ShowSystemPanel({
+      type:'message',title:'MENSAGEM',icon:'✉',
+      html:`<div class="s62MessageStrip"><div class="s62Body small"><div style="font-size:1.14em;margin-bottom:12px">[ ${typeof escapeHtml==='function'?escapeHtml(title):String(title||'')} ]</div><div>${typeof escapeHtml==='function'?escapeHtml(detail):String(detail||'')}</div></div></div>`,
+      actions:[{label:'CONTINUAR'}]
+    });
+  };
+
+  /* A Quest Secreta mantém sua lógica original, mas em um DOM limpo e clicável. */
+  if(s61){
+    s61.style.removeProperty('pointer-events');
+    s61.addEventListener('click',function(ev){
+      if(ev.target===s61 && typeof window.s61CloseEvent==='function')window.s61CloseEvent();
+    });
+  }
+  const prevCloseSecret=window.s61CloseEvent;
+  window.s61CloseEvent=function(){
+    const el=document.getElementById('s61EventOverlay');
+    el?.classList.remove('show');el?.style.removeProperty('pointer-events');
+    if(typeof prevCloseSecret==='function' && prevCloseSecret!==window.s61CloseEvent){try{prevCloseSecret()}catch(e){}}
+  };
+
+  /* Jornada: corrige especificamente FECHAR sem instalar listener global de toque. */
+  const prevOpenJourney=window.openJourneyMode;
+  window.openJourneyMode=function(){
+    let r;if(typeof prevOpenJourney==='function')r=prevOpenJourney.apply(this,arguments);
+    const o=document.getElementById('journeyOverlay');o?.style.removeProperty('pointer-events');o?.classList.add('show');
+    return r;
+  };
+  const prevCloseJourney=window.closeJourneyMode;
+  window.closeJourneyMode=function(){
+    const o=document.getElementById('journeyOverlay');o?.classList.remove('show');o?.style.removeProperty('pointer-events');
+    if(typeof prevCloseJourney==='function'&&prevCloseJourney!==window.closeJourneyMode){try{return prevCloseJourney.apply(this,arguments)}catch(e){}}
+  };
+  document.querySelector('.journeyClose')?.addEventListener('click',function(ev){ev.stopPropagation();window.closeJourneyMode()});
+
+  /* O overlay legado fica sempre fora do caminho; mensagens agora usam s62. */
+  try{document.getElementById('systemOverlay')?.classList.remove('show')}catch(e){}
+
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    const msg=`VERSÃO INSTALADA: ${VERSION} // MENSAGENS UNIFICADAS + OTIMIZAÇÃO DE FLUIDEZ.`;
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version',msg);
+      if(typeof save==='function')save(); else if(typeof persist==='function')persist();
+    }
+  }catch(e){}
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,300);setTimeout(mark,1300);setTimeout(mark,2800);
+})();
+</script>
+
 </body></html>
