@@ -6099,8 +6099,8 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
  // If a legacy orb script inserts itself after load, remove it again.
  const aiOverlay=document.getElementById("aiChatOverlay");
  if(aiOverlay){
-  const mo=new MutationObserver(()=>{const o=document.getElementById("siriusOrbStage");if(o)o.remove();if(aiOverlay.classList.contains("show"))installHud()});
-  mo.observe(aiOverlay,{childList:true,subtree:true});
+  const cleanupLegacyOrb=()=>{const o=document.getElementById("siriusOrbStage");if(o)o.remove();if(aiOverlay.classList.contains("show"))installHud()};
+  [120,500,1200].forEach(ms=>setTimeout(cleanupLegacyOrb,ms));
  }
  setTimeout(()=>{installHud();document.querySelectorAll(".versionMark").forEach(x=>x.textContent=`SIRIUS // ${RELEASE}`)},300);
 })();
@@ -7276,11 +7276,6 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
   }
   let applying=false;
   function apply(){if(applying)return; applying=true; try{renderBook();renderStreak();renderWeekly();document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}finally{applying=false}}
-  function watch(){
-    const home=document.getElementById('view-home'); if(!home)return;
-    const obs=new MutationObserver(()=>requestAnimationFrame(apply));
-    ['dashCurrentBook','homeStreakCard','weeklySummaryCard'].forEach(id=>{const n=document.getElementById(id); if(n)obs.observe(n,{childList:true,subtree:false})});
-  }
   const boot=()=>{apply();setTimeout(apply,180);setTimeout(apply,600)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
@@ -8041,19 +8036,8 @@ A missão precisa ter ação concreta, duração, condição objetiva de conclus
     try{window.renderBottomHomeAttrs();}catch(e){console.error(e);}
   }
 
-  /* Reaplica apenas se algum código legado tentar reconstruir a área. */
-  const target=document.getElementById('homeAttrCards');
-  if(target && typeof MutationObserver!=='undefined'){
-    let pending=false;
-    const observer=new MutationObserver(()=>{
-      if(pending)return;
-      const ok=target.querySelectorAll('.homeAttrCard.artAttr[data-home-attr]').length===CORE.length;
-      if(ok)return;
-      pending=true;
-      requestAnimationFrame(()=>{pending=false;ensureHomeStatus();});
-    });
-    observer.observe(target,{childList:true,subtree:false});
-  }
+  /* Sem MutationObserver: recuperação finita após o boot. */
+  [300,900,1800].forEach(ms=>setTimeout(ensureHomeStatus,ms));
 
   ensureHomeStatus();
   setTimeout(ensureHomeStatus,120);
@@ -11374,8 +11358,7 @@ body.s64-test-active #s62TestControls [data-test]{
       }
     };
     releaseSecretOverlay();
-    const mo=new MutationObserver(releaseSecretOverlay);
-    mo.observe(overlay,{attributes:true,attributeFilter:['class']});
+    [250,700,1500].forEach(ms=>setTimeout(releaseSecretOverlay,ms));
 
     /* type=button evita qualquer comportamento de submit em WebKit. */
     overlay.addEventListener('click',function(ev){
@@ -11434,10 +11417,8 @@ body.s64-test-active #s62TestControls [data-test]{
     actions.addEventListener('click',function(ev){
       if(Date.now()-lastTouchAt<700){ev.preventDefault();ev.stopImmediatePropagation()}
     },true);
-    const mo=new MutationObserver(prepare);
-    mo.observe(overlay,{attributes:true,attributeFilter:['class']});
-    mo.observe(actions,{childList:true,subtree:true});
     prepare();
+    [250,700,1500].forEach(ms=>setTimeout(prepare,ms));
   }
   try{
     if(typeof data!=='undefined'){
@@ -11978,17 +11959,64 @@ body.s64-test-active #s62TestControls [data-test]{
     upgradeMoreCards();
     markVersion();
     pushVersionLog();
-    const grid=document.querySelector('#moreSheet .moreGrid');
-    if(grid && !grid.dataset.s87Observed){
-      grid.dataset.s87Observed='1';
-      new MutationObserver(()=>upgradeMoreCards()).observe(grid,{childList:true,subtree:true});
-    }
+    /* Sem MutationObserver: os cards são atualizados apenas em hooks explícitos. */
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,100),{once:true});
   else setTimeout(init,100);
   window.addEventListener('load',()=>setTimeout(init,220),{once:true});
   [700,1600,3000].forEach(ms=>setTimeout(init,ms));
+})();
+</script>
+
+
+
+<!-- ===== SIRIUS v2.22.88 // NO MUTATION OBSERVER STABILITY ===== -->
+<script id="sirius-v22288-no-observer-script">
+(function(){
+  const VERSION='v2.22.88';
+
+  function versionNumber(s){const m=String(s||'').match(/v2\.22\.(\d+)/i);return m?Number(m[1]):-1}
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function renderHistory88(){
+    const hist=document.getElementById('dashHistory');if(!hist||typeof data==='undefined')return;
+    const unique=new Map();
+    (Array.isArray(data.systemLog)?data.systemLog:[]).forEach(x=>{
+      const msg=String(x?.text||x?.message||'');const n=versionNumber(msg);if(n<0)return;const key=`v2.22.${n}`;
+      if(!unique.has(key))unique.set(key,{version:key,msg});
+    });
+    if(!unique.has(VERSION))unique.set(VERSION,{version:VERSION,msg:`VERSÃO INSTALADA: ${VERSION} // MUTATION OBSERVERS REMOVIDOS PARA MAIOR ESTABILIDADE.`});
+    const list=[...unique.values()].sort((a,b)=>versionNumber(b.version)-versionNumber(a.version)).slice(0,5);
+    hist.innerHTML=list.map(x=>`<div class="s86VersionItem ${x.version===VERSION?'current':''}"><div class="s86VersionTitle">${x.version===VERSION?'VERSÃO ATUAL':'VERSÃO'}</div><div class="s86VersionMeta">${esc(x.msg)}</div></div>`).join('');
+  }
+
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  function logVersion(){
+    try{
+      if(typeof data==='undefined')return;
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg=`VERSÃO INSTALADA: ${VERSION} // MUTATION OBSERVERS REMOVIDOS, BOOT MAIS LEVE E ESTÁVEL.`;
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);else data.systemLog.push({type:'version',text:msg,at:new Date().toISOString()});
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }catch(e){console.warn('SIRIUS 2.22.88 log',e)}
+  }
+
+  const prevMoreView88=window.openMoreView;
+  window.openMoreView=function(view){
+    const r=typeof prevMoreView88==='function'?prevMoreView88.apply(this,arguments):undefined;
+    if(view==='history')setTimeout(renderHistory88,20);
+    return r;
+  };
+
+  function init(){
+    mark();logVersion();renderHistory88();
+    /* Atualizações finitas, sem observação contínua do DOM. */
+    if(typeof window.renderBottomHomeAttrs==='function')try{window.renderBottomHomeAttrs()}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);
+  window.addEventListener('load',()=>setTimeout(init,180),{once:true});
 })();
 </script>
 
