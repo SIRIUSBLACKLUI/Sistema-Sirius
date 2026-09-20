@@ -11812,4 +11812,198 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.22.95 // BLOQUEADOR AZUL + POSIÇÃO DO MENU MAIS ===== -->
+<style id="sirius-v22295-touch-layer-fix">
+#moreSheet{
+  z-index:2147483000!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0 14px calc(92px + env(safe-area-inset-bottom))!important;
+  box-sizing:border-box!important;
+}
+#moreSheet .s94Panel{
+  width:calc(100vw - 28px)!important;
+  max-width:760px!important;
+  margin:0 auto!important;
+}
+body.s95-more-open > *:not(#moreSheet){
+  pointer-events:none!important;
+}
+#view-learning .professorClassShell,
+#view-professor .professorClassShell{
+  position:relative!important;
+  isolation:isolate!important;
+}
+#view-learning .professorClassShell::before,
+#view-learning .professorClassShell::after,
+#view-learning .professorClassActions::before,
+#view-learning .professorClassActions::after,
+#view-professor .professorClassShell::before,
+#view-professor .professorClassShell::after,
+#view-professor .professorClassActions::before,
+#view-professor .professorClassActions::after{
+  pointer-events:none!important;
+}
+#view-learning .professorClassShell::after,
+#view-professor .professorClassShell::after{
+  z-index:0!important;
+}
+#view-learning .professorClassShell > *,
+#view-professor .professorClassShell > *{
+  position:relative!important;
+  z-index:2!important;
+}
+#view-learning .professorClassActions,
+#view-professor .professorClassActions{
+  position:relative!important;
+  z-index:40!important;
+  pointer-events:auto!important;
+  isolation:isolate!important;
+}
+#view-learning .professorClassActions button,
+#view-professor .professorClassActions button{
+  position:relative!important;
+  z-index:41!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+.learningOverlay:not(.show),
+.validationOverlay:not(.show),
+.systemOverlay:not(.show){
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+#moreSheet .s94Panel,
+#moreSheet .s94Grid,
+#moreSheet .s94Card,
+#moreSheet .s94Close{
+  pointer-events:auto!important;
+}
+#moreSheet .s94Header,
+#moreSheet .s94Panel::before,
+#moreSheet .s94Card::before,
+#moreSheet .s94Card::after,
+#moreSheet .s94CardInner,
+#moreSheet .s94CardInner *,
+#moreSheet .s94Close::before,
+#moreSheet .s94Close::after{
+  pointer-events:none!important;
+}
+@media(max-width:520px){
+  #moreSheet{
+    padding-left:14px!important;
+    padding-right:14px!important;
+    padding-bottom:calc(94px + env(safe-area-inset-bottom))!important;
+  }
+  #moreSheet .s94Panel{
+    width:100%!important;
+    max-width:none!important;
+  }
+}
+</style>
+
+<script id="sirius-v22295-touch-layer-fix-script">
+(function(){
+  const VERSION='v2.22.95';
+  const oldOpen=window.openMoreSheet;
+  const oldClose=window.closeMoreSheet;
+
+  function neutralizeProfessorBlockers(){
+    const actions=document.querySelector('#view-learning .professorClassActions, #view-professor .professorClassActions');
+    if(!actions || !actions.offsetParent)return;
+    const r=actions.getBoundingClientRect();
+    const points=[
+      [r.left+4,r.top+4],
+      [r.left+r.width/2,r.top+r.height/2],
+      [r.right-4,r.bottom-4]
+    ];
+    const allowed=new Set([actions,...actions.querySelectorAll('*')]);
+    const ancestors=[];
+    let p=actions.parentElement;
+    while(p){ancestors.push(p);p=p.parentElement;}
+
+    points.forEach(([x,y])=>{
+      document.elementsFromPoint(x,y).forEach(el=>{
+        if(!el || allowed.has(el) || ancestors.includes(el))return;
+        if(el.closest?.('#moreSheet'))return;
+        const cs=getComputedStyle(el);
+        const pos=cs.position;
+        const z=parseInt(cs.zIndex,10);
+        const isOverlay=['fixed','absolute','sticky'].includes(pos);
+        const isHighLayer=isOverlay && (Number.isFinite(z)?z>=2:true);
+        if(isHighLayer &&
+           !el.matches('button,a,input,textarea,select,[role="button"]') &&
+           !el.closest('button,a,input,textarea,select,[role="button"],.bottomDock')){
+          el.dataset.s95PointerNeutralized='1';
+          el.style.setProperty('pointer-events','none','important');
+        }
+      });
+    });
+  }
+
+  window.openMoreSheet=function(){
+    neutralizeProfessorBlockers();
+    document.body.classList.add('s95-more-open');
+    if(typeof oldOpen==='function')oldOpen.apply(this,arguments);
+    const sheet=document.getElementById('moreSheet');
+    if(sheet){
+      sheet.classList.add('show');
+      sheet.setAttribute('aria-hidden','false');
+    }
+  };
+
+  window.closeMoreSheet=function(){
+    const r=typeof oldClose==='function'?oldClose.apply(this,arguments):undefined;
+    const sheet=document.getElementById('moreSheet');
+    if(sheet){
+      sheet.classList.remove('show');
+      sheet.setAttribute('aria-hidden','true');
+    }
+    document.body.classList.remove('s95-more-open');
+    return r;
+  };
+
+  function bindProfessorButtons(){
+    document.querySelectorAll('.professorClassActions button').forEach(btn=>{
+      btn.style.setProperty('pointer-events','auto','important');
+      btn.style.setProperty('position','relative','important');
+      btn.style.setProperty('z-index','41','important');
+    });
+  }
+
+  function markVersion(){
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+
+  function logVersion(){
+    try{
+      if(typeof data==='undefined')return;
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg='VERSÃO INSTALADA: '+VERSION+' // CAMADA AZUL DE APRENDER NEUTRALIZADA; MENU MAIS REPOSICIONADO ACIMA DO DOCK; TOQUE PRIORITÁRIO NOS 8 CARDS.';
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        if(typeof addSystemLog==='function')addSystemLog('version',msg);
+        else data.systemLog.push({type:'version',text:msg,at:new Date().toISOString()});
+        if(typeof save==='function')save();else if(typeof persist==='function')persist();
+      }
+    }catch(e){console.warn('SIRIUS v2.22.95 log',e)}
+  }
+
+  function init(){
+    bindProfessorButtons();
+    neutralizeProfessorBlockers();
+    markVersion();
+    logVersion();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});
+  }else{
+    setTimeout(init,80);
+  }
+  window.addEventListener('load',()=>setTimeout(init,220),{once:true});
+})();
+</script>
+
 </body></html>
