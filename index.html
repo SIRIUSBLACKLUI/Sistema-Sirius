@@ -13124,4 +13124,292 @@ body.s95-more-open > *:not(#moreSheet){
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.23.04 // ABA MAIS COMPACTA — PROPORÇÃO DO MOCKUP ===== -->
+<style id="sirius-v22304-more-compact">
+/* Override final: reduz drasticamente a altura do menu MAIS no iPhone,
+   preservando a grade 4x2 e todas as ações existentes. */
+@media (max-width:520px){
+  #moreSheet{
+    align-items:flex-end!important;
+    justify-content:center!important;
+    padding:0 9px calc(104px + env(safe-area-inset-bottom))!important;
+    background:rgba(1,7,15,.08)!important;
+  }
+  #moreSheet .s94Panel{
+    width:calc(100vw - 18px)!important;
+    max-width:none!important;
+    padding:9px 10px calc(10px + env(safe-area-inset-bottom))!important;
+    border-width:1.5px!important;
+    border-radius:27px!important;
+    box-shadow:0 0 0 1px rgba(92,222,255,.12) inset,0 0 20px rgba(0,150,255,.15),0 10px 28px rgba(0,0,0,.32)!important;
+  }
+  #moreSheet .s94Panel::before{
+    inset:5px!important;
+    border-radius:22px!important;
+  }
+  #moreSheet .s94Header{
+    min-height:6px!important;
+    height:6px!important;
+    margin:0 0 8px!important;
+  }
+  #moreSheet .s94Glyph{
+    width:42px!important;
+    height:5px!important;
+  }
+  #moreSheet .s94Grid{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-rows:64px!important;
+    gap:8px!important;
+    margin:0 3px!important;
+  }
+  #moreSheet .s94Card{
+    height:64px!important;
+    min-height:64px!important;
+    max-height:64px!important;
+    border-width:1px!important;
+    border-radius:13px!important;
+    box-shadow:0 0 0 1px rgba(120,228,255,.05) inset,0 0 10px rgba(19,155,255,.10)!important;
+  }
+  #moreSheet .s94CardInner{
+    padding:5px 6px 6px!important;
+  }
+  #moreSheet .s94Card svg{
+    width:22px!important;
+    height:22px!important;
+    margin:3px 0 0!important;
+    stroke-width:1.8!important;
+  }
+  #moreSheet .s94Card span{
+    left:7px!important;
+    right:15px!important;
+    bottom:7px!important;
+    font-size:6.1px!important;
+    letter-spacing:.85px!important;
+    line-height:1.05!important;
+    white-space:normal!important;
+    overflow:visible!important;
+  }
+  #moreSheet .s94CardInner::after{
+    right:5px!important;
+    bottom:5px!important;
+    font-size:14px!important;
+  }
+  #moreSheet .s94Close{
+    min-height:45px!important;
+    height:45px!important;
+    margin:9px 3px 0!important;
+    border-width:1px!important;
+    border-radius:14px!important;
+    gap:8px!important;
+    box-shadow:0 0 0 1px rgba(120,228,255,.05) inset,0 0 10px rgba(19,155,255,.09)!important;
+  }
+  #moreSheet .s94Close::before{
+    font-size:19px!important;
+  }
+  #moreSheet .s94Close span{
+    font-size:7px!important;
+    letter-spacing:1.8px!important;
+  }
+}
+@media (max-width:380px){
+  #moreSheet{padding-left:7px!important;padding-right:7px!important}
+  #moreSheet .s94Panel{width:calc(100vw - 14px)!important;padding-left:8px!important;padding-right:8px!important}
+  #moreSheet .s94Grid{grid-auto-rows:60px!important;gap:7px!important}
+  #moreSheet .s94Card{height:60px!important;min-height:60px!important;max-height:60px!important}
+  #moreSheet .s94Card svg{width:20px!important;height:20px!important}
+  #moreSheet .s94Card span{font-size:5.7px!important;letter-spacing:.7px!important}
+  #moreSheet .s94Close{height:42px!important;min-height:42px!important}
+}
+</style>
+<script id="sirius-v22304-version-mark">
+(function(){
+  const VERSION='v2.23.04';
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mark,{once:true});else mark();
+  window.addEventListener('load',()=>setTimeout(mark,250),{once:true});
+})();
+</script>
+
+
+
+<!-- ===== SIRIUS v2.23.05 // MAIS COMPACTO + PADRÃO ÚNICO DE MENSAGENS ===== -->
+<style id="sirius-v22305-unified-dialogs">
+/* 1) Mantém a ATT anterior da aba MAIS e fecha a proporção no formato compacto aprovado. */
+@media (max-width:520px){
+  #moreSheet{padding:0 10px calc(106px + env(safe-area-inset-bottom))!important}
+  #moreSheet .s94Panel{
+    width:min(94vw,520px)!important;
+    max-width:520px!important;
+    padding:10px 10px calc(11px + env(safe-area-inset-bottom))!important;
+    border-radius:28px!important;
+  }
+  #moreSheet .s94Panel::before{inset:6px!important;border-radius:22px!important}
+  #moreSheet .s94Header{margin:0 0 8px!important;min-height:7px!important}
+  #moreSheet .s94Glyph{width:50px!important;height:5px!important}
+  #moreSheet .s94Grid{grid-auto-rows:72px!important;gap:8px!important;margin:0 3px!important}
+  #moreSheet .s94Card{height:72px!important;min-height:72px!important;max-height:72px!important;border-radius:13px!important}
+  #moreSheet .s94CardInner{padding:6px 7px!important}
+  #moreSheet .s94Card svg{width:23px!important;height:23px!important;margin:5px 0 14px!important}
+  #moreSheet .s94Card span{left:7px!important;right:17px!important;bottom:8px!important;font-size:6.4px!important;letter-spacing:.85px!important}
+  #moreSheet .s94CardInner::after{right:5px!important;bottom:6px!important;font-size:15px!important}
+  #moreSheet .s94Close{min-height:46px!important;margin:10px 3px 0!important;border-radius:13px!important;gap:7px!important}
+  #moreSheet .s94Close::before{font-size:19px!important}
+  #moreSheet .s94Close span{font-size:7px!important;letter-spacing:1.65px!important}
+}
+
+/* 2) Padrão visual oficial para caixas de mensagem: mesma moldura, só muda o conteúdo. */
+:root{--msg-cyan:#69ecff;--msg-blue:#0b497c;--msg-deep:#061a30;--msg-text:#f7fbff;--msg-muted:#b5d0e3}
+
+.systemOverlay,
+.s62SystemOverlay,
+.s2302Modal,
+.validationOverlay{
+  background:rgba(0,5,13,.72)!important;
+  backdrop-filter:blur(4px)!important;
+  -webkit-backdrop-filter:blur(4px)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px!important;
+}
+
+.systemWindow,
+.s62SystemPanel,
+.s2302ModalCard,
+.validationWindow{
+  width:min(86vw,430px)!important;
+  max-width:430px!important;
+  border:1px solid rgba(105,236,255,.82)!important;
+  border-radius:0!important;
+  background:
+    radial-gradient(circle at 50% -8%,rgba(105,236,255,.16),transparent 32%),
+    linear-gradient(180deg,rgba(10,63,108,.985),rgba(5,39,72,.99))!important;
+  color:var(--msg-text)!important;
+  box-shadow:0 0 32px rgba(63,207,255,.22),inset 0 0 42px rgba(77,194,255,.08)!important;
+  padding:28px 22px 24px!important;
+  text-align:center!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+.systemWindow::before,.systemWindow::after,
+.s2302ModalCard::before,.s2302ModalCard::after,
+.validationWindow::before,.validationWindow::after{
+  content:""!important;position:absolute!important;pointer-events:none!important;z-index:0!important
+}
+.systemWindow::before,.s2302ModalCard::before,.validationWindow::before{
+  inset:9px!important;
+  border-left:2px solid rgba(105,236,255,.72)!important;
+  border-right:2px solid rgba(105,236,255,.72)!important;
+  background:
+    linear-gradient(#69ecff,#69ecff) left top/42px 2px no-repeat,
+    linear-gradient(#69ecff,#69ecff) right top/42px 2px no-repeat,
+    linear-gradient(#69ecff,#69ecff) left bottom/42px 2px no-repeat,
+    linear-gradient(#69ecff,#69ecff) right bottom/42px 2px no-repeat!important;
+  opacity:.82!important
+}
+.systemWindow::after,.s2302ModalCard::after,.validationWindow::after{
+  left:50%!important;top:9px!important;transform:translateX(-50%)!important;
+  width:112px!important;height:26px!important;
+  background:linear-gradient(90deg,transparent,#69ecff 18%,#69ecff 82%,transparent) center bottom/100% 1px no-repeat!important;
+  opacity:.78!important
+}
+.systemWindow>* ,.s2302ModalCard>* ,.validationWindow>*{position:relative!important;z-index:2!important}
+
+/* Cabeçalho no padrão da imagem de referência. */
+.systemKicker,
+.s2302ModalKicker{
+  margin:1px 0 14px!important;
+  color:#effcff!important;
+  font-family:Impact,"Arial Narrow",sans-serif!important;
+  font-size:0!important;
+  font-weight:500!important;
+  letter-spacing:.7px!important;
+  text-transform:uppercase!important;
+  text-shadow:0 2px 3px #00152c,0 0 9px rgba(255,255,255,.12)!important;
+}
+.systemKicker::after,.s2302ModalKicker::after{
+  content:"✉  MENSAGEM"!important;
+  display:block!important;
+  font-size:25px!important;
+  letter-spacing:.8px!important;
+}
+.systemBig,.s2302ModalTitle,.validationWindow h3{
+  margin:8px 0 10px!important;
+  color:#fff!important;
+  font-family:Impact,"Arial Narrow",sans-serif!important;
+  font-size:24px!important;
+  line-height:1.16!important;
+  letter-spacing:.6px!important;
+  font-weight:500!important;
+  text-transform:uppercase!important;
+  text-shadow:0 2px 3px #00152c,0 0 8px rgba(255,255,255,.08)!important;
+}
+.systemDetail,.s2302ModalText,.validationText{
+  color:var(--msg-text)!important;
+  font-size:14px!important;
+  line-height:1.45!important;
+  font-weight:800!important;
+  letter-spacing:.25px!important;
+  white-space:pre-line!important;
+}
+
+/* Ações no mesmo estilo ACCEPT/RECUSAR da referência. */
+.systemClose,
+.s2302ModalActions button,
+.s2302RewardChoice,
+.validationActions button{
+  min-height:48px!important;
+  border:1px solid rgba(123,245,255,.9)!important;
+  border-radius:0!important;
+  background:linear-gradient(180deg,rgba(36,132,153,.92),rgba(11,82,105,.96))!important;
+  color:#fff!important;
+  box-shadow:0 0 13px rgba(88,232,255,.20),inset 0 0 12px rgba(255,255,255,.04)!important;
+  font-size:11px!important;
+  font-weight:1000!important;
+  letter-spacing:1.4px!important;
+  text-transform:uppercase!important;
+}
+.systemClose{width:min(230px,78%)!important;margin:20px auto 0!important;display:block!important}
+.s2302ModalActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:17px!important}
+.s2302ModalActions:has(> button:only-child){grid-template-columns:1fr!important}
+.s2302ModalActions:has(> button:only-child) button{width:min(230px,100%)!important;justify-self:center!important}
+.s2302ModalActions .primary,.validationActions .primary{background:linear-gradient(180deg,rgba(39,151,173,.98),rgba(13,92,117,.98))!important}
+
+/* Recompensa: continua com 3 escolhas, mas dentro da mesma caixa oficial. */
+.s2302RewardGrid{display:grid!important;gap:9px!important;margin-top:16px!important}
+.s2302RewardChoice{text-align:left!important;padding:11px 13px!important;background:linear-gradient(180deg,rgba(11,67,102,.96),rgba(6,43,73,.98))!important}
+.s2302RewardChoice b{display:block!important;font-size:12px!important;color:#fff!important;letter-spacing:1.2px!important}
+.s2302RewardChoice span{display:block!important;font-size:10px!important;color:#cae4f2!important;line-height:1.35!important;margin-top:4px!important;letter-spacing:.35px!important}
+.s2302Modal input,.validationWindow input,.validationWindow textarea{
+  width:100%!important;background:#04101d!important;color:#fff!important;border:1px solid rgba(105,236,255,.68)!important;border-radius:0!important;padding:11px!important;font-size:16px!important;box-shadow:inset 0 0 12px rgba(68,197,255,.06)!important
+}
+
+/* O painel s62 já era o mais próximo da referência; é fixado como modelo oficial. */
+.s62SystemPanel{width:min(86vw,430px)!important;max-width:430px!important;padding:28px 22px 24px!important}
+.s62Header{font-size:25px!important}.s62HeaderIcon{width:31px!important;height:31px!important;flex-basis:31px!important}
+.s62Actions{gap:12px!important}.s62Actions button{min-height:48px!important;font-size:12px!important}
+
+@media(max-width:390px){
+  .systemWindow,.s62SystemPanel,.s2302ModalCard,.validationWindow{width:min(90vw,390px)!important;padding:24px 17px 20px!important}
+  .systemKicker::after,.s2302ModalKicker::after{font-size:22px!important}
+  .systemBig,.s2302ModalTitle,.validationWindow h3{font-size:21px!important}
+  .systemDetail,.s2302ModalText,.validationText{font-size:12px!important}
+  .s2302RewardChoice b{font-size:10px!important}.s2302RewardChoice span{font-size:9px!important}
+}
+</style>
+<script id="sirius-v22305-version">
+(function(){
+  const VERSION='v2.23.05';
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  mark();setTimeout(mark,250);setTimeout(mark,1500);
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // ABA MAIS COMPACTA + PADRÃO ÚNICO DE CAIXAS DE MENSAGEM.');
+      if(typeof save==='function')save(); else if(typeof STORAGE_KEY==='string')localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    }
+  }catch(e){console.warn('SIRIUS '+VERSION,e)}
+})();
+</script>
+
 </body></html>
