@@ -13412,4 +13412,157 @@ body.s95-more-open > *:not(#moreSheet){
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.06 // TEST LAB TOUCH FIX + DARK CONTROLS ===== -->
+<style id="sirius-v22306-test-lab-fix">
+/* Remove o preenchimento azul-claro residual do laboratório. */
+#s62TestControls{
+  position:relative!important;
+  z-index:8!important;
+  isolation:isolate!important;
+  background:linear-gradient(180deg,#04101d,#020914)!important;
+  border:1px solid #214f72!important;
+  box-shadow:inset 0 0 18px rgba(52,190,255,.035)!important;
+}
+#s62TestControls .s62TestControlsGrid{
+  position:relative!important;
+  z-index:10!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  pointer-events:auto!important;
+}
+#s62TestControls .s62TestControlsGrid button,
+#s62TestControls .s62TestControlsGrid button:disabled,
+body.s64-test-active #s62TestControls .s62TestControlsGrid button{
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  position:relative!important;
+  z-index:20!important;
+  min-height:52px!important;
+  opacity:1!important;
+  filter:none!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:rgba(76,213,255,.12)!important;
+  border:1px solid #2a638b!important;
+  border-radius:0!important;
+  background:linear-gradient(180deg,#061522,#03101b)!important;
+  color:#b9cad6!important;
+  box-shadow:inset 0 0 14px rgba(57,193,255,.025)!important;
+  font-size:9px!important;
+  font-weight:950!important;
+  letter-spacing:1.3px!important;
+  cursor:pointer!important;
+}
+#s62TestControls .s62TestControlsGrid button.s86-needs-test{opacity:.78!important}
+#s62TestControls .s62TestControlsGrid button:active{
+  background:#082033!important;
+  border-color:#55dfff!important;
+  color:#fff!important;
+}
+#s62TestControls .s62TestControlsTitle,
+#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important}
+#s62TestControls::before,#s62TestControls::after{pointer-events:none!important}
+</style>
+<script id="sirius-v22306-test-lab-script">
+(function(){
+  const VERSION='v2.23.06';
+  const mapByText={
+    'ORIENTAÇÃO DE QUEST':'s62TestQuestOrientation',
+    'MENSAGEM':'s62TestMessage',
+    'AVISO DO SISTEMA':'s62TestNoticeGrowth',
+    'RECOMPENSA':'s62TestRewards',
+    'QUEST SECRETA':'s62TestSecret',
+    'RECUPERAÇÃO':'s62TestPenaltyZone',
+    'PENALIDADE':'s62TestNoticePenalty',
+    'TEMPORIZADOR':'s62TestRewardsTimer'
+  };
+  function isTest(){try{return typeof window.s62IsTestMode==='function'&&window.s62IsTestMode()}catch(e){return false}}
+  function showNeedTest(){
+    if(typeof window.s62ShowSystemPanel==='function'){
+      window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]});
+    }else if(typeof window.showToast==='function')window.showToast('ATIVE O MODO DE TESTE');
+  }
+  function ensureEventCenter(){
+    if(typeof data==='undefined')return null;
+    data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};
+    data.eventCenter.messages=Array.isArray(data.eventCenter.messages)?data.eventCenter.messages:[];
+    data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];
+    data.eventCenter.recoveries=Array.isArray(data.eventCenter.recoveries)?data.eventCenter.recoveries:[];
+    data.eventCenter.timers=Array.isArray(data.eventCenter.timers)?data.eventCenter.timers:[];
+    return data.eventCenter;
+  }
+  function runSpecial(id){
+    if(id==='s66TestInbox'){
+      window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');
+      window.s66OpenEventCenter?.();
+      return true;
+    }
+    if(id==='s66TestReward'){
+      const ec=ensureEventCenter();if(!ec)return true;
+      const rid='reward_test_'+Date.now();
+      ec.rewards.unshift({id:rid,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});
+      window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:rid});
+      window.s66OpenEventCenter?.();
+      return true;
+    }
+    if(id==='s66TestTimer'){
+      if(typeof data!=='undefined'){
+        data.missions=Array.isArray(data.missions)?data.missions:[];
+        let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);
+        if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}
+        window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');
+        window.s66OpenEventCenter?.();
+      }
+      return true;
+    }
+    if(id==='s66TestRecovery'){
+      window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório');
+      return true;
+    }
+    return false;
+  }
+  function resolveButton(btn){
+    if(!btn)return null;
+    if(runSpecial.bind && /^s66Test/.test(btn.id||''))return {special:btn.id};
+    const label=String(btn.textContent||'').trim().toUpperCase();
+    const fn=mapByText[label];
+    return fn?{fn}:null;
+  }
+  function execute(btn){
+    if(!isTest()){showNeedTest();return}
+    const action=resolveButton(btn);if(!action)return;
+    if(action.special){runSpecial(action.special);return}
+    const fn=window[action.fn];if(typeof fn==='function')fn();
+  }
+  function arm(){
+    const box=document.getElementById('s62TestControls');if(!box)return;
+    const buttons=box.querySelectorAll('.s62TestControlsGrid button');
+    buttons.forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.style.pointerEvents='auto';b.onclick=null});
+    if(box.dataset.s2306Wired==='1')return;
+    box.dataset.s2306Wired='1';
+    let last=0;
+    const handler=function(ev){
+      const b=ev.target&&ev.target.closest?ev.target.closest('#s62TestControls .s62TestControlsGrid button'):null;
+      if(!b||!box.contains(b))return;
+      const now=Date.now();if(now-last<420){ev.preventDefault();ev.stopImmediatePropagation();return}
+      last=now;ev.preventDefault();ev.stopImmediatePropagation();execute(b);
+    };
+    box.addEventListener('pointerup',handler,true);
+    box.addEventListener('click',handler,true);
+  }
+  function init(){arm();setTimeout(arm,250);setTimeout(arm,900)}
+  const prevRefresh=window.refreshDashboard;
+  window.refreshDashboard=function(){const r=typeof prevRefresh==='function'?prevRefresh.apply(this,arguments):undefined;setTimeout(arm,20);return r};
+  const prevToggle=window.toggleSiriusTestMode;
+  window.toggleSiriusTestMode=function(){const r=typeof prevToggle==='function'?prevToggle.apply(this,arguments):undefined;setTimeout(arm,30);return r};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+  window.addEventListener('load',()=>setTimeout(arm,150),{once:true});
+  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  mark();setTimeout(mark,300);setTimeout(mark,1400);
+})();
+</script>
+
 </body></html>
