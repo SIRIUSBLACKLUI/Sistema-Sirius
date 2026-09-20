@@ -9985,6 +9985,7 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
   }
 
   function maybeTriggerSecret(){
+    try{if(typeof window.s62IsTestMode==='function'&&window.s62IsTestMode())return}catch(e){}
     const state=ensureSecretState();
     if(!state.unlocked && requirementsMet())unlockSecretMission(true);
     else if(state.unlocked && !state.accepted && state.refused){
@@ -10567,12 +10568,11 @@ body.s64-test-active #s62TestControls [data-test]{
       active=true;
       runs=[];
       renderLab();
-      try{if(typeof render==='function')render()}catch(e){}
-      renderLab();
+      /* Ativar o laboratório não dispara render global: evita iniciar quests/eventos automaticamente. */
       if(typeof s62ShowSystemPanel==='function'){
-        s62ShowSystemPanel({type:'notice',title:'AVISO',body:'<span class="green">MODO DE TESTE ATIVO.</span><br><br>TODOS OS REQUISITOS FORAM LIBERADOS TEMPORARIAMENTE.<br><br>NADA DESTE MODO SERÁ GRAVADO NO PROGRESSO REAL.',actions:[{label:'CONTINUAR'}]});
+        s62ShowSystemPanel({type:'notice',title:'TESTE ATIVADO',body:'<span class="green">TESTE ATIVADO.</span>',actions:[{label:'CONTINUAR'}]});
       }else if(typeof showSystemEvent==='function'){
-        showSystemEvent('MODO DE TESTE ATIVO','Tudo liberado temporariamente. Nenhum progresso real será salvo.');
+        showSystemEvent('TESTE ATIVADO','Modo de teste ativo.');
       }
     }catch(err){
       active=false;
@@ -13562,6 +13562,36 @@ body.s64-test-active #s62TestControls .s62TestControlsGrid button{
   window.addEventListener('load',()=>setTimeout(arm,150),{once:true});
   const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
   mark();setTimeout(mark,300);setTimeout(mark,1400);
+})();
+</script>
+
+
+<!-- ===== SIRIUS v2.23.07 // TEST LAB FINAL FIX ===== -->
+<style id="sirius-v22307-test-lab-final-style">
+#s62TestControls{position:relative!important;isolation:isolate!important;overflow:visible!important;background:#020914!important;background-image:none!important;border:1px solid #214f72!important;box-shadow:inset 0 0 14px rgba(37,145,205,.035)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#s62TestControls::before,#s62TestControls::after,#s62TestControls .s62TestControlsGrid::before,#s62TestControls .s62TestControlsGrid::after,#s62TestControls .s62TestNotice::before,#s62TestControls .s62TestNotice::after,#s62TestControls .s62TestControlsGrid button::before,#s62TestControls .s62TestControlsGrid button::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important}
+#s62TestControls .s62TestControlsGrid{position:relative!important;z-index:50!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;background:transparent!important;background-image:none!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#s62TestControls .s62TestControlsTitle,#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important;background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#s62TestControls .s62TestControlsGrid button{-webkit-appearance:none!important;appearance:none!important;position:relative!important;z-index:100!important;min-height:52px!important;opacity:1!important;filter:none!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-tap-highlight-color:rgba(76,213,255,.12)!important;border:1px solid #2a638b!important;border-radius:0!important;background:linear-gradient(180deg,#061522,#03101b)!important;color:#b9cad6!important;box-shadow:inset 0 0 14px rgba(57,193,255,.025)!important;font-size:9px!important;font-weight:950!important;letter-spacing:1.3px!important;cursor:pointer!important}
+#s62TestControls .s62TestControlsGrid button:active{background:#082033!important;border-color:#55dfff!important;color:#fff!important}
+#s2302DailyHost,.s2302Quest,.s2302Objective,.s2302ObjRight,.s2302Update,.s2302Complete,[data-s2302-update],[data-s2302-complete]{pointer-events:auto!important}.s2302Update,[data-s2302-update]{position:relative!important;z-index:25!important;touch-action:manipulation!important}
+</style>
+<script id="sirius-v22307-test-lab-final-script">
+(function(){
+const VERSION='v2.23.07';let lastTap=0;
+function isTest(){try{return typeof window.s62IsTestMode==='function'&&!!window.s62IsTestMode()}catch(e){return false}}
+function need(){if(window.s62ShowSystemPanel)window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]});else window.showToast?.('ATIVE O MODO DE TESTE')}
+function activated(){if(window.s62ShowSystemPanel)window.s62ShowSystemPanel({type:'notice',title:'TESTE ATIVADO',body:'<span class="green">TESTE ATIVADO.</span>',actions:[{label:'CONTINUAR'}]});else window.showSystemEvent?.('TESTE ATIVADO','Modo de teste ativo.')}
+function ec(){if(typeof data==='undefined')return null;data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};['messages','rewards','recoveries','timers'].forEach(k=>data.eventCenter[k]=Array.isArray(data.eventCenter[k])?data.eventCenter[k]:[]);return data.eventCenter}
+function special(a){if(a==='inbox'){window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');window.s66OpenEventCenter?.();return}if(a==='rewardPending'){const x=ec();if(!x)return;const id='reward_test_'+Date.now();x.rewards.unshift({id,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:id});window.s66OpenEventCenter?.();return}if(a==='timerReal'){data.missions=Array.isArray(data.missions)?data.missions:[];let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');window.s66OpenEventCenter?.();return}if(a==='recoveryEvent')window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório')}
+const acts={orientation:()=>window.s62TestQuestOrientation?.(),message:()=>window.s62TestMessage?.(),notice:()=>window.s62TestNoticeGrowth?.(),reward:()=>window.s62TestRewards?.(),secret:()=>window.s62TestSecret?.(),recovery:()=>window.s62TestPenaltyZone?.(),penalty:()=>window.s62TestNoticePenalty?.(),timer:()=>window.s62TestRewardsTimer?.(),inbox:()=>special('inbox'),rewardPending:()=>special('rewardPending'),timerReal:()=>special('timerReal'),recoveryEvent:()=>special('recoveryEvent')};
+function rebuild(){const g=document.querySelector('#s62TestControls .s62TestControlsGrid');if(!g)return;if(g.dataset.s2307Built!=='1'){g.innerHTML=`<button type="button" data-s2307-action="orientation">ORIENTAÇÃO DE QUEST</button><button type="button" data-s2307-action="message">MENSAGEM</button><button type="button" data-s2307-action="notice">AVISO DO SISTEMA</button><button type="button" data-s2307-action="reward">RECOMPENSA</button><button type="button" data-s2307-action="secret">QUEST SECRETA</button><button type="button" data-s2307-action="recovery">RECUPERAÇÃO</button><button type="button" data-s2307-action="penalty">PENALIDADE</button><button type="button" data-s2307-action="timer">TEMPORIZADOR</button><button type="button" id="s66TestInbox" data-s2307-action="inbox">CENTRAL / MENSAGEM</button><button type="button" id="s66TestReward" data-s2307-action="rewardPending">RECOMPENSA PENDENTE</button><button type="button" id="s66TestTimer" data-s2307-action="timerReal">TEMPORIZADOR REAL</button><button type="button" id="s66TestRecovery" data-s2307-action="recoveryEvent">RECUPERAÇÃO</button>`;g.dataset.s2307Built='1'}g.querySelectorAll('button').forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.style.pointerEvents='auto'})}
+function tap(ev){const b=ev.target?.closest?.('#s62TestControls [data-s2307-action]');if(!b)return;const n=Date.now();if(ev.type==='click'&&n-lastTap<650){ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();return}lastTap=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();if(!isTest()){need();return}acts[b.dataset.s2307Action]?.()}
+document.addEventListener('touchend',tap,{capture:true,passive:false});document.addEventListener('pointerup',e=>{if(e.pointerType!=='touch')tap(e)},true);document.addEventListener('click',tap,true);
+const prev=window.toggleSiriusTestMode;if(typeof prev==='function'&&!prev.__s2307Wrapped){const w=function(){const was=isTest(),r=prev.apply(this,arguments),now=isTest();rebuild();if(!was&&now)activated();return r};w.__s2307Wrapped=true;window.toggleSiriusTestMode=w}
+function init(){rebuild();document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();window.addEventListener('load',()=>setTimeout(init,80),{once:true});[250,900,1800,3200].forEach(ms=>setTimeout(init,ms));
+try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // LABORATÓRIO: TOQUE RESTAURADO, FAIXA AZUL REMOVIDA E ATIVAÇÃO SEM DISPARO DE MISSÕES.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){console.warn('SIRIUS '+VERSION,e)}
 })();
 </script>
 
