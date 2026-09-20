@@ -13707,4 +13707,308 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VE
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.09 // CORREÇÕES CONQUISTAS + TESTE + CENTRAL + KANT PDF ===== -->
+<style id="sirius-v22309-fixes-style">
+/* CONQUISTAS: volta para um fundo uniforme com thumbs menores em quadrado. */
+#view-achievements .s98AchCard,
+#dashAchievements .s98AchCard{
+  background:linear-gradient(180deg,#081628 0%,#07111e 58%,#060d17 100%)!important;
+  box-shadow:0 0 18px rgba(27,170,235,.10),inset 0 0 22px rgba(38,161,221,.05)!important;
+}
+#view-achievements .s98AchCard::before,
+#view-achievements .s98AchCard::after,
+#dashAchievements .s98AchCard::before,
+#dashAchievements .s98AchCard::after{
+  display:none!important;
+  content:none!important;
+}
+#view-achievements .s98AchInner,
+#dashAchievements .s98AchInner{
+  grid-template-columns:64px 44px minmax(0,1fr)!important;
+  gap:10px!important;
+  min-height:120px!important;
+  padding:12px 13px!important;
+}
+#view-achievements .s98AchThumb,
+#dashAchievements .s98AchThumb{
+  width:64px!important;
+  height:64px!important;
+  border-radius:14px!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+#view-achievements .s98AchIconWrap,
+#dashAchievements .s98AchIconWrap{
+  width:42px!important;height:42px!important;
+}
+#view-achievements .s98AchIconWrap svg,
+#view-achievements .s98AchBadge svg,
+#view-achievements .s98AchMetaIcon svg,
+#dashAchievements .s98AchIconWrap svg,
+#dashAchievements .s98AchBadge svg,
+#dashAchievements .s98AchMetaIcon svg{
+  width:19px!important;height:19px!important;
+}
+#view-achievements .s98AchBody,
+#dashAchievements .s98AchBody{padding-right:124px!important}
+#view-achievements .s98AchTitle,
+#dashAchievements .s98AchTitle{font-size:16px!important;line-height:1.02!important}
+#view-achievements .s98AchDesc,
+#dashAchievements .s98AchDesc{font-size:8.6px!important;max-width:220px!important}
+#view-achievements .s98AchBadge,
+#dashAchievements .s98AchBadge{width:116px!important;height:42px!important;font-size:7px!important}
+@media(min-width:760px){
+  #view-achievements .s98AchInner,
+  #dashAchievements .s98AchInner{grid-template-columns:88px 58px minmax(0,1fr)!important;min-height:148px!important;padding:17px 18px!important;gap:16px!important}
+  #view-achievements .s98AchThumb,
+  #dashAchievements .s98AchThumb{width:88px!important;height:88px!important;border-radius:18px!important}
+  #view-achievements .s98AchIconWrap,
+  #dashAchievements .s98AchIconWrap{width:56px!important;height:56px!important}
+  #view-achievements .s98AchBody,
+  #dashAchievements .s98AchBody{padding-right:170px!important}
+  #view-achievements .s98AchTitle,
+  #dashAchievements .s98AchTitle{font-size:24px!important}
+  #view-achievements .s98AchDesc,
+  #dashAchievements .s98AchDesc{font-size:12px!important}
+  #view-achievements .s98AchBadge,
+  #dashAchievements .s98AchBadge{width:170px!important;height:54px!important;font-size:9px!important}
+}
+
+/* CENTRAL: reforço de toque e botão auxiliar de redirecionamento. */
+#s66EventHub .s66HubItem,
+#s66EventHub .s66HubItem *{pointer-events:auto!important}
+#s66EventHub .s66HubItem.reward .rewardBtn,
+#s66EventHub .s2309HubAction{
+  position:relative!important;z-index:6!important;touch-action:manipulation!important;
+}
+#s66EventHub .s66HubItem.timer{cursor:pointer}
+#s66EventHub .s2309HubActions{display:flex;gap:8px;margin-top:10px}
+#s66EventHub .s2309HubAction{
+  width:100%;min-height:40px;border:1px solid #49dfff;background:#082743;color:#ecfbff;
+  font-size:7px;font-weight:1000;letter-spacing:1.1px;padding:9px 10px
+}
+
+/* Durante a ativação do teste, overlays automáticos antigos ficam ocultos por instantes. */
+body.s2309-test-activation #s61EventOverlay{display:none!important}
+</style>
+<script id="sirius-v22309-fixes-script">
+(function(){
+  const VERSION='v2.23.09';
+  const KANT_ID='kant_metafisica_costumes_pdf';
+  const KANT_URL='./hdh_kant_metafisica_costumes.pdf';
+  const KANT_TITLE='Kant — Os Princípios da Metafísica dos Costumes';
+
+  function safeSave(){
+    try{ if(typeof save==='function') return save(); }catch(e){}
+    try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(data)); }catch(e){}
+  }
+  function ensureArchive(){
+    data.knowledgeArchive=data.knowledgeArchive&&typeof data.knowledgeArchive==='object'?data.knowledgeArchive:{};
+    data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];
+    return data.knowledgeArchive.sources;
+  }
+  function ensureKantSource(){
+    const sources=ensureArchive();
+    let s=sources.find(x=>x && (x.id===KANT_ID || /metaf[ií]sica dos costumes/i.test(String(x.title||''))));
+    if(!s){
+      s={
+        id:KANT_ID,
+        title:KANT_TITLE,
+        author:'Immanuel Kant',
+        type:'Livro',
+        area:'Filosofia',
+        section:'Missão de penalidade',
+        materialUrl:KANT_URL,
+        progress:0,
+        fileProgress:0,
+        epubCfi:null,
+        readingSeconds:0,
+        lastReadAt:null,
+        milestonesSeen:[],
+        learningMilestonesCreated:[],
+        createdAt:new Date().toISOString()
+      };
+      sources.unshift(s);
+    }else{
+      if(!s.materialUrl) s.materialUrl=KANT_URL;
+      if(!s.title) s.title=KANT_TITLE;
+      if(!s.author) s.author='Immanuel Kant';
+      if(!s.type) s.type='Livro';
+      if(!s.area) s.area='Filosofia';
+      if(!s.section) s.section='Missão de penalidade';
+      if(!Array.isArray(s.milestonesSeen)) s.milestonesSeen=[];
+      if(!Array.isArray(s.learningMilestonesCreated)) s.learningMilestonesCreated=[];
+      if(s.fileProgress===undefined || s.fileProgress===null) s.fileProgress=Number(s.progress)||0;
+      if(s.readingSeconds===undefined || s.readingSeconds===null) s.readingSeconds=0;
+    }
+    return s;
+  }
+  function openKantPdf(){
+    const s=ensureKantSource();
+    safeSave();
+    try{
+      if(typeof openKnowledgeMaterial==='function'){ openKnowledgeMaterial(s.id); return true; }
+    }catch(e){ console.warn('SIRIUS '+VERSION+' openKnowledgeMaterial',e); }
+    try{ window.open(KANT_URL,'_blank','noopener'); return true; }catch(e){}
+    return false;
+  }
+
+  function suppressTestNoise(ms=1800){
+    document.body.classList.add('s2309-test-activation');
+    const closeLegacy=()=>{ try{ document.getElementById('s61EventOverlay')?.classList.remove('show'); }catch(e){} };
+    const closeGeneric=()=>{
+      try{
+        const title=String(document.getElementById('s62HeaderText')?.textContent||'').trim().toUpperCase();
+        if(title && title!=='TESTE ATIVADO') window.s62CloseSystemPanel?.();
+      }catch(e){}
+    };
+    [30,120,280,650,1100,1600].forEach(t=>setTimeout(()=>{closeLegacy();closeGeneric();},t));
+    setTimeout(()=>document.body.classList.remove('s2309-test-activation'),ms);
+  }
+
+  function wrapTestToggle(){
+    const prev=window.toggleSiriusTestMode;
+    if(typeof prev!=='function' || prev.__s2309Wrapped) return;
+    const wrapped=function(){
+      let before=false;
+      try{ before=typeof window.s62IsTestMode==='function' && window.s62IsTestMode(); }catch(e){}
+      if(!before) suppressTestNoise(1800);
+      const out=prev.apply(this,arguments);
+      if(!before){
+        ensureKantSource();
+        safeSave();
+      }
+      return out;
+    };
+    wrapped.__s2309Wrapped=true;
+    window.toggleSiriusTestMode=wrapped;
+  }
+
+  function dedupePanels(){
+    const prev=window.s62ShowSystemPanel;
+    if(typeof prev!=='function' || prev.__s2309Wrapped) return;
+    let lastSig=''; let lastAt=0;
+    const wrapped=function(cfg={}){
+      const sig=(String(cfg.title||'')+'::'+String(cfg.body||cfg.html||'')).replace(/\s+/g,' ').trim();
+      const now=Date.now();
+      if(sig && sig===lastSig && now-lastAt<1500) return;
+      lastSig=sig; lastAt=now;
+      return prev.call(this,cfg);
+    };
+    wrapped.__s2309Wrapped=true;
+    window.s62ShowSystemPanel=wrapped;
+  }
+
+  function findMissionIndexByTitle(title){
+    const t=String(title||'').trim().toUpperCase();
+    if(!t || !Array.isArray(data?.missions)) return -1;
+    return data.missions.findIndex(m=>String(m?.name||'').trim().toUpperCase()===t);
+  }
+  function openMissionByTitle(title){
+    const run=()=>{
+      const idx=findMissionIndexByTitle(title);
+      if(idx>=0 && typeof window.openMissionPanel==='function') return window.openMissionPanel(idx);
+      const row=[...document.querySelectorAll('#view-missions .missionListRow,#view-missions [data-s100-mission]')].find(el=>String(el.textContent||'').toUpperCase().includes(String(title||'').trim().toUpperCase()));
+      if(row){ row.scrollIntoView?.({behavior:'smooth',block:'center'}); row.click?.(); }
+    };
+    try{ if(typeof window.openDockView==='function') window.openDockView('missions'); }catch(e){}
+    [90,260,520].forEach(ms=>setTimeout(run,ms));
+  }
+
+  function rewardIdFromButton(btn){
+    const raw=btn?.dataset?.s2309RewardId || btn?.getAttribute?.('data-s2309-reward-id');
+    if(raw) return raw;
+    const onclick=btn?.getAttribute?.('onclick')||'';
+    const m=onclick.match(/s66ClaimReward\('([^']+)'\)/);
+    return m?m[1]:'';
+  }
+  function bindTap(el,fn,key){
+    if(!el || (key && el.dataset[key]==='1')) return;
+    if(key) el.dataset[key]='1';
+    let last=0;
+    const fire=(ev)=>{
+      const now=Date.now();
+      if(now-last<350){ ev?.preventDefault?.(); ev?.stopPropagation?.(); return; }
+      last=now; ev?.preventDefault?.(); ev?.stopPropagation?.(); fn(ev);
+    };
+    el.addEventListener('touchend',fire,{passive:false});
+    el.addEventListener('click',fire,true);
+  }
+  function enhanceHub(){
+    const host=document.getElementById('s66EventHub');
+    if(!host) return;
+
+    host.querySelectorAll('.s66HubItem.reward').forEach(item=>{
+      const btn=item.querySelector('.rewardBtn, button');
+      if(!btn) return;
+      const id=rewardIdFromButton(btn);
+      if(id) btn.dataset.s2309RewardId=id;
+      btn.type='button';
+      bindTap(btn,()=>{ const rid=rewardIdFromButton(btn); if(rid && typeof window.s66ClaimReward==='function') window.s66ClaimReward(rid); },'s2309Bound');
+    });
+
+    host.querySelectorAll('.s66HubItem.timer').forEach(item=>{
+      if(item.dataset.s2309Enhanced==='1') return;
+      item.dataset.s2309Enhanced='1';
+      const title=(item.querySelector('.s66HubTitle')?.textContent||'').trim();
+      item.dataset.s2309MissionTitle=title;
+      const actions=document.createElement('div');
+      actions.className='s2309HubActions';
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='s2309HubAction';
+      btn.textContent='VER MISSÃO';
+      actions.appendChild(btn);
+      item.appendChild(actions);
+      bindTap(btn,()=>openMissionByTitle(title),'s2309Bound');
+      bindTap(item,(ev)=>{ if(ev?.target?.closest?.('button')) return; openMissionByTitle(title); },'s2309CardBound');
+    });
+  }
+  function observeHub(){
+    const mo=new MutationObserver(()=>enhanceHub());
+    mo.observe(document.body,{childList:true,subtree:true});
+    [120,420,1200,2400].forEach(ms=>setTimeout(enhanceHub,ms));
+  }
+
+  function wirePenaltyRedirect(){
+    let last=0;
+    const handler=(ev)=>{
+      const btn=ev.target?.closest?.('[data-s2302-penalty]');
+      if(!btn) return;
+      const now=Date.now();
+      if(now-last<350) return;
+      last=now;
+      setTimeout(()=>{ try{ openKantPdf(); }catch(e){} }, 140);
+    };
+    document.addEventListener('click',handler,true);
+    document.addEventListener('touchend',handler,{capture:true,passive:false});
+  }
+
+  function init(){
+    ensureKantSource();
+    dedupePanels();
+    wrapTestToggle();
+    observeHub();
+    enhanceHub();
+    wirePenaltyRedirect();
+    try{
+      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+      const msg='VERSÃO INSTALADA: '+VERSION+' // CONQUISTAS COM FUNDO UNIFORME, TESTE SEM POPUP INDEVIDO, CENTRAL COM TOQUES CORRIGIDOS E PDF DE KANT INTEGRADO À PENALIDADE.';
+      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+        window.addSystemLog?.('version',msg);
+        safeSave();
+      }
+    }catch(e){ console.warn('SIRIUS '+VERSION,e); }
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,90),{once:true});
+  else setTimeout(init,90);
+  window.addEventListener('load',()=>setTimeout(()=>{init();},260),{once:true});
+  [900,2200,4200].forEach(ms=>setTimeout(()=>{ensureKantSource(); enhanceHub();},ms));
+})();
+</script>
+
 </body></html>
