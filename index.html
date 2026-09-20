@@ -12174,4 +12174,206 @@ body.s95-more-open > *:not(#moreSheet){
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.22.98 // SECRET CONTINUE FIX + CONQUISTAS LAYOUT ===== -->
+<style id="sirius-v22298-fixes-style">
+/* Correção isolada do popup da Quest Secreta */
+#s61EventOverlay.show{pointer-events:auto!important;z-index:2147483200!important}
+#s61EventOverlay.show .s61EventPanel{pointer-events:auto!important;isolation:isolate}
+#s61EventOverlay.show .s61EventActions{position:relative!important;z-index:12!important;pointer-events:auto!important}
+#s61EventOverlay.show .s61EventActions button{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-user-select:none!important;user-select:none!important;
+  -webkit-tap-highlight-color:rgba(89,230,255,.14)!important;
+  position:relative!important;z-index:13!important;cursor:pointer!important;
+}
+#s61EventOverlay.show .s61Ornament,
+#s61EventOverlay.show .s61ToastLine,
+#s61EventOverlay.show .s61EventPanel::before,
+#s61EventOverlay.show .s61EventPanel::after{pointer-events:none!important}
+
+/* Novo layout aprovado para CONQUISTAS: thumbnail à esquerda, ícone circular, texto central e badge à direita. */
+#achievements,#dashAchievements{display:grid!important;gap:14px!important}
+.s98AchCard{
+  --accent:#36dfff;--accent-rgb:54,223,255;
+  position:relative;overflow:hidden;min-height:138px;border-radius:24px;
+  border:2px solid rgba(var(--accent-rgb),.86);background:linear-gradient(180deg,#071726 0%,#08101d 100%);
+  box-shadow:0 0 0 1px rgba(var(--accent-rgb),.08),0 0 18px rgba(var(--accent-rgb),.13),inset 0 0 18px rgba(var(--accent-rgb),.05);
+  isolation:isolate;
+}
+.s98AchCard::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 82% 46%,rgba(var(--accent-rgb),.09),transparent 24%),linear-gradient(90deg,rgba(3,10,18,.08),rgba(3,10,18,.28));pointer-events:none}
+.s98AchCard::after{content:"";position:absolute;left:0;top:10px;bottom:10px;width:5px;border-radius:0 10px 10px 0;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(var(--accent-rgb),1));box-shadow:0 0 11px rgba(var(--accent-rgb),.44);pointer-events:none}
+.s98AchInner{position:relative;z-index:2;display:grid;grid-template-columns:78px 50px minmax(0,1fr);gap:12px;align-items:center;min-height:138px;padding:13px 14px}
+.s98AchThumb{width:78px;height:78px;border-radius:16px;border:2px solid rgba(var(--accent-rgb),.86);background-image:var(--art-image);background-size:cover;background-position:var(--art-position,center);background-repeat:no-repeat;box-shadow:0 0 14px rgba(var(--accent-rgb),.18);justify-self:start}
+.s98AchIconWrap{width:46px;height:46px;border-radius:50%;border:2.4px solid rgba(var(--accent-rgb),.98);background:radial-gradient(circle at 50% 50%,rgba(var(--accent-rgb),.08),rgba(4,12,24,.72) 58%);box-shadow:0 0 15px rgba(var(--accent-rgb),.16),inset 0 0 10px rgba(var(--accent-rgb),.10);color:var(--accent);display:grid;place-items:center}
+.s98AchIconWrap svg,.s98AchBadge svg,.s98AchMetaIcon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.s98AchBody{position:relative;min-width:0;padding-right:130px}
+.s98AchTitle{color:#f5fbff;font-size:17px;line-height:1.02;font-weight:1000;letter-spacing:.3px;text-transform:uppercase}
+.s98AchDesc{margin-top:6px;color:#d6e4f3;font-size:8.8px;line-height:1.3;max-width:190px}
+.s98AchMeta{margin-top:14px;display:flex;align-items:center;gap:8px;width:100%}
+.s98AchCounter{width:68px;display:flex;align-items:center;gap:6px;color:#f4fbff;font-size:8.7px;font-weight:900;white-space:nowrap}
+.s98AchMetaIcon{color:var(--accent);display:flex;align-items:center}
+.s98AchBar{flex:1;height:11px;border-radius:999px;border:1px solid rgba(171,191,219,.14);background:linear-gradient(180deg,rgba(154,173,205,.20),rgba(63,76,99,.18));overflow:hidden}
+.s98AchBar>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(var(--accent-rgb),.58),rgba(var(--accent-rgb),1));box-shadow:0 0 10px rgba(var(--accent-rgb),.28)}
+.s98AchBadge{position:absolute;right:0;top:50%;transform:translateY(-50%);width:122px;height:44px;border-radius:17px;border:2px solid var(--badge-border);background:var(--badge-bg);color:var(--badge-text);display:flex;align-items:center;justify-content:center;gap:7px;padding:0 10px;font-size:7.4px;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}
+.s98AchCard.is-unlocked{--badge-text:#11ebff;--badge-border:rgba(var(--accent-rgb),.95);--badge-bg:rgba(5,31,48,.70)}
+.s98AchCard.is-progress{--badge-text:#ffcf58;--badge-border:rgba(255,198,71,.78);--badge-bg:rgba(39,28,7,.74)}
+.s98AchCard.is-locked{--badge-text:#d2def2;--badge-border:rgba(120,140,176,.74);--badge-bg:rgba(15,23,43,.74)}
+.s98-cyan{--accent:#2fe0ff;--accent-rgb:47,224,255;--art-position:center center}
+.s98-blue{--accent:#34efff;--accent-rgb:52,239,255;--art-position:center center}
+.s98-purple{--accent:#dd74ff;--accent-rgb:221,116,255;--art-position:center center}
+.s98-pink{--accent:#ff59cb;--accent-rgb:255,89,203;--art-position:center center}
+@media(min-width:760px){
+  .s98AchCard{min-height:164px;border-radius:28px}
+  .s98AchInner{grid-template-columns:104px 72px minmax(0,1fr);gap:18px;min-height:164px;padding:18px 20px}
+  .s98AchThumb{width:104px;height:104px;border-radius:20px}
+  .s98AchIconWrap{width:64px;height:64px;border-width:3px}
+  .s98AchIconWrap svg,.s98AchBadge svg,.s98AchMetaIcon svg{width:31px;height:31px}
+  .s98AchBody{padding-right:182px}
+  .s98AchTitle{font-size:24px}
+  .s98AchDesc{font-size:13px;max-width:320px;margin-top:8px}
+  .s98AchMeta{margin-top:22px;gap:12px}
+  .s98AchCounter{width:96px;font-size:12px;gap:8px}
+  .s98AchBar{height:15px}
+  .s98AchBadge{width:178px;height:56px;border-radius:19px;font-size:10px;gap:9px;padding:0 14px}
+}
+</style>
+<script id="sirius-v22298-fixes-script">
+(function(){
+  const VERSION='v2.22.98';
+
+  /* 1) Quest secreta: reforço real de clique/toque no CONTINUAR / ACEITAR / RECUSAR */
+  (function secretEventFix(){
+    const overlay=document.getElementById('s61EventOverlay');
+    const actions=document.getElementById('s61EventActions');
+    if(!overlay||!actions)return;
+    let lastTouchAt=0;
+    function prep(){
+      if(!overlay.classList.contains('show'))return;
+      overlay.style.removeProperty('pointer-events');
+      actions.style.removeProperty('pointer-events');
+      actions.querySelectorAll('button').forEach(btn=>{
+        if(btn.dataset.s98Bound==='1')return;
+        btn.dataset.s98Bound='1';
+        btn.type='button';
+        btn.style.pointerEvents='auto';
+        btn.style.touchAction='manipulation';
+        const original=typeof btn.onclick==='function'?btn.onclick:null;
+        btn.__s98OriginalHandler=original;
+        btn.onclick=function(ev){
+          if(this.__s98Lock && Date.now()-this.__s98Lock<650){if(ev){ev.preventDefault?.();ev.stopPropagation?.();}return false;}
+          this.__s98Lock=Date.now();
+          if(typeof this.__s98OriginalHandler==='function') return this.__s98OriginalHandler.call(this,ev);
+          if(this.id==='s61AcceptBtn' && /CONTINUAR/i.test(this.textContent||'')){
+            if(typeof window.s61CloseEvent==='function')window.s61CloseEvent();
+            if(typeof window.siriusOfferSecretQuest==='function')setTimeout(()=>window.siriusOfferSecretQuest(),170);
+            return false;
+          }
+          if(typeof window.s61CloseEvent==='function')window.s61CloseEvent();
+          return false;
+        };
+        btn.addEventListener('touchend',function(ev){
+          lastTouchAt=Date.now();
+          ev.preventDefault();
+          ev.stopPropagation();
+          if(typeof this.onclick==='function') this.onclick(ev);
+          else if(typeof this.__s98OriginalHandler==='function') this.__s98OriginalHandler.call(this,ev);
+        },{passive:false});
+      });
+    }
+    new MutationObserver(prep).observe(actions,{childList:true,subtree:true});
+    new MutationObserver(prep).observe(overlay,{attributes:true,attributeFilter:['class']});
+    actions.addEventListener('click',function(ev){
+      const btn=ev.target.closest?.('button');
+      if(!btn)return;
+      if(Date.now()-lastTouchAt<700){ev.preventDefault();ev.stopImmediatePropagation();}
+    },true);
+    [60,260,800,1600].forEach(ms=>setTimeout(prep,ms));
+    prep();
+  })();
+
+  /* 2) Coleta as artes já aprovadas que estavam sendo usadas em Conquistas */
+  const ICONS={
+    awaken:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"></path></svg>',
+    swords:'<svg viewBox="0 0 24 24"><path d="M5 4l6 6M4 5l3-1 1 3M10 11l-6 6 3 3 6-6M19 4l-6 6M20 5l-3-1-1 3M14 11l6 6-3 3-6-6"></path></svg>',
+    note:'<svg viewBox="0 0 24 24"><path d="M9 18V6l9-2v12"></path><circle cx="6" cy="18" r="3"></circle><circle cx="15" cy="16" r="3"></circle></svg>',
+    masks:'<svg viewBox="0 0 24 24"><path d="M4 5h7v7c0 4-2 6-3.5 7C6 18 4 16 4 12zM13 5h7v7c0 4-2 6-3.5 7-1-.7-2.2-1.8-2.8-3.5"></path></svg>',
+    chevrons:'<svg viewBox="0 0 24 24"><path d="m7 8 5 5 5-5M7 13l5 5 5-5"></path></svg>',
+    calendar:'<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"></rect><path d="M8 3v5M16 3v5M4 10h16"></path></svg>',
+    bars:'<svg viewBox="0 0 24 24"><path d="M5 20V12M10 20V8M15 20V4M20 20V10"></path></svg>',
+    lock:'<svg viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"></rect><path d="M8.5 11V8.8A3.5 3.5 0 0 1 12 5.3a3.5 3.5 0 0 1 3.5 3.5V11M12 14v3"></path></svg>',
+    check:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8.2 12.1l2.6 2.7 5.1-5.4"></path></svg>',
+    progress:'<svg viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-3.2-6.7M20.5 5.5V12H14"></path></svg>'
+  };
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v)):String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function artFromExisting(){
+    const map={};
+    document.querySelectorAll('.s97AchCard,.s98AchCard').forEach(card=>{
+      const title=(card.querySelector('.s97AchTitle,.s98AchTitle')?.textContent||'').trim().toUpperCase();
+      const style=card.getAttribute('style')||'';
+      let match=style.match(/--art-image:\s*url\('([^']+)'\)/);
+      if(!match){
+        const thumb=card.querySelector('.s98AchThumb');
+        const bg=thumb?getComputedStyle(thumb).backgroundImage:'';
+        const m2=bg&&bg.match(/^url\(["']?(.*?)["']?\)$/);
+        match=m2;
+      }
+      if(title&&match&&match[1])map[title]=match[1];
+    });
+    return map;
+  }
+  function level(){try{return Number((typeof levelInfo==='function'?levelInfo():{level:1}).level)||1}catch(e){return 1}}
+  function completed(){return Math.max(Number(data?.completedMissions)||0,Array.isArray(data?.missions)?data.missions.filter(m=>m.done).length:0)}
+  function streak(){return Math.max(0,Number(data?.streak)||0)}
+  function bestPd(){try{return Math.max(0,...officialAttributes.map(n=>Number(data?.attrs?.[n]?.pd)||0))}catch(e){return 0}}
+  function make(title,desc,value,target,theme,icon,meta,art){
+    const unlocked=value>=target,partial=!unlocked&&value>0;
+    return {title,desc,value,target,theme,icon,meta,art:art||'',percent:Math.max(0,Math.min(100,(value/target)*100)),state:unlocked?'unlocked':(partial?'progress':'locked'),status:unlocked?'DESBLOQUEADO':(partial?'EM PROGRESSO':'BLOQUEADO')};
+  }
+  function build(){
+    const art=artFromExisting();
+    const c=completed(),s=streak(),l=level(),p=bestPd();
+    return [
+      make('DESPERTAR','Concluir a primeira missão.',Math.min(c,1),1,'cyan','awaken','chevrons',art['DESPERTAR']),
+      make('ROTINA INICIADA','Alcançar sequência de 3 dias.',Math.min(s,3),3,'blue','swords','calendar',art['ROTINA INICIADA']),
+      make('JOGADOR EM ASCENSÃO','Alcançar o Level 2.',Math.max(0,Math.min(l-1,1)),1,'purple','note','bars',art['JOGADOR EM ASCENSÃO']),
+      make('PRIMEIRA ESPECIALIZAÇÃO','Levar qualquer atributo a 25 PD.',Math.min(p,25),25,'pink','masks','bars',art['PRIMEIRA ESPECIALIZAÇÃO'])
+    ];
+  }
+  function card(a){
+    const badge=a.state==='unlocked'?'check':(a.state==='progress'?'progress':'lock');
+    return `<div class="s98AchCard s98-${a.theme} is-${a.state}" style="--art-image:url('${a.art||''}')"><div class="s98AchInner"><div class="s98AchThumb"></div><div class="s98AchIconWrap">${ICONS[a.icon]}</div><div class="s98AchBody"><div class="s98AchTitle">${esc(a.title)}</div><div class="s98AchDesc">${esc(a.desc)}</div><div class="s98AchMeta"><div class="s98AchCounter"><span class="s98AchMetaIcon">${ICONS[a.meta]}</span><span>${a.value}/${a.target}</span></div><div class="s98AchBar"><span style="width:${a.percent}%"></span></div></div><div class="s98AchBadge">${ICONS[badge]}<span>${a.status}</span></div></div></div></div>`;
+  }
+  function renderAchievementsV22298(){
+    try{
+      const markup=build().map(card).join('');
+      ['achievements','dashAchievements'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=markup});
+    }catch(e){console.warn('SIRIUS v2.22.98 achievements',e)}
+  }
+  window.renderAchievementVisuals=renderAchievementsV22298;
+  window.renderAchievementVisualsV22257=renderAchievementsV22298;
+  const prevRender=window.render;
+  if(typeof prevRender==='function'&&!prevRender.__s98Wrapped){
+    const wrapped=function(){const r=prevRender.apply(this,arguments);setTimeout(renderAchievementsV22298,0);return r};
+    wrapped.__s98Wrapped=true;window.render=wrapped;
+  }
+  renderAchievementsV22298();
+  [180,760,1400].forEach(ms=>setTimeout(renderAchievementsV22298,ms));
+
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    const msg=`VERSÃO INSTALADA: ${VERSION} // CONTINUAR DA QUEST SECRETA CORRIGIDO E CONQUISTAS RESTAURADA NO LAYOUT APROVADO.`;
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
+      if(typeof addSystemLog==='function') addSystemLog('version',msg);
+      if(typeof save==='function') save(); else if(typeof persist==='function') persist();
+    }
+  }catch(e){}
+
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  mark();setTimeout(mark,350);setTimeout(mark,1600);setTimeout(mark,3200);
+})();
+</script>
+
 </body></html>
