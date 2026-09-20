@@ -11742,77 +11742,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   #moreSheet .s94Close{min-height:64px!important;margin-top:10px!important;font-size:8.2px!important}
 }
 </style>
-<script id="sirius-v22294-more-script">
-(function(){
-  const VERSION='v2.22.94';
-  let lastTouchTime=0;
-  function closeSheet(){
-    const sheet=document.getElementById('moreSheet');
-    if(!sheet) return;
-    sheet.classList.remove('show');
-    sheet.setAttribute('aria-hidden','true');
-    document.body.classList.remove('s94-more-open');
-  }
-  function openSheet(){
-    const sheet=document.getElementById('moreSheet');
-    if(!sheet) return;
-    sheet.classList.add('show');
-    sheet.setAttribute('aria-hidden','false');
-    document.body.classList.add('s94-more-open');
-    wireButtons();
-  }
-  function runAction(key){
-    if(key==='central'){ if(typeof window.s66OpenEventCenter==='function'){ window.s66OpenEventCenter(); return; } }
-    if(key==='dungeons'){ if(typeof window.s67OpenDungeonHub==='function'){ window.s67OpenDungeonHub(); return; } }
-    if(typeof window.openMoreView==='function') window.openMoreView(key);
-  }
-  function bindButton(btn){
-    if(!btn || btn.dataset.s94Bound==='1') return;
-    btn.dataset.s94Bound='1';
-    const actionKey=btn.dataset.moreAction;
-    const activate=(ev)=>{
-      if(ev){ ev.preventDefault(); ev.stopPropagation(); }
-      if(actionKey) runAction(actionKey);
-      return false;
-    };
-    btn.addEventListener('touchend', function(ev){ lastTouchTime=Date.now(); activate(ev); }, {passive:false});
-    btn.addEventListener('click', function(ev){ if(Date.now()-lastTouchTime<650){ ev.preventDefault(); ev.stopPropagation(); return false; } return activate(ev); }, false);
-  }
-  function bindClose(el){
-    if(!el || el.dataset.s94Bound==='1') return;
-    el.dataset.s94Bound='1';
-    const handler=(ev)=>{ ev.preventDefault(); ev.stopPropagation(); closeSheet(); return false; };
-    el.addEventListener('touchend', handler, {passive:false});
-    el.addEventListener('click', function(ev){ if(Date.now()-lastTouchTime<650){ ev.preventDefault(); ev.stopPropagation(); return false; } return handler(ev); }, false);
-  }
-  function wireButtons(){
-    const sheet=document.getElementById('moreSheet');
-    if(!sheet) return;
-    sheet.querySelectorAll('[data-more-action]').forEach(bindButton);
-    sheet.querySelectorAll('[data-more-close]').forEach(bindClose);
-  }
-  window.openMoreSheet=openSheet;
-  window.closeMoreSheet=closeSheet;
-  function markVersion(){ document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION); }
-  function logVersion(){
-    try{
-      if(typeof data==='undefined') return;
-      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-      const msg='VERSÃO INSTALADA: '+VERSION+' // MENU MAIS REAPLICADO COM CAIXA MENOR, 8 CARDS UNIFORMES E CLIQUE DIRETO EM TODOS OS BOTÕES.';
-      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
-        if(typeof addSystemLog==='function') addSystemLog('version', msg);
-        else data.systemLog.push({type:'version',text:msg,at:new Date().toISOString()});
-        if(typeof save==='function') save(); else if(typeof persist==='function') persist();
-      }
-    }catch(e){ console.warn('SIRIUS v2.22.94 log',e); }
-  }
-  function init(){ wireButtons(); markVersion(); logVersion(); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,60),{once:true}); else setTimeout(init,60);
-  window.addEventListener('load',()=>setTimeout(init,180),{once:true});
-})();
-</script>
-
-
 <!-- ===== SIRIUS v2.22.95 // BLOQUEADOR AZUL + POSIÇÃO DO MENU MAIS ===== -->
 <style id="sirius-v22295-touch-layer-fix">
 #moreSheet{
@@ -11904,104 +11833,255 @@ body.s95-more-open > *:not(#moreSheet){
 }
 </style>
 
-<script id="sirius-v22295-touch-layer-fix-script">
+<!-- ===== SIRIUS v2.22.96 // MAIS DEFINITIVO + REMOÇÃO DO AVATAR ===== -->
+<style id="sirius-v22296-final-more-style">
+/* MENU MAIS: camada máxima, caixa baixa e somente controles reais recebem toque. */
+#moreSheet{
+  z-index:2147483647!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:0 14px calc(94px + env(safe-area-inset-bottom))!important;
+  box-sizing:border-box!important;
+  pointer-events:none!important;
+}
+#moreSheet.show{pointer-events:auto!important}
+#moreSheet .s94Backdrop{z-index:0!important;pointer-events:auto!important}
+#moreSheet .s94Panel{
+  position:relative!important;
+  z-index:10!important;
+  width:calc(100vw - 28px)!important;
+  max-width:760px!important;
+  margin:0 auto!important;
+  pointer-events:auto!important;
+  isolation:isolate!important;
+}
+#moreSheet .s94Panel::before,
+#moreSheet .s94Header,
+#moreSheet .s94Header *,
+#moreSheet .s94Card::before,
+#moreSheet .s94Card::after,
+#moreSheet .s94CardInner,
+#moreSheet .s94CardInner *,
+#moreSheet .s94Close::before,
+#moreSheet .s94Close::after{pointer-events:none!important}
+#moreSheet .s94Grid{position:relative!important;z-index:20!important;pointer-events:auto!important}
+#moreSheet .s94Card{
+  position:relative!important;
+  z-index:30!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+}
+#moreSheet .s94Close{position:relative!important;z-index:30!important;pointer-events:auto!important;touch-action:manipulation!important}
+
+/* O boneco customizável e TODO o guarda-roupa/equipamentos deixam de existir visualmente. */
+#s54AvatarStudio,
+.s54AvatarStudio,
+.s54AvatarStageWrap,
+.s54AvatarStage,
+.s54MiniAvatar,
+.s54Wardrobe,
+.s54WardrobeGroup,
+.s54Items,
+.s54Item,
+.s54AvatarActions,
+.s54AvatarEquipped{display:none!important}
+
+@media(max-width:520px){
+  #moreSheet{
+    padding-left:14px!important;
+    padding-right:14px!important;
+    padding-bottom:calc(94px + env(safe-area-inset-bottom))!important;
+  }
+  #moreSheet .s94Panel{width:100%!important;max-width:none!important}
+}
+</style>
+
+<script id="sirius-v22296-final-more-script">
 (function(){
-  const VERSION='v2.22.95';
-  const oldOpen=window.openMoreSheet;
-  const oldClose=window.closeMoreSheet;
+  const VERSION='v2.22.96';
+  const STANDARD_VIEWS=new Set(['adaptive','learning','ai','history','achievements','data']);
+  let lastActionAt=0;
+  let inerted=[];
 
-  function neutralizeProfessorBlockers(){
-    const actions=document.querySelector('#view-learning .professorClassActions, #view-professor .professorClassActions');
-    if(!actions || !actions.offsetParent)return;
-    const r=actions.getBoundingClientRect();
-    const points=[
-      [r.left+4,r.top+4],
-      [r.left+r.width/2,r.top+r.height/2],
-      [r.right-4,r.bottom-4]
-    ];
-    const allowed=new Set([actions,...actions.querySelectorAll('*')]);
-    const ancestors=[];
-    let p=actions.parentElement;
-    while(p){ancestors.push(p);p=p.parentElement;}
-
-    points.forEach(([x,y])=>{
-      document.elementsFromPoint(x,y).forEach(el=>{
-        if(!el || allowed.has(el) || ancestors.includes(el))return;
-        if(el.closest?.('#moreSheet'))return;
-        const cs=getComputedStyle(el);
-        const pos=cs.position;
-        const z=parseInt(cs.zIndex,10);
-        const isOverlay=['fixed','absolute','sticky'].includes(pos);
-        const isHighLayer=isOverlay && (Number.isFinite(z)?z>=2:true);
-        if(isHighLayer &&
-           !el.matches('button,a,input,textarea,select,[role="button"]') &&
-           !el.closest('button,a,input,textarea,select,[role="button"],.bottomDock')){
-          el.dataset.s95PointerNeutralized='1';
-          el.style.setProperty('pointer-events','none','important');
-        }
-      });
-    });
+  function removeAvatarSystem(){
+    document.querySelectorAll('#s54AvatarStudio,.s54AvatarStudio').forEach(el=>el.remove());
+    /* As funções antigas ficam inofensivas caso algum módulo legado tente chamá-las. */
+    window.s54EquipAvatarItem=function(){};
+    window.s54ResetAvatarLook=function(){};
   }
 
-  window.openMoreSheet=function(){
-    neutralizeProfessorBlockers();
-    document.body.classList.add('s95-more-open');
-    if(typeof oldOpen==='function')oldOpen.apply(this,arguments);
-    const sheet=document.getElementById('moreSheet');
-    if(sheet){
-      sheet.classList.add('show');
-      sheet.setAttribute('aria-hidden','false');
-    }
-  };
+  /* Mantém o perfil normal, mas elimina o estúdio do boneco sempre que o perfil for renderizado. */
+  const previousProfileRenderer=window.renderPlayerProfile;
+  if(typeof previousProfileRenderer==='function'){
+    window.renderPlayerProfile=function(){
+      const r=previousProfileRenderer.apply(this,arguments);
+      removeAvatarSystem();
+      return r;
+    };
+  }
 
-  window.closeMoreSheet=function(){
-    const r=typeof oldClose==='function'?oldClose.apply(this,arguments):undefined;
+  function setBackgroundInert(on){
+    if(on){
+      inerted=[];
+      [...document.body.children].forEach(el=>{
+        if(el.id==='moreSheet' || ['SCRIPT','STYLE'].includes(el.tagName))return;
+        if(!el.hasAttribute('inert')){
+          el.setAttribute('inert','');
+          el.dataset.s96Inert='1';
+          inerted.push(el);
+        }
+      });
+    }else{
+      inerted.forEach(el=>{
+        if(el?.dataset?.s96Inert==='1'){
+          el.removeAttribute('inert');
+          delete el.dataset.s96Inert;
+        }
+      });
+      inerted=[];
+    }
+  }
+
+  function closeMore(){
     const sheet=document.getElementById('moreSheet');
     if(sheet){
       sheet.classList.remove('show');
       sheet.setAttribute('aria-hidden','true');
     }
-    document.body.classList.remove('s95-more-open');
-    return r;
+    document.body.classList.remove('s95-more-open','s96-more-open');
+    setBackgroundInert(false);
+  }
+
+  function directOpenView(view){
+    document.querySelectorAll('.dashView').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById('view-'+view);
+    if(!target)return false;
+    target.classList.add('active');
+    document.getElementById('dashboardShell')?.classList.remove('home-active');
+    document.querySelectorAll('.bottomDock button[data-view]').forEach(b=>b.classList.remove('active'));
+    closeMore();
+    try{if(typeof window.refreshDashboard==='function')window.refreshDashboard()}catch(e){console.warn('SIRIUS refresh',e)}
+    try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){window.scrollTo(0,0)}
+    return true;
+  }
+
+  /* Esta passa a ser a implementação FINAL de openMoreView, sem a cadeia antiga de wrappers. */
+  window.openMoreView=function(view){
+    return directOpenView(view);
   };
 
-  function bindProfessorButtons(){
-    document.querySelectorAll('.professorClassActions button').forEach(btn=>{
-      btn.style.setProperty('pointer-events','auto','important');
-      btn.style.setProperty('position','relative','important');
-      btn.style.setProperty('z-index','41','important');
+  function runAction(key){
+    if(STANDARD_VIEWS.has(key))return directOpenView(key);
+    if(key==='central'){
+      if(typeof window.s66OpenEventCenter==='function'){
+        closeMore();
+        window.s66OpenEventCenter();
+        return true;
+      }
+      return false;
+    }
+    if(key==='dungeons'){
+      if(typeof window.s67OpenDungeonHub==='function'){
+        closeMore();
+        window.s67OpenDungeonHub();
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  function cardAtPoint(x,y){
+    const cards=[...document.querySelectorAll('#moreSheet [data-more-action]')];
+    return cards.find(btn=>{
+      const r=btn.getBoundingClientRect();
+      return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom;
+    })||null;
+  }
+
+  function activateCard(btn,ev){
+    if(!btn)return false;
+    const now=Date.now();
+    if(now-lastActionAt<750){
+      ev?.preventDefault?.(); ev?.stopPropagation?.();
+      return true;
+    }
+    lastActionAt=now;
+    ev?.preventDefault?.(); ev?.stopPropagation?.();
+    return runAction(btn.dataset.moreAction);
+  }
+
+  function rebuildCardsWithoutOldListeners(){
+    const grid=document.querySelector('#moreSheet .s94Grid');
+    if(!grid)return;
+    [...grid.querySelectorAll('[data-more-action]')].forEach(old=>{
+      const fresh=old.cloneNode(true);
+      fresh.removeAttribute('onclick');
+      old.replaceWith(fresh);
     });
   }
 
-  function markVersion(){
-    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  function wireMenu(){
+    const sheet=document.getElementById('moreSheet');
+    if(!sheet || sheet.dataset.s96Wired==='1')return;
+    sheet.dataset.s96Wired='1';
+
+    /* Captura por coordenada: mesmo que uma camada visual seja o target,
+       o card que ocupa aquele ponto continua recebendo a ação. */
+    sheet.addEventListener('pointerup',ev=>{
+      if(ev.pointerType==='mouse')return;
+      const btn=ev.target.closest?.('[data-more-action]') || cardAtPoint(ev.clientX,ev.clientY);
+      if(btn)activateCard(btn,ev);
+    },true);
+
+    sheet.addEventListener('click',ev=>{
+      const close=ev.target.closest?.('[data-more-close]');
+      if(close){ev.preventDefault();ev.stopPropagation();closeMore();return;}
+      const btn=ev.target.closest?.('[data-more-action]') || cardAtPoint(ev.clientX,ev.clientY);
+      if(btn)activateCard(btn,ev);
+    },true);
   }
 
+  window.openMoreSheet=function(){
+    removeAvatarSystem();
+    rebuildCardsWithoutOldListeners();
+    /* rebuild remove listeners antigos; permite instalar UMA delegação nova. */
+    const sheet=document.getElementById('moreSheet');
+    if(!sheet)return;
+    wireMenu();
+    setBackgroundInert(true);
+    document.body.classList.remove('s95-more-open');
+    document.body.classList.add('s96-more-open');
+    sheet.classList.add('show');
+    sheet.setAttribute('aria-hidden','false');
+  };
+
+  window.closeMoreSheet=closeMore;
+
+  function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
   function logVersion(){
     try{
       if(typeof data==='undefined')return;
       data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-      const msg='VERSÃO INSTALADA: '+VERSION+' // CAMADA AZUL DE APRENDER NEUTRALIZADA; MENU MAIS REPOSICIONADO ACIMA DO DOCK; TOQUE PRIORITÁRIO NOS 8 CARDS.';
+      const msg='VERSÃO INSTALADA: '+VERSION+' // MENU MAIS COM NAVEGAÇÃO DIRETA E CAPTURA POR COORDENADA; AVATAR E EQUIPAMENTOS REMOVIDOS DA INTERFACE.';
       if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
         if(typeof addSystemLog==='function')addSystemLog('version',msg);
         else data.systemLog.push({type:'version',text:msg,at:new Date().toISOString()});
         if(typeof save==='function')save();else if(typeof persist==='function')persist();
       }
-    }catch(e){console.warn('SIRIUS v2.22.95 log',e)}
+    }catch(e){console.warn('SIRIUS v2.22.96 log',e)}
   }
 
   function init(){
-    bindProfessorButtons();
-    neutralizeProfessorBlockers();
+    removeAvatarSystem();
+    rebuildCardsWithoutOldListeners();
+    wireMenu();
     markVersion();
     logVersion();
   }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});
-  }else{
-    setTimeout(init,80);
-  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});
+  else setTimeout(init,80);
   window.addEventListener('load',()=>setTimeout(init,220),{once:true});
 })();
 </script>
