@@ -12809,4 +12809,174 @@ body.s95-more-open > *:not(#moreSheet){
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.01 // DAILY QUEST INTERACTION + ORIENTATION HUD ===== -->
+<style id="sirius-v2301-daily-quest-style">
+/* ORIENTAÇÃO DE QUEST — estética vertical cinematográfica, sem copiar a referência literalmente. */
+#view-missions .s99DailyQuest{
+  position:relative!important;
+  margin:0 0 14px!important;
+  padding:18px 16px 16px!important;
+  border:1px solid #3ddcff!important;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(47,139,211,.16),transparent 31%),
+    linear-gradient(180deg,#07182b 0%,#061426 52%,#05111f 100%)!important;
+  box-shadow:0 0 28px rgba(54,211,255,.12),inset 0 0 34px rgba(55,190,255,.055)!important;
+  overflow:visible!important;
+  isolation:isolate!important;
+}
+#view-missions .s99DailyQuest::before{
+  content:""!important;position:absolute!important;left:42px!important;right:42px!important;top:0!important;height:2px!important;
+  background:linear-gradient(90deg,transparent,#66ebff 24%,#66ebff 76%,transparent)!important;
+  box-shadow:0 0 12px #5ee8ff!important;pointer-events:none!important;
+}
+#view-missions .s99DailyQuest::after{
+  content:"";position:absolute;inset:7px;z-index:-1;pointer-events:none;
+  border:1px solid rgba(81,197,244,.20);
+  clip-path:polygon(0 18px,18px 18px,18px 0,calc(100% - 18px) 0,calc(100% - 18px) 18px,100% 18px,100% calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,18px calc(100% - 18px),0 calc(100% - 18px));
+}
+#view-missions .s99DQTop{display:block!important;text-align:center!important;padding:0 6px!important}
+#view-missions .s99DQKicker{
+  display:inline-block!important;position:relative!important;margin:0 auto 15px!important;padding:7px 18px!important;
+  color:#e7f8ff!important;font-size:8.2px!important;letter-spacing:1.25px!important;font-weight:1000!important;
+  border-top:1px solid #2d779d!important;border-bottom:1px solid #2d779d!important;text-shadow:0 0 10px #7aeaff55!important;
+}
+#view-missions .s99DQKicker::before{content:"!";display:inline-grid;place-items:center;width:17px;height:17px;margin-right:7px;border:1px solid #ff6570;border-radius:50%;color:#ff7c82;vertical-align:-1px;font-size:10px;box-shadow:0 0 10px #ff657033}
+#view-missions .s99DQTitle{margin:0 auto!important;max-width:94%!important;font-size:15px!important;line-height:1.22!important;letter-spacing:.15px!important;color:#f6fbff!important;text-transform:uppercase!important}
+#view-missions .s99DQSub{margin-top:7px!important;color:#7e9fbe!important;font-size:6.6px!important;letter-spacing:.35px!important}
+#view-missions .s99DQState{position:absolute!important;right:15px!important;top:14px!important;padding:5px 7px!important;font-size:5.3px!important;border-color:#3c86a9!important;background:#061421!important;color:#9bdff8!important}
+#view-missions .s99DQObjectives{margin-top:18px!important;padding-top:13px!important;border-top:1px solid rgba(57,139,180,.36)!important}
+#view-missions .s99DQObjectivesTitle{font-size:10px!important;letter-spacing:1.5px!important;color:#67ff72!important;margin-bottom:12px!important;text-shadow:0 0 10px #55ff7750!important}
+#view-missions .s99DQRow{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 68px 68px!important;gap:7px!important;align-items:center!important;
+  min-height:48px!important;padding:5px 0!important;border-bottom:1px solid rgba(59,138,181,.15)!important;
+}
+#view-missions .s99DQObj{font-size:8.2px!important;line-height:1.35!important;font-weight:1000!important;color:#f1f7ff!important;letter-spacing:.05px!important}
+#view-missions .s99DQObj.done{color:#72f3a2!important}
+#view-missions .s99DQCount{font-size:9.2px!important;color:#dcecff!important;font-weight:1000!important;letter-spacing:.2px!important}
+#view-missions .s99DQRow button{
+  min-height:34px!important;border:1px solid #3a88b5!important;background:linear-gradient(180deg,#0a2036,#071726)!important;
+  color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.75px!important;padding:6px 4px!important;
+  box-shadow:inset 0 0 12px rgba(61,202,255,.04)!important;touch-action:manipulation!important;
+}
+#view-missions .s99DQRow button:active{transform:scale(.97)!important;background:#0c2b48!important;border-color:#5fe5ff!important}
+#view-missions .s99DQProgress{margin-top:12px!important;height:5px!important;border-color:#23516f!important;background:#06101b!important}
+#view-missions .s99DQFooter{margin-top:12px!important}
+#view-missions .s99DQReward{font-size:6.4px!important;line-height:1.55!important}
+#view-missions .s99DQClaim{min-height:41px!important}
+#view-missions .s99DQAdjust{margin-top:10px!important;min-height:42px!important;background:#061522!important;border-color:#2d6f97!important}
+#view-missions .s99DQWarning{
+  margin:14px -2px 0!important;padding:13px 8px 4px!important;border-top:1px solid rgba(206,61,75,.28)!important;
+  text-align:center!important;font-size:7px!important;line-height:1.55!important;color:#cbd8e5!important;font-weight:800!important;
+}
+#view-missions .s99DQWarning b{display:block!important;margin-bottom:4px!important;color:#ff4f58!important;font-size:12px!important;letter-spacing:.4px!important;text-shadow:0 0 10px #ff4f5845!important}
+
+/* Modal nativo do SIRIUS para atualizar progresso: evita dependência de prompt() no iPhone/PWA. */
+#s101DQOverlay{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(1,5,12,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
+#s101DQOverlay.show{display:flex;pointer-events:auto}
+#s101DQModal{width:min(92vw,390px);position:relative;border:1px solid #47ddff;background:linear-gradient(180deg,#071a2d,#06111e);padding:18px;box-shadow:0 0 42px rgba(56,210,255,.22),inset 0 0 26px rgba(52,176,255,.06)}
+#s101DQModal::before{content:"";position:absolute;left:20%;right:20%;top:0;height:2px;background:#60ebff;box-shadow:0 0 12px #60ebff}
+.s101DQKicker{text-align:center;color:#72eaff;font-size:7px;font-weight:1000;letter-spacing:1.5px}.s101DQModalTitle{text-align:center;margin-top:9px;color:#f5fbff;font-size:14px;font-weight:1000;line-height:1.25}
+.s101DQModalMeta{text-align:center;margin-top:7px;color:#85a7c5;font-size:7px;line-height:1.45}.s101DQInputLabel{display:block;margin-top:15px;color:#63ff79;font-size:7px;font-weight:1000;letter-spacing:1.1px}
+#s101DQValue{width:100%;margin-top:6px;min-height:48px;border:1px solid #347ca5;background:#040e19;color:#fff;padding:10px 12px;font-size:20px;font-weight:1000;text-align:center;outline:none;-webkit-appearance:none;border-radius:0}
+#s101DQValue:focus{border-color:#66e8ff;box-shadow:0 0 14px rgba(76,219,255,.18)}
+.s101DQActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.s101DQActions button{min-height:42px;border:1px solid #34749a;background:#071725;color:#c7e3f5;font-size:7px;font-weight:1000;letter-spacing:.9px;touch-action:manipulation}
+.s101DQActions .primary{border-color:#50dfff;background:linear-gradient(180deg,#1289dc,#07538f);color:#fff}.s101DQHint{text-align:center;margin-top:10px;color:#6f8da8;font-size:6px;line-height:1.45}
+@media(max-width:430px){
+  #view-missions .s99DailyQuest{padding:16px 12px 14px!important}
+  #view-missions .s99DQState{position:static!important;display:inline-block!important;margin-top:9px!important}
+  #view-missions .s99DQRow{grid-template-columns:minmax(0,1fr) 58px 62px!important;gap:5px!important}
+  #view-missions .s99DQObj{font-size:7.2px!important}#view-missions .s99DQCount{font-size:8px!important}
+}
+</style>
+<div id="s101DQOverlay" aria-hidden="true">
+  <div id="s101DQModal" role="dialog" aria-modal="true" aria-labelledby="s101DQModalTitle">
+    <div class="s101DQKicker">[ SIRIUS // ATUALIZAÇÃO DE OBJETIVO ]</div>
+    <div id="s101DQModalTitle" class="s101DQModalTitle">OBJETIVO</div>
+    <div id="s101DQModalMeta" class="s101DQModalMeta"></div>
+    <label class="s101DQInputLabel" for="s101DQValue">TOTAL CONCLUÍDO ATÉ AGORA</label>
+    <input id="s101DQValue" type="number" inputmode="numeric" min="0" max="999" step="1" autocomplete="off">
+    <div class="s101DQActions"><button type="button" data-s101-cancel>CANCELAR</button><button type="button" class="primary" data-s101-save>SALVAR PROGRESSO</button></div>
+    <div class="s101DQHint">O valor salvo substitui o progresso atual deste objetivo.</div>
+  </div>
+</div>
+<script id="sirius-v2301-daily-quest-script">
+(function(){
+  'use strict';
+  const VERSION='v2.23.01';
+  let currentKey=null,lastTouch=0;
+  const overlay=document.getElementById('s101DQOverlay');
+  const title=document.getElementById('s101DQModalTitle');
+  const meta=document.getElementById('s101DQModalMeta');
+  const input=document.getElementById('s101DQValue');
+
+  function quest(){return (typeof data==='object'&&data)?data.s99DailyQuest:null}
+  function closeEditor(){currentKey=null;overlay?.classList.remove('show');overlay?.setAttribute('aria-hidden','true');if(input)input.blur()}
+  function openEditor(key){
+    const q=quest(),o=q?.objectives?.[key];if(!q||!o||q.claimed)return;
+    currentKey=key;
+    if(title)title.textContent=o.label||'OBJETIVO';
+    if(meta)meta.textContent=`META DE HOJE // ${Number(o.target)||0} ${o.unit||''}`;
+    if(input)input.value=String(Number(o.value)||0);
+    overlay?.classList.add('show');overlay?.setAttribute('aria-hidden','false');
+    setTimeout(()=>{try{input?.focus({preventScroll:true});input?.select()}catch(e){input?.focus()}},80);
+  }
+  function saveEditor(){
+    const q=quest(),o=q?.objectives?.[currentKey];if(!q||!o||q.claimed){closeEditor();return}
+    const parsed=Number(String(input?.value??'0').replace(',','.'));
+    const value=Math.max(0,Math.min(999,Math.round(Number.isFinite(parsed)?parsed:0)));
+    const savedKey=currentKey;
+    o.value=value;o.updatedAt=new Date().toISOString();
+    try{if(typeof save==='function')save();else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){console.error('SIRIUS daily save',e)}
+    closeEditor();
+    /* A renderização original continua sendo a fonte de verdade visual. */
+    try{window.refreshDashboard?.()}catch(e){}
+    const host=document.getElementById('s99DailyQuestHost');
+    if(host){
+      const map={pushups:0,abs:1,squats:2,cardio:3};
+      const rows=host.querySelectorAll('.s99DQRow');
+      const row=rows[map[savedKey]??-1];
+      if(row){const c=row.querySelector('.s99DQCount');if(c)c.textContent=`${value}/${Number(o.target)||0} ${o.unit||''}`}
+    }
+    /* Força a rotina legada a redesenhar sem depender do prompt. */
+    try{document.dispatchEvent(new Event('visibilitychange'))}catch(e){}
+    setTimeout(()=>{
+      const buttons=document.querySelectorAll('#s99DailyQuestHost [data-s99-dq]');
+      buttons.forEach(b=>{b.type='button';b.style.pointerEvents='auto'});
+    },30);
+  }
+
+  /* Captura antes do listener legado instalado em #view-missions. */
+  document.addEventListener('touchend',function(ev){
+    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
+    lastTouch=Date.now();ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
+  },{passive:false,capture:true});
+  document.addEventListener('click',function(ev){
+    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
+    if(Date.now()-lastTouch<700){ev.preventDefault();ev.stopImmediatePropagation();return}
+    ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
+  },true);
+
+  overlay?.addEventListener('touchend',function(ev){
+    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(!b)return;
+    ev.preventDefault();ev.stopPropagation();lastTouch=Date.now();b.hasAttribute('data-s101-save')?saveEditor():closeEditor();
+  },{passive:false});
+  overlay?.addEventListener('click',function(ev){
+    if(Date.now()-lastTouch<650){ev.preventDefault();return}
+    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(b){b.hasAttribute('data-s101-save')?saveEditor():closeEditor();return}
+    if(ev.target===overlay)closeEditor();
+  });
+  input?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveEditor()}else if(ev.key==='Escape')closeEditor()});
+
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  mark();setTimeout(mark,250);setTimeout(mark,1200);
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    const msg=`VERSÃO INSTALADA: ${VERSION} // DAILY QUEST COM ATUALIZAÇÃO TÁTIL E ORIENTAÇÃO VISUAL REFINADA.`;
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);if(typeof save==='function')save()}
+  }catch(e){}
+})();
+</script>
+
 </body></html>
