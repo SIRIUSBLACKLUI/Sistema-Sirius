@@ -12811,171 +12811,109 @@ body.s95-more-open > *:not(#moreSheet){
 
 
 
-<!-- ===== SIRIUS v2.23.01 // DAILY QUEST INTERACTION + ORIENTATION HUD ===== -->
-<style id="sirius-v2301-daily-quest-style">
-/* ORIENTAÇÃO DE QUEST — estética vertical cinematográfica, sem copiar a referência literalmente. */
-#view-missions .s99DailyQuest{
-  position:relative!important;
-  margin:0 0 14px!important;
-  padding:18px 16px 16px!important;
-  border:1px solid #3ddcff!important;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(47,139,211,.16),transparent 31%),
-    linear-gradient(180deg,#07182b 0%,#061426 52%,#05111f 100%)!important;
-  box-shadow:0 0 28px rgba(54,211,255,.12),inset 0 0 34px rgba(55,190,255,.055)!important;
-  overflow:visible!important;
-  isolation:isolate!important;
-}
-#view-missions .s99DailyQuest::before{
-  content:""!important;position:absolute!important;left:42px!important;right:42px!important;top:0!important;height:2px!important;
-  background:linear-gradient(90deg,transparent,#66ebff 24%,#66ebff 76%,transparent)!important;
-  box-shadow:0 0 12px #5ee8ff!important;pointer-events:none!important;
-}
-#view-missions .s99DailyQuest::after{
-  content:"";position:absolute;inset:7px;z-index:-1;pointer-events:none;
-  border:1px solid rgba(81,197,244,.20);
-  clip-path:polygon(0 18px,18px 18px,18px 0,calc(100% - 18px) 0,calc(100% - 18px) 18px,100% 18px,100% calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,18px calc(100% - 18px),0 calc(100% - 18px));
-}
-#view-missions .s99DQTop{display:block!important;text-align:center!important;padding:0 6px!important}
-#view-missions .s99DQKicker{
-  display:inline-block!important;position:relative!important;margin:0 auto 15px!important;padding:7px 18px!important;
-  color:#e7f8ff!important;font-size:8.2px!important;letter-spacing:1.25px!important;font-weight:1000!important;
-  border-top:1px solid #2d779d!important;border-bottom:1px solid #2d779d!important;text-shadow:0 0 10px #7aeaff55!important;
-}
-#view-missions .s99DQKicker::before{content:"!";display:inline-grid;place-items:center;width:17px;height:17px;margin-right:7px;border:1px solid #ff6570;border-radius:50%;color:#ff7c82;vertical-align:-1px;font-size:10px;box-shadow:0 0 10px #ff657033}
-#view-missions .s99DQTitle{margin:0 auto!important;max-width:94%!important;font-size:15px!important;line-height:1.22!important;letter-spacing:.15px!important;color:#f6fbff!important;text-transform:uppercase!important}
-#view-missions .s99DQSub{margin-top:7px!important;color:#7e9fbe!important;font-size:6.6px!important;letter-spacing:.35px!important}
-#view-missions .s99DQState{position:absolute!important;right:15px!important;top:14px!important;padding:5px 7px!important;font-size:5.3px!important;border-color:#3c86a9!important;background:#061421!important;color:#9bdff8!important}
-#view-missions .s99DQObjectives{margin-top:18px!important;padding-top:13px!important;border-top:1px solid rgba(57,139,180,.36)!important}
-#view-missions .s99DQObjectivesTitle{font-size:10px!important;letter-spacing:1.5px!important;color:#67ff72!important;margin-bottom:12px!important;text-shadow:0 0 10px #55ff7750!important}
-#view-missions .s99DQRow{
-  display:grid!important;grid-template-columns:minmax(0,1fr) 68px 68px!important;gap:7px!important;align-items:center!important;
-  min-height:48px!important;padding:5px 0!important;border-bottom:1px solid rgba(59,138,181,.15)!important;
-}
-#view-missions .s99DQObj{font-size:8.2px!important;line-height:1.35!important;font-weight:1000!important;color:#f1f7ff!important;letter-spacing:.05px!important}
-#view-missions .s99DQObj.done{color:#72f3a2!important}
-#view-missions .s99DQCount{font-size:9.2px!important;color:#dcecff!important;font-weight:1000!important;letter-spacing:.2px!important}
-#view-missions .s99DQRow button{
-  min-height:34px!important;border:1px solid #3a88b5!important;background:linear-gradient(180deg,#0a2036,#071726)!important;
-  color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.75px!important;padding:6px 4px!important;
-  box-shadow:inset 0 0 12px rgba(61,202,255,.04)!important;touch-action:manipulation!important;
-}
-#view-missions .s99DQRow button:active{transform:scale(.97)!important;background:#0c2b48!important;border-color:#5fe5ff!important}
-#view-missions .s99DQProgress{margin-top:12px!important;height:5px!important;border-color:#23516f!important;background:#06101b!important}
-#view-missions .s99DQFooter{margin-top:12px!important}
-#view-missions .s99DQReward{font-size:6.4px!important;line-height:1.55!important}
-#view-missions .s99DQClaim{min-height:41px!important}
-#view-missions .s99DQAdjust{margin-top:10px!important;min-height:42px!important;background:#061522!important;border-color:#2d6f97!important}
-#view-missions .s99DQWarning{
-  margin:14px -2px 0!important;padding:13px 8px 4px!important;border-top:1px solid rgba(206,61,75,.28)!important;
-  text-align:center!important;font-size:7px!important;line-height:1.55!important;color:#cbd8e5!important;font-weight:800!important;
-}
-#view-missions .s99DQWarning b{display:block!important;margin-bottom:4px!important;color:#ff4f58!important;font-size:12px!important;letter-spacing:.4px!important;text-shadow:0 0 10px #ff4f5845!important}
-
-/* Modal nativo do SIRIUS para atualizar progresso: evita dependência de prompt() no iPhone/PWA. */
-#s101DQOverlay{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(1,5,12,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
-#s101DQOverlay.show{display:flex;pointer-events:auto}
-#s101DQModal{width:min(92vw,390px);position:relative;border:1px solid #47ddff;background:linear-gradient(180deg,#071a2d,#06111e);padding:18px;box-shadow:0 0 42px rgba(56,210,255,.22),inset 0 0 26px rgba(52,176,255,.06)}
-#s101DQModal::before{content:"";position:absolute;left:20%;right:20%;top:0;height:2px;background:#60ebff;box-shadow:0 0 12px #60ebff}
-.s101DQKicker{text-align:center;color:#72eaff;font-size:7px;font-weight:1000;letter-spacing:1.5px}.s101DQModalTitle{text-align:center;margin-top:9px;color:#f5fbff;font-size:14px;font-weight:1000;line-height:1.25}
-.s101DQModalMeta{text-align:center;margin-top:7px;color:#85a7c5;font-size:7px;line-height:1.45}.s101DQInputLabel{display:block;margin-top:15px;color:#63ff79;font-size:7px;font-weight:1000;letter-spacing:1.1px}
-#s101DQValue{width:100%;margin-top:6px;min-height:48px;border:1px solid #347ca5;background:#040e19;color:#fff;padding:10px 12px;font-size:20px;font-weight:1000;text-align:center;outline:none;-webkit-appearance:none;border-radius:0}
-#s101DQValue:focus{border-color:#66e8ff;box-shadow:0 0 14px rgba(76,219,255,.18)}
-.s101DQActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.s101DQActions button{min-height:42px;border:1px solid #34749a;background:#071725;color:#c7e3f5;font-size:7px;font-weight:1000;letter-spacing:.9px;touch-action:manipulation}
-.s101DQActions .primary{border-color:#50dfff;background:linear-gradient(180deg,#1289dc,#07538f);color:#fff}.s101DQHint{text-align:center;margin-top:10px;color:#6f8da8;font-size:6px;line-height:1.45}
-@media(max-width:430px){
-  #view-missions .s99DailyQuest{padding:16px 12px 14px!important}
-  #view-missions .s99DQState{position:static!important;display:inline-block!important;margin-top:9px!important}
-  #view-missions .s99DQRow{grid-template-columns:minmax(0,1fr) 58px 62px!important;gap:5px!important}
-  #view-missions .s99DQObj{font-size:7.2px!important}#view-missions .s99DQCount{font-size:8px!important}
-}
+<!-- ===== SIRIUS v2.23.02 // DAILY QUEST 06:00 + PENALTY + REWARD CHOICE ===== -->
+<style id="sirius-v2302-daily-quest-style">
+/* A Daily Quest antiga permanece no arquivo como compatibilidade, mas não é exibida. */
+#s99DailyQuestHost{display:none!important}
+#s2302DailyHost{position:relative;z-index:46;margin:0 0 14px;pointer-events:auto!important}
+.s2302Quest{--q:#47cfff;position:relative;width:100%;max-width:430px;margin:0 auto;padding:22px 18px 18px;color:#eefaff;background:linear-gradient(180deg,#07182a 0%,#06111f 48%,#050e19 100%);border:1px solid #2f8dc0;box-shadow:inset 0 0 40px rgba(36,157,220,.09),0 0 24px rgba(31,164,230,.12);overflow:hidden;isolation:isolate}
+.s2302Quest:before{content:"";position:absolute;inset:6px;border:1px solid rgba(73,194,243,.28);pointer-events:none}
+.s2302Quest:after{content:"";position:absolute;left:17%;right:17%;top:0;height:2px;background:linear-gradient(90deg,transparent,#70e7ff 20%,#70e7ff 80%,transparent);box-shadow:0 0 11px #55dfff;pointer-events:none}
+.s2302Corner{position:absolute;width:42px;height:42px;pointer-events:none;opacity:.95}
+.s2302Corner:before,.s2302Corner:after{content:"";position:absolute;background:#5bdcff;box-shadow:0 0 8px rgba(91,220,255,.55)}
+.s2302Corner:before{width:30px;height:1px}.s2302Corner:after{width:1px;height:30px}
+.s2302Corner.tl{left:5px;top:5px}.s2302Corner.tr{right:5px;top:5px;transform:scaleX(-1)}.s2302Corner.bl{left:5px;bottom:5px;transform:scaleY(-1)}.s2302Corner.br{right:5px;bottom:5px;transform:scale(-1)}
+.s2302Corner i{position:absolute;left:0;top:0;width:12px;height:12px;border-left:2px solid #9af3ff;border-top:2px solid #9af3ff}
+.s2302Header{text-align:center;padding:3px 12px 14px;border-bottom:1px solid rgba(74,162,206,.2)}
+.s2302HeaderKicker{font-size:7px;letter-spacing:3px;color:#71ddff;font-weight:1000;text-shadow:0 0 8px rgba(87,219,255,.55)}
+.s2302HeaderTitle{margin-top:11px;font-size:16px;line-height:1.35;font-weight:1000;letter-spacing:.7px;color:#f6fbff;text-shadow:0 0 8px rgba(255,255,255,.08)}
+.s2302State{display:inline-block;margin-top:9px;padding:4px 11px;border:1px solid #3ca9d4;color:#bfefff;background:#06131f;font-size:6.2px;font-weight:1000;letter-spacing:1.5px}
+.s2302ObjectivesTitle{text-align:center;color:#51ff6e;font-size:8px;font-weight:1000;letter-spacing:2.1px;margin:15px 0 7px;text-shadow:0 0 8px rgba(67,255,102,.32)}
+.s2302Objective{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;min-height:45px;padding:6px 2px;border-bottom:1px solid rgba(59,133,170,.17)}
+.s2302Objective:last-child{border-bottom:0}.s2302ObjText{min-width:0}.s2302ObjLine{display:flex;align-items:center;gap:7px;font-size:8.1px;font-weight:1000;color:#f2f7fb;line-height:1.25}.s2302Check{color:#5e7180;font-size:10px}.s2302Objective.done .s2302Check,.s2302Objective.done .s2302ObjLine{color:#5ef18d}.s2302ObjSub{font-size:5.8px;color:#6f8da7;margin-top:3px;letter-spacing:.6px}.s2302ObjRight{display:flex;align-items:center;gap:7px}.s2302Count{min-width:58px;text-align:right;font-size:8.2px;font-weight:1000;color:#dbe8f1;white-space:nowrap}.s2302Update{min-width:68px;min-height:32px!important;padding:6px 8px!important;border:1px solid #337fa6!important;background:#071827!important;color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.8px!important;touch-action:manipulation!important;pointer-events:auto!important;position:relative!important;z-index:48!important}
+.s2302Progress{height:4px;background:#102332;border:1px solid #1b435c;margin:13px 2px 0;overflow:hidden}.s2302Progress span{display:block;height:100%;background:#55dcff;box-shadow:0 0 8px #55dcff;transition:width .2s ease}
+.s2302Attention{margin-top:15px;padding:11px 12px 10px;border-top:1px solid rgba(172,42,47,.35);border-bottom:1px solid rgba(172,42,47,.22);text-align:center}.s2302Attention b{display:block;color:#ff343a;font-size:9px;letter-spacing:2.3px;margin-bottom:5px;text-shadow:0 0 7px rgba(255,52,58,.28)}.s2302Attention span{font-size:7px;color:#b8c2cb;line-height:1.5}
+.s2302Timer{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:13px;color:#d8eaf2}.s2302Clock{width:24px;height:24px;border:2px solid #e8f6fb;border-radius:50%;position:relative;opacity:.9}.s2302Clock:before{content:"";position:absolute;left:10px;top:4px;width:1px;height:7px;background:#e8f6fb}.s2302Clock:after{content:"";position:absolute;left:10px;top:10px;width:6px;height:1px;background:#e8f6fb;transform:rotate(25deg);transform-origin:left center}.s2302TimerText{font-size:9px;font-weight:1000;letter-spacing:1.2px}.s2302TimerSub{font-size:5.8px;color:#66869f;margin-top:2px;letter-spacing:.8px}
+.s2302Complete{width:100%;min-height:40px!important;margin-top:12px!important;border:1px solid #49dfff!important;background:linear-gradient(180deg,#118ad8,#07538d)!important;color:#fff!important;font-size:7px!important;font-weight:1000!important;letter-spacing:1.4px!important;touch-action:manipulation!important}.s2302Complete[disabled]{opacity:.38!important;filter:grayscale(.6)!important}.s2302Complete.done{border-color:#44d892!important;background:#073b2f!important;color:#8fffc7!important}
+.s2302Penalty{margin-top:13px;border:1px solid #8d2d36;background:linear-gradient(180deg,#210b11,#10090d);padding:12px;text-align:center}.s2302PenaltyTitle{color:#ff5158;font-size:9px;font-weight:1000;letter-spacing:2px}.s2302PenaltyText{margin-top:7px;color:#d9c6c8;font-size:7px;line-height:1.5}.s2302PenaltyTimer{margin-top:9px;color:#fff;font-size:14px;font-weight:1000;letter-spacing:1px}.s2302Penalty button{margin-top:9px;min-height:36px;border:1px solid #b43d46;background:#2a0d14;color:#ffd9dc;font-size:6.5px;font-weight:1000;letter-spacing:1px;padding:7px 10px}
+.s2302Modal{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(1,5,10,.9);backdrop-filter:blur(5px)}.s2302Modal.show{display:flex}.s2302ModalCard{width:min(92vw,390px);border:1px solid #42cfff;background:linear-gradient(180deg,#071a2c,#050d18);padding:18px;box-shadow:0 0 36px rgba(53,205,255,.18);position:relative}.s2302ModalKicker{font-size:6.5px;letter-spacing:2px;color:#75e6ff;font-weight:1000}.s2302ModalTitle{font-size:16px;font-weight:1000;margin-top:7px}.s2302ModalText{font-size:7px;color:#89a7c0;line-height:1.5;margin-top:6px}.s2302Modal input{width:100%;min-height:48px;margin-top:13px;background:#040b13;color:#fff;border:1px solid #347ca4;padding:11px;font-size:16px}.s2302ModalActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.s2302ModalActions button,.s2302RewardChoice{min-height:40px;border:1px solid #347ca4;background:#071827;color:#e8f8ff;font-size:6.7px;font-weight:1000;letter-spacing:1px}.s2302ModalActions .primary{border-color:#56dfff;background:#0c6dab}.s2302RewardGrid{display:grid;gap:8px;margin-top:13px}.s2302RewardChoice{text-align:left;padding:11px}.s2302RewardChoice b{display:block;font-size:8px;color:#fff}.s2302RewardChoice span{display:block;font-size:6.3px;color:#89abc4;margin-top:4px;line-height:1.4}
+@media(max-width:430px){.s2302Quest{padding:19px 11px 14px}.s2302HeaderTitle{font-size:13.5px}.s2302Objective{grid-template-columns:minmax(0,1fr) auto}.s2302ObjLine{font-size:7.2px}.s2302Count{min-width:48px;font-size:7.2px}.s2302Update{min-width:59px;font-size:5.2px!important;padding:5px!important}.s2302ObjRight{gap:4px}}
 </style>
-<div id="s101DQOverlay" aria-hidden="true">
-  <div id="s101DQModal" role="dialog" aria-modal="true" aria-labelledby="s101DQModalTitle">
-    <div class="s101DQKicker">[ SIRIUS // ATUALIZAÇÃO DE OBJETIVO ]</div>
-    <div id="s101DQModalTitle" class="s101DQModalTitle">OBJETIVO</div>
-    <div id="s101DQModalMeta" class="s101DQModalMeta"></div>
-    <label class="s101DQInputLabel" for="s101DQValue">TOTAL CONCLUÍDO ATÉ AGORA</label>
-    <input id="s101DQValue" type="number" inputmode="numeric" min="0" max="999" step="1" autocomplete="off">
-    <div class="s101DQActions"><button type="button" data-s101-cancel>CANCELAR</button><button type="button" class="primary" data-s101-save>SALVAR PROGRESSO</button></div>
-    <div class="s101DQHint">O valor salvo substitui o progresso atual deste objetivo.</div>
-  </div>
-</div>
-<script id="sirius-v2301-daily-quest-script">
+<script id="sirius-v2302-daily-quest-script">
 (function(){
-  'use strict';
-  const VERSION='v2.23.01';
-  let currentKey=null,lastTouch=0;
-  const overlay=document.getElementById('s101DQOverlay');
-  const title=document.getElementById('s101DQModalTitle');
-  const meta=document.getElementById('s101DQModalMeta');
-  const input=document.getElementById('s101DQValue');
-
-  function quest(){return (typeof data==='object'&&data)?data.s99DailyQuest:null}
-  function closeEditor(){currentKey=null;overlay?.classList.remove('show');overlay?.setAttribute('aria-hidden','true');if(input)input.blur()}
-  function openEditor(key){
-    const q=quest(),o=q?.objectives?.[key];if(!q||!o||q.claimed)return;
-    currentKey=key;
-    if(title)title.textContent=o.label||'OBJETIVO';
-    if(meta)meta.textContent=`META DE HOJE // ${Number(o.target)||0} ${o.unit||''}`;
-    if(input)input.value=String(Number(o.value)||0);
-    overlay?.classList.add('show');overlay?.setAttribute('aria-hidden','false');
-    setTimeout(()=>{try{input?.focus({preventScroll:true});input?.select()}catch(e){input?.focus()}},80);
+  const VERSION='v2.23.02',KEY='s2302DailyQuest';
+  const OBJECTIVE_ORDER=['pushups','plank','abs','squats','run'];
+  const DEFAULTS={
+    pushups:{label:'FLEXÃO',target:10,unit:'REP'},
+    plank:{label:'PRANCHA',target:60,unit:'SEG'},
+    abs:{label:'ABDOMINAL',target:15,unit:'REP'},
+    squats:{label:'AGACHAMENTO',target:20,unit:'REP'},
+    run:{label:'CORRER',target:10,unit:'MIN'}
+  };
+  let timerId=null,penaltyTimerId=null;
+  function saveNow(){try{if(typeof save==='function')save();else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function cycleBounds(now=new Date()){
+    const start=new Date(now);start.setHours(6,0,0,0);if(now<start)start.setDate(start.getDate()-1);
+    const end=new Date(start);end.setDate(end.getDate()+1);
+    return {start,end,key:`${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}-0600`};
   }
-  function saveEditor(){
-    const q=quest(),o=q?.objectives?.[currentKey];if(!q||!o||q.claimed){closeEditor();return}
-    const parsed=Number(String(input?.value??'0').replace(',','.'));
-    const value=Math.max(0,Math.min(999,Math.round(Number.isFinite(parsed)?parsed:0)));
-    const savedKey=currentKey;
-    o.value=value;o.updatedAt=new Date().toISOString();
-    try{if(typeof save==='function')save();else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){console.error('SIRIUS daily save',e)}
-    closeEditor();
-    /* A renderização original continua sendo a fonte de verdade visual. */
-    try{window.refreshDashboard?.()}catch(e){}
-    const host=document.getElementById('s99DailyQuestHost');
-    if(host){
-      const map={pushups:0,abs:1,squats:2,cardio:3};
-      const rows=host.querySelectorAll('.s99DQRow');
-      const row=rows[map[savedKey]??-1];
-      if(row){const c=row.querySelector('.s99DQCount');if(c)c.textContent=`${value}/${Number(o.target)||0} ${o.unit||''}`}
+  function makeQuest(bounds=cycleBounds()){
+    const objectives={};OBJECTIVE_ORDER.forEach(k=>objectives[k]={...DEFAULTS[k],value:0,updatedAt:null});
+    return {cycleKey:bounds.key,cycleStart:bounds.start.toISOString(),cycleEnd:bounds.end.toISOString(),objectives,completed:false,completedAt:null,rewardClaimed:false,reward:null,failed:false,penalty:null,createdAt:new Date().toISOString()};
+  }
+  function done(q){return OBJECTIVE_ORDER.every(k=>Number(q?.objectives?.[k]?.value||0)>=Number(q?.objectives?.[k]?.target||1))}
+  function pct(q){return Math.round(OBJECTIVE_ORDER.reduce((s,k)=>{const o=q?.objectives?.[k]||DEFAULTS[k];return s+Math.min(1,Number(o.value||0)/Math.max(1,Number(o.target||1)))},0)/OBJECTIVE_ORDER.length*100)}
+  function ensureQuest(){
+    if(typeof data==='undefined'||!data||typeof data!=='object')return null;
+    const b=cycleBounds();let q=data[KEY];
+    if(!q){q=data[KEY]=makeQuest(b);saveNow();return q}
+    if(q.cycleKey!==b.key){
+      data.s2302DailyHistory=Array.isArray(data.s2302DailyHistory)?data.s2302DailyHistory:[];
+      if(!q.completed){q.failed=true;q.failedAt=b.start.toISOString();q.penalty={type:'READING',title:'KANT — OS PRINCÍPIOS DA METAFÍSICA',durationSec:600,status:'PENDING',startedAt:null,completedAt:null};}
+      data.s2302DailyHistory.unshift(JSON.parse(JSON.stringify(q)));data.s2302DailyHistory=data.s2302DailyHistory.slice(0,45);
+      const nq=makeQuest(b);
+      if(q.penalty&&q.penalty.status!=='COMPLETED')nq.penalty=q.penalty;
+      q=data[KEY]=nq;saveNow();
+      try{if(typeof addSystemLog==='function')addSystemLog('mission',q.penalty?'PENALIDADE ATIVA: LEITURA DE KANT POR 10 MINUTOS':'NOVO CICLO DA QUEST DIÁRIA ÀS 06:00')}catch(e){}
     }
-    /* Força a rotina legada a redesenhar sem depender do prompt. */
-    try{document.dispatchEvent(new Event('visibilitychange'))}catch(e){}
-    setTimeout(()=>{
-      const buttons=document.querySelectorAll('#s99DailyQuestHost [data-s99-dq]');
-      buttons.forEach(b=>{b.type='button';b.style.pointerEvents='auto'});
-    },30);
+    /* Migração segura caso a estrutura evolua. */
+    q.objectives=q.objectives||{};OBJECTIVE_ORDER.forEach(k=>{if(!q.objectives[k])q.objectives[k]={...DEFAULTS[k],value:0,updatedAt:null};else{q.objectives[k].label=DEFAULTS[k].label;q.objectives[k].unit=DEFAULTS[k].unit;if(!Number(q.objectives[k].target))q.objectives[k].target=DEFAULTS[k].target}});
+    return q;
   }
-
-  /* Captura antes do listener legado instalado em #view-missions. */
-  document.addEventListener('touchend',function(ev){
-    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
-    lastTouch=Date.now();ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
-  },{passive:false,capture:true});
-  document.addEventListener('click',function(ev){
-    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
-    if(Date.now()-lastTouch<700){ev.preventDefault();ev.stopImmediatePropagation();return}
-    ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
-  },true);
-
-  overlay?.addEventListener('touchend',function(ev){
-    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(!b)return;
-    ev.preventDefault();ev.stopPropagation();lastTouch=Date.now();b.hasAttribute('data-s101-save')?saveEditor():closeEditor();
-  },{passive:false});
-  overlay?.addEventListener('click',function(ev){
-    if(Date.now()-lastTouch<650){ev.preventDefault();return}
-    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(b){b.hasAttribute('data-s101-save')?saveEditor():closeEditor();return}
-    if(ev.target===overlay)closeEditor();
-  });
-  input?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveEditor()}else if(ev.key==='Escape')closeEditor()});
-
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  mark();setTimeout(mark,250);setTimeout(mark,1200);
-  try{
-    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-    const msg=`VERSÃO INSTALADA: ${VERSION} // DAILY QUEST COM ATUALIZAÇÃO TÁTIL E ORIENTAÇÃO VISUAL REFINADA.`;
-    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);if(typeof save==='function')save()}
-  }catch(e){}
+  function host(){
+    let h=document.getElementById('s2302DailyHost');if(h)return h;
+    const old=document.getElementById('s99DailyQuestHost'),forge=document.getElementById('missionForge');if(!old&&!forge)return null;
+    h=document.createElement('div');h.id='s2302DailyHost';(old||forge).parentNode.insertBefore(h,old||forge);return h;
+  }
+  function remainingText(){const b=cycleBounds();let sec=Math.max(0,Math.floor((b.end-Date.now())/1000));const h=Math.floor(sec/3600);sec%=3600;const m=Math.floor(sec/60),s=sec%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+  function penaltyRemaining(q){const p=q?.penalty;if(!p||p.status!=='RUNNING'||!p.startedAt)return Number(p?.durationSec||600);return Math.max(0,Number(p.durationSec||600)-Math.floor((Date.now()-new Date(p.startedAt).getTime())/1000))}
+  function penaltyHtml(q){const p=q?.penalty;if(!p||p.status==='COMPLETED')return '';const rem=penaltyRemaining(q);const mm=Math.floor(rem/60),ss=rem%60;return `<div class="s2302Penalty"><div class="s2302PenaltyTitle">MISSÃO DE PENALIDADE</div><div class="s2302PenaltyText">Quest diária anterior não concluída.<br><b>LER 10 MINUTOS DE KANT — OS PRINCÍPIOS DA METAFÍSICA.</b><br>O material poderá ser vinculado à Biblioteca quando você adicioná-lo.</div><div class="s2302PenaltyTimer">${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}</div><button type="button" data-s2302-penalty>${p.status==='RUNNING'?'LEITURA EM ANDAMENTO':'INICIAR LEITURA DE 10 MIN'}</button></div>`}
+  function render(){
+    const q=ensureQuest(),h=host();if(!q||!h)return;const ready=done(q),progress=pct(q);
+    const rows=OBJECTIVE_ORDER.map(k=>{const o=q.objectives[k],ok=Number(o.value)>=Number(o.target);return `<div class="s2302Objective ${ok?'done':''}"><div class="s2302ObjText"><div class="s2302ObjLine"><span class="s2302Check">[${ok?'✓':' '}]</span><span>${esc(o.label)}</span></div><div class="s2302ObjSub">OBJETIVO DIÁRIO</div></div><div class="s2302ObjRight"><div class="s2302Count">${Number(o.value)||0}/${Number(o.target)||0} ${esc(o.unit)}</div><button type="button" class="s2302Update" data-s2302-update="${k}">ATUALIZAR</button></div></div>`}).join('');
+    h.innerHTML=`<div class="s2302Quest"><span class="s2302Corner tl"><i></i></span><span class="s2302Corner tr"><i></i></span><span class="s2302Corner bl"><i></i></span><span class="s2302Corner br"><i></i></span><div class="s2302Header"><div class="s2302HeaderKicker">ORIENTAÇÃO DE QUEST</div><div class="s2302HeaderTitle">QUEST DIÁRIA<br>PREPARANDO-SE PARA FICAR MAIS FORTE</div><div class="s2302State">${q.rewardClaimed?'FINALIZADA':ready?'RECOMPENSA DISPONÍVEL':'ATIVA'}</div></div><div class="s2302ObjectivesTitle">OBJETIVOS</div>${rows}<div class="s2302Progress"><span style="width:${progress}%"></span></div><div class="s2302Attention"><b>ATENÇÃO!</b><span>O CICLO TERMINA ÀS 06:00. SE A QUEST NÃO FOR CONCLUÍDA, UMA MISSÃO DE PENALIDADE SERÁ ATIVADA.</span></div><div class="s2302Timer"><span class="s2302Clock"></span><div><div class="s2302TimerText" data-s2302-timer>${remainingText()} RESTANTES</div><div class="s2302TimerSub">NOVO CICLO DIÁRIO ÀS 06:00</div></div></div><button type="button" class="s2302Complete ${q.rewardClaimed?'done':''}" data-s2302-complete ${(ready&&!q.rewardClaimed)?'':'disabled'}>${q.rewardClaimed?'RECOMPENSA ESCOLHIDA':ready?'CONCLUIR E ESCOLHER RECOMPENSA':'CONCLUA TODOS OS OBJETIVOS'}</button>${penaltyHtml(q)}</div>`;
+    tickPenalty();
+  }
+  function openModal(html){let m=document.getElementById('s2302Modal');if(!m){m=document.createElement('div');m.id='s2302Modal';m.className='s2302Modal';document.body.appendChild(m)}m.innerHTML=html;m.classList.add('show')}
+  function closeModal(){document.getElementById('s2302Modal')?.classList.remove('show')}
+  function editObjective(key){const q=ensureQuest(),o=q?.objectives?.[key];if(!o||q.rewardClaimed)return;openModal(`<div class="s2302ModalCard"><div class="s2302ModalKicker">[ SIRIUS // PROGRESSO ]</div><div class="s2302ModalTitle">${esc(o.label)}</div><div class="s2302ModalText">META: ${Number(o.target)} ${esc(o.unit)} // informe o total concluído até agora.</div><input id="s2302ProgressInput" inputmode="decimal" type="number" min="0" max="9999" step="1" value="${Number(o.value)||0}"><div class="s2302ModalActions"><button type="button" data-s2302-close>CANCELAR</button><button type="button" class="primary" data-s2302-save="${key}">SALVAR PROGRESSO</button></div></div>`);setTimeout(()=>document.getElementById('s2302ProgressInput')?.focus(),80)}
+  function saveObjective(key){const q=ensureQuest(),o=q?.objectives?.[key],inp=document.getElementById('s2302ProgressInput');if(!o||!inp)return;const n=Math.max(0,Math.min(9999,Math.round(Number(String(inp.value).replace(',','.'))||0)));o.value=n;o.updatedAt=new Date().toISOString();saveNow();closeModal();render();try{if(typeof refreshDashboard==='function')refreshDashboard()}catch(e){}}
+  function rewards(){
+    const q=ensureQuest();if(!q||!done(q)||q.rewardClaimed)return;
+    openModal(`<div class="s2302ModalCard"><div class="s2302ModalKicker">[ SIRIUS // RECOMPENSA DA QUEST ]</div><div class="s2302ModalTitle">ESCOLHA 1 RECOMPENSA</div><div class="s2302ModalText">A escolha é definitiva para este ciclo diário.</div><div class="s2302RewardGrid"><button type="button" class="s2302RewardChoice" data-s2302-reward="xp"><b>01 // XP</b><span>Receber +50 XP imediatamente.</span></button><button type="button" class="s2302RewardChoice" data-s2302-reward="recovery"><b>02 // RECURSO DE RECUPERAÇÃO</b><span>Receber 1 Crédito de Recuperação para o inventário SIRIUS.</span></button><button type="button" class="s2302RewardChoice" data-s2302-reward="box"><b>03 // CAIXA ALEATÓRIA</b><span>Pode conceder XP, item cosmético ou uma Chave de Dungeon.</span></button></div><div class="s2302ModalActions"><button type="button" data-s2302-close>VOLTAR</button></div></div>`)
+  }
+  function chooseReward(type){const q=ensureQuest();if(!q||q.rewardClaimed||!done(q))return;let label='';data.s2302Inventory=data.s2302Inventory||{recoveryCredits:0,dungeonKeys:0,cosmetics:[]};if(type==='xp'){data.xp=(Number(data.xp)||0)+50;label='+50 XP'}else if(type==='recovery'){data.s2302Inventory.recoveryCredits=Number(data.s2302Inventory.recoveryCredits||0)+1;label='1 CRÉDITO DE RECUPERAÇÃO'}else{const roll=Math.floor(Math.random()*3);if(roll===0){data.xp=(Number(data.xp)||0)+35;label='CAIXA: +35 XP'}else if(roll===1){data.s2302Inventory.cosmetics.push({id:'daily-'+Date.now(),name:'EMBLEMA // CAÇADOR DIÁRIO',obtainedAt:new Date().toISOString()});label='CAIXA: EMBLEMA COSMÉTICO'}else{data.s2302Inventory.dungeonKeys=Number(data.s2302Inventory.dungeonKeys||0)+1;label='CAIXA: CHAVE DE DUNGEON'}}q.completed=true;q.completedAt=q.completedAt||new Date().toISOString();q.rewardClaimed=true;q.reward={type,label,claimedAt:new Date().toISOString()};data.completedMissions=(Number(data.completedMissions)||0)+1;saveNow();closeModal();render();try{if(typeof addSystemLog==='function')addSystemLog('reward',`QUEST DIÁRIA CONCLUÍDA // ${label}`);if(typeof refreshDashboard==='function')refreshDashboard();if(typeof showSystemEvent==='function')showSystemEvent('RECOMPENSA RECEBIDA',label)}catch(e){}}
+  function startPenalty(){const q=ensureQuest(),p=q?.penalty;if(!p||p.status==='COMPLETED')return;if(p.status!=='RUNNING'){p.status='RUNNING';p.startedAt=new Date().toISOString();saveNow()}render();tickPenalty()}
+  function tickPenalty(){if(penaltyTimerId){clearInterval(penaltyTimerId);penaltyTimerId=null}const q=ensureQuest(),p=q?.penalty;if(!p||p.status!=='RUNNING')return;const update=()=>{const cur=ensureQuest(),rem=penaltyRemaining(cur);const el=document.querySelector('.s2302PenaltyTimer');if(el){const mm=Math.floor(rem/60),ss=rem%60;el.textContent=`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`}if(rem<=0){clearInterval(penaltyTimerId);penaltyTimerId=null;cur.penalty.status='COMPLETED';cur.penalty.completedAt=new Date().toISOString();saveNow();render();try{if(typeof addSystemLog==='function')addSystemLog('mission','PENALIDADE CONCLUÍDA: 10 MINUTOS DE LEITURA DE KANT');if(typeof showSystemEvent==='function')showSystemEvent('PENALIDADE CONCLUÍDA','10 minutos de leitura registrados.')}catch(e){}}};update();penaltyTimerId=setInterval(update,1000)}
+  function wire(){
+    const view=document.getElementById('view-missions');if(view&&view.dataset.s2302Wired!=='1'){view.dataset.s2302Wired='1';view.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s2302-update],[data-s2302-complete],[data-s2302-penalty]');if(!b)return;ev.preventDefault();ev.stopPropagation();if(b.dataset.s2302Update)editObjective(b.dataset.s2302Update);else if(b.hasAttribute('data-s2302-complete'))rewards();else startPenalty()},false);view.addEventListener('touchend',ev=>{const b=ev.target.closest?.('[data-s2302-update],[data-s2302-complete],[data-s2302-penalty]');if(!b)return;ev.preventDefault();ev.stopPropagation();b.click()},{passive:false,capture:false})}
+    document.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s2302-close],[data-s2302-save],[data-s2302-reward]');if(!b)return;if(b.hasAttribute('data-s2302-close'))closeModal();else if(b.dataset.s2302Save)saveObjective(b.dataset.s2302Save);else if(b.dataset.s2302Reward)chooseReward(b.dataset.s2302Reward)},false)
+  }
+  function tick(){const q=ensureQuest();const t=document.querySelector('[data-s2302-timer]');if(t)t.textContent=remainingText()+' RESTANTES';const b=cycleBounds();if(q&&q.cycleKey!==b.key)render()}
+  function init(){ensureQuest();render();wire();if(timerId)clearInterval(timerId);timerId=setInterval(tick,1000);document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // DAILY QUEST 06:00, 5 OBJETIVOS, PENALIDADE KANT E ESCOLHA DE RECOMPENSA.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);saveNow()}}catch(e){}}
+  const prevDock=window.openDockView;if(typeof prevDock==='function')window.openDockView=function(v){const r=prevDock.apply(this,arguments);if(v==='missions')setTimeout(render,40);return r};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);window.addEventListener('load',()=>setTimeout(()=>{render();wire()},260),{once:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){ensureQuest();render()}},{passive:true});
 })();
 </script>
 
