@@ -13595,4 +13595,116 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VE
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.23.08 // TOUCH LAYER + MESSAGE STANDARD AUDIT ===== -->
+<style id="sirius-v22308-final-fixes-style">
+/* LABORATÓRIO: remove qualquer camada visual residual e mantém a grade como camada interativa superior. */
+#s62TestControls{position:relative!important;isolation:auto!important;overflow:hidden!important;background:#020914!important;background-image:none!important;box-shadow:inset 0 0 14px rgba(37,145,205,.035)!important}
+#s62TestControls>*:not(.s62TestControlsTitle):not(.s62TestControlsGrid):not(.s62TestNotice){display:none!important}
+#s62TestControls .s62TestControlsTitle,#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important;background:transparent!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#s62TestControls .s62TestControlsGrid{position:relative!important;z-index:2147483000!important;isolation:isolate!important;overflow:visible!important;background:#020914!important;background-image:none!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#s62TestControls .s62TestControlsGrid::before,#s62TestControls .s62TestControlsGrid::after,#s62TestControls::before,#s62TestControls::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important}
+#s62TestControls .s62TestControlsGrid button{position:relative!important;z-index:2147483001!important;pointer-events:auto!important;touch-action:manipulation!important;opacity:1!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:none!important}
+
+/* CENTRAL: elimina a arte que estava parecendo um contador/ícone corrompido e reposiciona o badge. */
+#moreSheet #s66EventsCard::before{display:none!important;background-image:none!important}
+#moreSheet #s66EventsCard .s94CardInner{background:radial-gradient(circle at 50% 30%,rgba(47,208,255,.10),transparent 50%)!important}
+#moreSheet #s66EventsCard svg{display:block!important;opacity:1!important;visibility:visible!important;width:26px!important;height:26px!important;stroke:#64e6ff!important;filter:drop-shadow(0 0 5px rgba(70,220,255,.42))!important;transform:none!important}
+#moreSheet #s66EventsCard .s67InnerBadge{left:auto!important;right:5px!important;top:5px!important;bottom:auto!important;transform:none!important;z-index:50!important;min-width:16px!important;height:16px!important;padding:0 4px!important;font-size:6.5px!important;line-height:16px!important}
+
+/* PADRÃO OFICIAL DE MENSAGEM: s62 e o fluxo legado de quest secreta usam a mesma linguagem visual. */
+#s62SystemOverlay,#s61EventOverlay{background:rgba(1,5,12,.91)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
+#s62SystemPanel,#s61EventOverlay .s61EventPanel{border:1px solid #4fd8ff!important;background:linear-gradient(180deg,rgba(5,27,49,.98),rgba(2,12,24,.99))!important;box-shadow:0 0 0 1px rgba(91,224,255,.10) inset,0 0 34px rgba(22,177,255,.18)!important;color:#edfaff!important}
+#s61EventOverlay .s61EventKicker{font-size:0!important;color:#e9faff!important}
+#s61EventOverlay .s61EventKicker::after{content:"✉  MENSAGEM"!important;font-size:12px!important;letter-spacing:2.4px!important;color:#e9faff!important}
+#s61EventOverlay .s61EventTitle{color:#fff!important;text-shadow:0 0 13px rgba(91,224,255,.24)!important}
+#s61EventOverlay .s61EventActions button,#s62SystemActions button{pointer-events:auto!important;touch-action:manipulation!important;position:relative!important;z-index:60!important;min-height:48px!important;border:1px solid #55dfff!important;background:linear-gradient(180deg,#0a3355,#061c32)!important;color:#f4fbff!important;box-shadow:inset 0 0 14px rgba(68,211,255,.07),0 0 12px rgba(35,172,255,.08)!important}
+#s61EventOverlay .s61EventActions button.reject{border-color:#55758e!important;background:#091521!important;color:#d4e2ec!important}
+#s62SystemPanel::before,#s62SystemPanel::after,#s61EventOverlay .s61EventPanel::before,#s61EventOverlay .s61EventPanel::after{pointer-events:none!important}
+
+/* DAILY QUEST: mantém os controles sempre na camada de toque. */
+#s2302DailyHost,.s2302Quest,.s2302Objective,.s2302ObjRight{position:relative!important;pointer-events:auto!important}
+.s2302Update,[data-s2302-update]{position:relative!important;z-index:2147482000!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(85,223,255,.16)!important}
+</style>
+<script id="sirius-v22308-final-fixes-script">
+(function(){
+  const VERSION='v2.23.08';
+  const TEST_ACTIONS={
+    orientation:()=>window.s62TestQuestOrientation?.(),
+    message:()=>window.s62TestMessage?.(),
+    notice:()=>window.s62TestNoticeGrowth?.(),
+    reward:()=>window.s62TestRewards?.(),
+    secret:()=>window.s62TestSecret?.(),
+    recovery:()=>window.s62TestPenaltyZone?.(),
+    penalty:()=>window.s62TestNoticePenalty?.(),
+    timer:()=>window.s62TestRewardsTimer?.(),
+    inbox:()=>{window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');window.s66OpenEventCenter?.()},
+    rewardPending:()=>{try{data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];const id='reward_test_'+Date.now();data.eventCenter.rewards.unshift({id,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:id});window.s66OpenEventCenter?.()}catch(e){console.warn(e)}},
+    timerReal:()=>{try{data.missions=Array.isArray(data.missions)?data.missions:[];let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');window.s66OpenEventCenter?.()}catch(e){console.warn(e)}},
+    recoveryEvent:()=>window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório')
+  };
+  function isTest(){try{return typeof window.s62IsTestMode==='function'&&!!window.s62IsTestMode()}catch(e){return false}}
+  function needTest(){window.s62ShowSystemPanel?.({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]})}
+  function actionAtPoint(x,y){const buttons=[...document.querySelectorAll('#s62TestControls [data-s2308-action]')];return buttons.find(b=>{const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
+  function rebuildLab(){
+    const box=document.getElementById('s62TestControls'),g=box?.querySelector('.s62TestControlsGrid');if(!box||!g)return;
+    g.innerHTML=`<button type="button" data-s2308-action="orientation">ORIENTAÇÃO DE QUEST</button><button type="button" data-s2308-action="message">MENSAGEM</button><button type="button" data-s2308-action="notice">AVISO DO SISTEMA</button><button type="button" data-s2308-action="reward">RECOMPENSA</button><button type="button" data-s2308-action="secret">QUEST SECRETA</button><button type="button" data-s2308-action="recovery">RECUPERAÇÃO</button><button type="button" data-s2308-action="penalty">PENALIDADE</button><button type="button" data-s2308-action="timer">TEMPORIZADOR</button><button type="button" id="s66TestInbox" data-s2308-action="inbox">CENTRAL / MENSAGEM</button><button type="button" id="s66TestReward" data-s2308-action="rewardPending">RECOMPENSA PENDENTE</button><button type="button" id="s66TestTimer" data-s2308-action="timerReal">TEMPORIZADOR REAL</button><button type="button" id="s66TestRecovery" data-s2308-action="recoveryEvent">RECUPERAÇÃO</button>`;
+    g.querySelectorAll('button').forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.onclick=null;b.style.pointerEvents='auto'});
+    [...box.children].forEach(el=>{if(!el.classList.contains('s62TestControlsTitle')&&!el.classList.contains('s62TestControlsGrid')&&!el.classList.contains('s62TestNotice'))el.remove()});
+  }
+  let lastLab=0;
+  function runLabButton(btn,ev){if(!btn)return false;const n=Date.now();if(n-lastLab<380)return true;lastLab=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();if(!isTest()){needTest();return true}TEST_ACTIONS[btn.dataset.s2308Action]?.();return true}
+  function labCapture(ev){
+    let btn=ev.target?.closest?.('#s62TestControls [data-s2308-action]');
+    const p=ev.changedTouches?.[0]||ev.touches?.[0]||ev;
+    if(!btn&&Number.isFinite(p.clientX)&&Number.isFinite(p.clientY))btn=actionAtPoint(p.clientX,p.clientY);
+    if(btn)runLabButton(btn,ev);
+  }
+  window.addEventListener('pointerup',labCapture,true);
+  window.addEventListener('touchend',labCapture,{capture:true,passive:false});
+  window.addEventListener('click',labCapture,true);
+
+  /* Reconstrói o componente oficial de mensagem uma única vez, sem listeners antigos acumulados. */
+  let panelActions=[];
+  function installMessagePanel(){
+    const old=document.getElementById('s62SystemOverlay');if(!old)return;
+    const fresh=old.cloneNode(true);old.replaceWith(fresh);
+    const els=()=>({overlay:document.getElementById('s62SystemOverlay'),head:document.getElementById('s62HeaderText'),icon:document.getElementById('s62HeaderIcon'),content:document.getElementById('s62SystemContent'),actions:document.getElementById('s62SystemActions')});
+    function close(){const e=els();e.overlay?.classList.remove('show');e.overlay?.setAttribute('aria-hidden','true')}
+    function run(i){const a=panelActions[i];close();if(a&&typeof a.onClick==='function')setTimeout(()=>{try{a.onClick()}catch(err){console.error('SIRIUS panel action',err)}},80)}
+    window.s62CloseSystemPanel=close;
+    window.s62ShowSystemPanel=function(cfg={}){const e=els();if(!e.overlay)return;e.head.textContent=cfg.title||'MENSAGEM';e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;panelActions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'CONTINUAR'}];e.actions.className='s62Actions'+(panelActions.length===1?' one':'');e.actions.innerHTML=panelActions.map((a,i)=>`<button type="button" data-s2308-panel="${i}">${String(a.label||'CONTINUAR').replace(/[<>]/g,'')}</button>`).join('');e.overlay.classList.add('show');e.overlay.setAttribute('aria-hidden','false')};
+    let last=0;function panelTap(ev){const b=ev.target?.closest?.('[data-s2308-panel]');if(b){const n=Date.now();if(n-last<350){ev.preventDefault();ev.stopImmediatePropagation();return}last=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();run(Number(b.dataset.s2308Panel));return}if(ev.target?.id==='s62SystemClose'||ev.target===fresh){ev.preventDefault();ev.stopPropagation();close()}}
+    fresh.addEventListener('pointerup',panelTap,true);fresh.addEventListener('touchend',panelTap,{capture:true,passive:false});fresh.addEventListener('click',panelTap,true);
+    window.showSystemEvent=function(title,detail){window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',html:`<div class="s62MessageStrip"><div class="s62Body small"><div style="font-size:1.14em;margin-bottom:12px">[ ${typeof escapeHtml==='function'?escapeHtml(title):String(title||'')} ]</div><div>${typeof escapeHtml==='function'?escapeHtml(detail):String(detail||'')}</div></div></div>`,actions:[{label:'CONTINUAR'}]})};
+  }
+
+  /* Quest diária: se uma camada invisível estiver sobre ATUALIZAR, resolve pelo ponto tocado. */
+  let dailyLast=0;
+  function dailyAtPoint(x,y){return [...document.querySelectorAll('[data-s2302-update]')].find(b=>{const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
+  function dailyCapture(ev){if(!document.getElementById('view-missions')?.classList.contains('active'))return;const p=ev.changedTouches?.[0]||ev.touches?.[0]||ev;if(!Number.isFinite(p.clientX)||!Number.isFinite(p.clientY))return;const b=dailyAtPoint(p.clientX,p.clientY);if(!b||ev.target===b||ev.target?.closest?.('[data-s2302-update]'))return;const n=Date.now();if(n-dailyLast<450)return;dailyLast=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();b.click()}
+  window.addEventListener('pointerup',dailyCapture,true);window.addEventListener('touchend',dailyCapture,{capture:true,passive:false});
+
+  /* TESTE ATIVADO: durante a ativação suprime avisos legados; só o painel TESTE ATIVADO passa. */
+  const prevToggle=window.toggleSiriusTestMode;
+  if(typeof prevToggle==='function'&&!prevToggle.__s2308Wrapped){
+    const wrapped=function(){
+      const before=isTest();
+      if(!before){
+        const realPanel=window.s62ShowSystemPanel;
+        window.s62ShowSystemPanel=function(cfg={}){if(String(cfg.title||'').toUpperCase()==='TESTE ATIVADO')return realPanel?.(cfg)};
+        try{return prevToggle.apply(this,arguments)}finally{window.s62ShowSystemPanel=realPanel;rebuildLab()}
+      }
+      const r=prevToggle.apply(this,arguments);rebuildLab();return r;
+    };
+    wrapped.__s2308Wrapped=true;window.toggleSiriusTestMode=wrapped;
+  }
+
+  function fixCentral(){const c=document.getElementById('s66EventsCard');if(!c)return;const badge=c.querySelector('.s67InnerBadge');if(badge){badge.style.left='auto';badge.style.right='5px';badge.style.top='5px';badge.style.transform='none'}}
+  function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  function init(){installMessagePanel();rebuildLab();fixCentral();markVersion();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // TOQUE DO LABORATÓRIO REFORÇADO, FAIXA VISUAL REMOVIDA, CENTRAL CORRIGIDA E CAIXAS DE SISTEMA AUDITADAS NO PADRÃO OFICIAL.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){console.warn('SIRIUS '+VERSION,e)}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);window.addEventListener('load',()=>setTimeout(()=>{rebuildLab();fixCentral();markVersion()},220),{once:true});[450,1200,2600,3600,5200].forEach(ms=>setTimeout(()=>{rebuildLab();fixCentral();markVersion()},ms));
+})();
+</script>
+
 </body></html>
