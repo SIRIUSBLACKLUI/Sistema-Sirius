@@ -12376,4 +12376,437 @@ body.s95-more-open > *:not(#moreSheet){
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.22.99 // MISSÕES PRIORIDADE + DAILY QUEST ===== -->
+<style id="sirius-v22299-missions-priority-style">
+/* MISSÕES passa a ser uma zona de interação isolada. Decoração nunca recebe toque. */
+#view-missions.active{position:relative!important;z-index:20!important;pointer-events:auto!important;isolation:isolate!important}
+#view-missions.active .dashPanel{position:relative!important;z-index:21!important;pointer-events:auto!important;isolation:isolate!important}
+#view-missions.active .dashPanel::before,#view-missions.active .dashPanel::after,
+#view-missions.active .missionForge::before,#view-missions.active .missionForge::after,
+#view-missions.active .missionProposalHost::before,#view-missions.active .missionProposalHost::after{pointer-events:none!important}
+#view-missions.active button,#view-missions.active select,#view-missions.active textarea,#view-missions.active input,#view-missions.active label{
+  pointer-events:auto!important;position:relative!important;z-index:40!important;touch-action:manipulation!important;
+}
+#view-missions.active select,#view-missions.active textarea{z-index:42!important}
+#view-missions.active .missionForge,#view-missions.active #missionProposalHost,#view-missions.active #dashMissions,#view-missions.active .s99DailyQuest{
+  position:relative!important;z-index:30!important;pointer-events:auto!important;
+}
+
+/* DAILY QUEST — linguagem de ORIENTAÇÃO DE QUEST, identidade própria SIRIUS */
+.s99DailyQuest{margin:0 0 12px;border:1px solid #42dfff;background:linear-gradient(180deg,#071a31 0%,#071526 54%,#06111f 100%);box-shadow:0 0 26px rgba(56,211,255,.12),inset 0 0 28px rgba(53,198,255,.05);padding:14px;overflow:hidden}
+.s99DailyQuest::before{content:"";position:absolute;left:14px;right:14px;top:0;height:2px;background:linear-gradient(90deg,#57e7ff,transparent 65%);box-shadow:0 0 12px #57e7ff;pointer-events:none}
+.s99DQTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.s99DQKicker{font-size:6.3px;letter-spacing:1.7px;color:#77e8ff;font-weight:1000}.s99DQTitle{margin:7px 0 2px;font-size:16px;font-weight:1000;color:#f4fbff}.s99DQSub{font-size:7px;color:#88a9c8;line-height:1.45}
+.s99DQState{border:1px solid #42a8d5;background:#061522;color:#bceeff;padding:7px 9px;font-size:6px;font-weight:1000;letter-spacing:.9px;white-space:nowrap}
+.s99DQObjectives{margin-top:12px;border-top:1px solid #1c4a68;padding-top:8px}.s99DQObjectivesTitle{text-align:center;color:#65ff76;font-size:8px;font-weight:1000;letter-spacing:1.2px;margin-bottom:6px}
+.s99DQRow{display:grid;grid-template-columns:minmax(0,1fr) 74px 72px;gap:8px;align-items:center;min-height:42px;border-bottom:1px solid rgba(66,154,203,.16)}
+.s99DQRow:last-child{border-bottom:0}.s99DQObj{font-size:8px;font-weight:1000;color:#f0f7ff}.s99DQObj.done{color:#68f3a0}.s99DQCount{text-align:right;font-size:9px;color:#d8e8f7;font-weight:1000;white-space:nowrap}.s99DQRow button{min-height:31px!important;border:1px solid #347fa9!important;background:#071b2e!important;color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.7px!important;padding:5px!important}
+.s99DQProgress{margin-top:10px;height:7px;border:1px solid #244d6b;background:#09131f;overflow:hidden}.s99DQProgress>span{display:block;height:100%;background:linear-gradient(90deg,#1ecfff,#60efff);box-shadow:0 0 10px #36dfff;transition:width .2s ease}
+.s99DQFooter{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;margin-top:10px}.s99DQReward{font-size:6.4px;color:#91b0cc;line-height:1.4}.s99DQReward b{color:#ffe56d}.s99DQClaim,.s99DQAdjust{min-height:38px!important;border:1px solid #49dfff!important;background:linear-gradient(180deg,#1489e8,#07559e)!important;color:white!important;font-size:6.8px!important;font-weight:1000!important;letter-spacing:.9px!important;padding:8px 11px!important}.s99DQClaim[disabled]{opacity:.45!important;filter:grayscale(.45)!important}.s99DQClaim.claimed{background:#08362f!important;border-color:#4ce8a1!important;color:#7fffc2!important}
+.s99DQAdjust{background:#071827!important;border-color:#2e6c94!important;color:#bcd8ee!important;margin-top:8px!important;width:100%!important}
+.s99DQWarning{margin-top:9px;padding-top:8px;border-top:1px solid rgba(62,149,196,.22);font-size:6px;color:#7f9db9;line-height:1.45}.s99DQWarning b{color:#ff6b70}
+@media(max-width:430px){.s99DailyQuest{padding:11px}.s99DQTitle{font-size:14px}.s99DQRow{grid-template-columns:minmax(0,1fr) 60px 62px;gap:5px}.s99DQObj{font-size:7px}.s99DQCount{font-size:7.8px}.s99DQFooter{grid-template-columns:1fr}.s99DQClaim{width:100%}}
+</style>
+<script id="sirius-v22299-missions-priority-script">
+(function(){
+  const VERSION='v2.22.99';
+  const VIEW_ID='view-missions';
+
+  function dateKey(d=new Date()){
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function physicalTier(){
+    const p=data?.physicalProfile||data?.adaptiveProfile||{};
+    const level=String(p.level||p.physicalLevel||'Iniciante').toLowerCase();
+    if(level.includes('avan'))return 'advanced';
+    if(level.includes('inter'))return 'intermediate';
+    return 'beginner';
+  }
+  function dailyTemplate(){
+    const tier=physicalTier();
+    const cfg=tier==='advanced'
+      ? {pushups:35,abs:40,squats:50,cardio:30,xp:60,label:'AVANÇADO'}
+      : tier==='intermediate'
+        ? {pushups:20,abs:25,squats:35,cardio:20,xp:45,label:'INTERMEDIÁRIO'}
+        : {pushups:10,abs:15,squats:20,cardio:10,xp:30,label:'INICIANTE'};
+    return {
+      date:dateKey(),createdAt:new Date().toISOString(),claimed:false,completedAt:null,level:cfg.label,rewardXp:cfg.xp,
+      objectives:{
+        pushups:{label:'FLEXÕES / FLEXÕES ADAPTADAS',value:0,target:cfg.pushups,unit:'REP'},
+        abs:{label:'ABDOMINAIS CONTROLADOS',value:0,target:cfg.abs,unit:'REP'},
+        squats:{label:'AGACHAMENTOS CONFORTÁVEIS',value:0,target:cfg.squats,unit:'REP'},
+        cardio:{label:'CAMINHAR / CORRER',value:0,target:cfg.cardio,unit:'MIN'}
+      }
+    };
+  }
+  function ensureDailyQuest(){
+    if(!data||typeof data!=='object')return null;
+    const today=dateKey();
+    const old=data.s99DailyQuest;
+    if(!old||old.date!==today){
+      data.s99DailyQuest=dailyTemplate();
+      data.s99DailyHistory=Array.isArray(data.s99DailyHistory)?data.s99DailyHistory:[];
+      if(old){data.s99DailyHistory.unshift({...old,expired:!old.claimed});data.s99DailyHistory=data.s99DailyHistory.slice(0,30)}
+      try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}
+    }
+    return data.s99DailyQuest;
+  }
+  function dqPercent(q){
+    const vals=Object.values(q?.objectives||{});if(!vals.length)return 0;
+    return Math.round(vals.reduce((s,o)=>s+Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1)),0)/vals.length*100);
+  }
+  function dqDone(q){return Object.values(q?.objectives||{}).every(o=>(Number(o.value)||0)>=(Number(o.target)||0))}
+  function escape(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function dailyHost(){
+    let host=document.getElementById('s99DailyQuestHost');
+    if(host)return host;
+    const forge=document.getElementById('missionForge');
+    if(!forge)return null;
+    host=document.createElement('div');host.id='s99DailyQuestHost';
+    forge.parentNode.insertBefore(host,forge);
+    return host;
+  }
+  function renderDailyQuest(){
+    const q=ensureDailyQuest(),host=dailyHost();if(!q||!host)return;
+    const done=dqDone(q),pct=dqPercent(q),objs=q.objectives||{};
+    const row=(key)=>{const o=objs[key];const ok=(Number(o.value)||0)>=(Number(o.target)||0);return `<div class="s99DQRow"><div class="s99DQObj ${ok?'done':''}">[${ok?'CONCLUÍDO':'INCOMPLETO'}] ${escape(o.label)}</div><div class="s99DQCount">${Number(o.value)||0}/${Number(o.target)||0} ${escape(o.unit)}</div><button type="button" data-s99-dq="${key}">ATUALIZAR</button></div>`};
+    host.innerHTML=`<div class="s99DailyQuest"><div class="s99DQTop"><div><div class="s99DQKicker">[ SIRIUS // ORIENTAÇÃO DE QUEST ]</div><div class="s99DQTitle">QUEST DIÁRIA — PREPARANDO-SE PARA FICAR MAIS FORTE</div><div class="s99DQSub">Missão física diária adaptada ao seu nível atual // ${escape(q.level||'INICIANTE')}</div></div><div class="s99DQState">${q.claimed?'FINALIZADA':done?'PRONTA':'ATIVA'}</div></div><div class="s99DQObjectives"><div class="s99DQObjectivesTitle">OBJETIVOS</div>${row('pushups')}${row('abs')}${row('squats')}${row('cardio')}</div><div class="s99DQProgress"><span style="width:${pct}%"></span></div><div class="s99DQFooter"><div class="s99DQReward"><b>RECOMPENSA // +${Number(q.rewardXp)||0} XP</b><br>Progresso: ${pct}% // a recompensa só é liberada após todos os objetivos.</div><button type="button" class="s99DQClaim ${q.claimed?'claimed':''}" data-s99-dq-claim ${(!done||q.claimed)?'disabled':''}>${q.claimed?'RECOMPENSA RECEBIDA':'CONCLUIR QUEST'}</button></div><button type="button" class="s99DQAdjust" data-s99-dq-adjust>AJUSTAR METAS DE HOJE</button><div class="s99DQWarning"><b>ATENÇÃO //</b> se houver dor aguda ou limitação física, interrompa o exercício e ajuste a meta. Quest não concluída expira no próximo dia sem punição física.</div></div>`;
+  }
+  function updateObjective(key){
+    const q=ensureDailyQuest(),o=q?.objectives?.[key];if(!o||q.claimed)return;
+    const raw=prompt(`${o.label}\nMeta de hoje: ${o.target} ${o.unit}\n\nInforme o TOTAL concluído até agora:`,String(o.value||0));
+    if(raw===null)return;
+    const value=Math.max(0,Math.min(999,Math.round(Number(String(raw).replace(',','.'))||0)));
+    o.value=value;o.updatedAt=new Date().toISOString();
+    try{if(typeof save==='function')save()}catch(e){}
+    renderDailyQuest();
+  }
+  function adjustQuest(){
+    const q=ensureDailyQuest();if(!q||q.claimed)return;
+    const order=['pushups','abs','squats','cardio'];
+    for(const key of order){const o=q.objectives[key];const raw=prompt(`AJUSTAR // ${o.label}\nMeta atual: ${o.target} ${o.unit}\nDigite a nova meta:`,String(o.target));if(raw===null)continue;const n=Math.max(1,Math.min(300,Math.round(Number(String(raw).replace(',','.'))||o.target)));o.target=n;o.value=Math.min(Number(o.value)||0,n)}
+    q.adjustedAt=new Date().toISOString();
+    try{if(typeof save==='function')save()}catch(e){}
+    renderDailyQuest();
+  }
+  function claimDaily(){
+    const q=ensureDailyQuest();if(!q||q.claimed||!dqDone(q))return;
+    q.claimed=true;q.completedAt=new Date().toISOString();
+    const before=typeof levelInfo==='function'?levelInfo().level:1;
+    data.xp=(Number(data.xp)||0)+(Number(q.rewardXp)||0);
+    data.completedMissions=(Number(data.completedMissions)||0)+1;
+    const today=new Date().toDateString();
+    if(data.lastDay!==today){data.streak=(Number(data.streak)||0)+1;data.lastDay=today}
+    if(typeof addSystemLog==='function')addSystemLog('mission','QUEST DIÁRIA CONCLUÍDA: PREPARANDO-SE PARA FICAR MAIS FORTE');
+    try{if(typeof save==='function')save()}catch(e){}
+    renderDailyQuest();
+    try{if(typeof refreshDashboard==='function')refreshDashboard()}catch(e){}
+    const after=typeof levelInfo==='function'?levelInfo().level:before;
+    if(typeof showSystemEvent==='function')showSystemEvent('QUEST DIÁRIA CONCLUÍDA',`+${Number(q.rewardXp)||0} XP recebidos.${after>before?` Nível ${after} alcançado.`:''}`);
+  }
+
+  /* Firewall: remove qualquer bloqueio legado quando a aba MISSÕES é aberta. */
+  function repairMissionInteractivity(){
+    const view=document.getElementById(VIEW_ID);if(!view)return;
+    let p=view;while(p&&p!==document.body){p.removeAttribute?.('inert');if(p.style?.pointerEvents==='none')p.style.removeProperty('pointer-events');p=p.parentElement}
+    view.querySelectorAll('button,select,textarea,input,label').forEach(el=>{el.removeAttribute('inert');el.style.setProperty('pointer-events','auto','important');if(el.matches('button,select,textarea,input'))el.style.setProperty('position','relative','important')});
+    renderDailyQuest();
+    try{document.getElementById('missionForgeSlots').textContent=`${activeMissionCount()} / ${MAX_ACTIVE_MISSIONS}`}catch(e){}
+  }
+
+  /* Botões principais ganham rotas explícitas independentes de wrappers antigos. */
+  function tagStaticActions(){
+    const view=document.getElementById(VIEW_ID);if(!view)return;
+    const buttons=[...view.querySelectorAll('button')];
+    buttons.forEach(b=>{
+      const t=(b.textContent||'').replace(/\s+/g,' ').trim().toUpperCase();
+      if(t==='+ GERAR')b.dataset.s99MissionAction='focus';
+      else if(t==='GERAR COM IA')b.dataset.s99MissionAction='generate-ai';
+      else if(t.includes('MISSÃO FÍSICA'))b.dataset.s99MissionAction='generate-physical';
+      else if(t==='ABRIR TERMINAL IA')b.dataset.s99MissionAction='terminal';
+      else if(t.includes('ADICIONAR MISSÃO MANUAL'))b.dataset.s99MissionAction='manual';
+    });
+  }
+  function runStatic(action){
+    if(action==='focus'){document.getElementById('missionForge')?.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('missionForgeGoal')?.focus();return true}
+    if(action==='generate-ai'){if(typeof window.generateMissionFromForge==='function')window.generateMissionFromForge();return true}
+    if(action==='generate-physical'){if(typeof window.generatePhysicalMissionFromForge==='function')window.generatePhysicalMissionFromForge();return true}
+    if(action==='terminal'){if(typeof window.openSiriusAI==='function')window.openSiriusAI();return true}
+    if(action==='manual'){if(typeof window.addMission==='function')window.addMission();return true}
+    return false;
+  }
+  function controlAtPoint(x,y){
+    const view=document.getElementById(VIEW_ID);if(!view)return null;
+    return [...view.querySelectorAll('button')].find(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null;
+  }
+  function installTouchBridge(){
+    const view=document.getElementById(VIEW_ID);if(!view||view.dataset.s99Wired==='1')return;view.dataset.s99Wired='1';
+    let lastTouch=0;
+    view.addEventListener('touchend',ev=>{
+      const btn=ev.target.closest?.('button')||controlAtPoint(ev.changedTouches?.[0]?.clientX??0,ev.changedTouches?.[0]?.clientY??0);if(!btn)return;
+      const dq=btn.dataset.s99Dq;if(dq){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation();updateObjective(dq);return}
+      if(btn.hasAttribute('data-s99-dq-claim')){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation();claimDaily();return}
+      if(btn.hasAttribute('data-s99-dq-adjust')){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation();adjustQuest();return}
+      const a=btn.dataset.s99MissionAction;if(a){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation();runStatic(a);return}
+      /* Para botões dinâmicos como ANALISAR, ACEITAR, AJUSTAR: executa o onclick existente. */
+      if(typeof btn.onclick==='function'){lastTouch=Date.now();ev.preventDefault();ev.stopPropagation();try{btn.onclick.call(btn,ev)}catch(e){console.error('SIRIUS mission touch',e)}}
+    },{passive:false,capture:true});
+    view.addEventListener('click',ev=>{
+      if(Date.now()-lastTouch<650){ev.preventDefault();ev.stopPropagation();return}
+      const btn=ev.target.closest?.('button');if(!btn)return;
+      if(btn.dataset.s99Dq){ev.preventDefault();ev.stopPropagation();updateObjective(btn.dataset.s99Dq);return}
+      if(btn.hasAttribute('data-s99-dq-claim')){ev.preventDefault();ev.stopPropagation();claimDaily();return}
+      if(btn.hasAttribute('data-s99-dq-adjust')){ev.preventDefault();ev.stopPropagation();adjustQuest();return}
+      const a=btn.dataset.s99MissionAction;if(a){ev.preventDefault();ev.stopPropagation();runStatic(a)}
+    },true);
+  }
+
+  const previousOpenDock=window.openDockView;
+  if(typeof previousOpenDock==='function'){
+    window.openDockView=function(view){const r=previousOpenDock.apply(this,arguments);if(view==='missions')setTimeout(()=>{repairMissionInteractivity();tagStaticActions()},30);return r};
+  }
+  const previousOpenDash=window.openDashView;
+  if(typeof previousOpenDash==='function'){
+    window.openDashView=function(view){const r=previousOpenDash.apply(this,arguments);if(view==='missions')setTimeout(()=>{repairMissionInteractivity();tagStaticActions()},30);return r};
+  }
+
+  function init(){
+    ensureDailyQuest();renderDailyQuest();tagStaticActions();installTouchBridge();repairMissionInteractivity();
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,70),{once:true});else setTimeout(init,70);
+  window.addEventListener('load',()=>setTimeout(init,180),{once:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){ensureDailyQuest();renderDailyQuest()}},{passive:true});
+  try{
+    data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+    const msg=`VERSÃO INSTALADA: ${VERSION} // MISSÕES PRIORIZADAS, CONTROLES REATIVADOS E QUEST DIÁRIA AUTOMÁTICA.`;
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);if(typeof save==='function')save()}
+  }catch(e){}
+})();
+</script>
+
+
+<!-- ===== SIRIUS v2.23.00 // MISSION CONTROL + MODAL TOUCH FIX ===== -->
+<style id="sirius-v2300-mission-control-style">
+/* ===== MISSÃO: CONTROLE DE TOQUE DO MODAL ===== */
+#missionOverlay.show{
+  pointer-events:auto!important;
+  z-index:2147483400!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+#missionOverlay.show .missionModal{
+  pointer-events:auto!important;
+  position:relative!important;
+  z-index:2!important;
+  isolation:isolate!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+#missionOverlay.show .missionModal::before,
+#missionOverlay.show .missionDecisionNotice::before,
+#missionOverlay.show .missionDecisionNotice::after{pointer-events:none!important}
+#missionOverlay.show .missionModalActions{
+  pointer-events:auto!important;
+  position:sticky!important;
+  z-index:50!important;
+  bottom:0!important;
+}
+#missionOverlay.show .missionModalActions button,
+#missionOverlay.show .adjustPanel button,
+#missionOverlay.show textarea,
+#missionOverlay.show input,
+#missionOverlay.show select{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  position:relative!important;
+  z-index:51!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+#missionOverlay.show textarea,#missionOverlay.show input,#missionOverlay.show select{-webkit-user-select:text!important;user-select:text!important}
+
+/* ===== MISSÕES: hierarquia nova ===== */
+#view-missions .dashPanel{padding-top:14px!important}
+#view-missions .sectionToolbar{margin-bottom:10px!important}
+#view-missions .sectionToolbar .dashPanelSub{color:#6d95b6!important}
+#view-missions .sectionToolbar>button{min-width:90px!important;min-height:40px!important;border-color:#48cfff!important;background:#07182a!important;color:#eafaff!important}
+
+.s100MissionCommand{position:relative;margin:0 0 12px;padding:12px;border:1px solid #286c94;background:linear-gradient(180deg,#071829,#05111e);box-shadow:inset 0 0 20px rgba(61,199,255,.04)}
+.s100MissionCommand::before{content:"";position:absolute;left:0;top:0;width:38%;height:2px;background:linear-gradient(90deg,#5be8ff,transparent);box-shadow:0 0 10px #5be8ff;pointer-events:none}
+.s100MissionCommandTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.s100MissionCommandKicker{font-size:6px;letter-spacing:1.6px;color:#76e7ff;font-weight:1000}
+.s100MissionCommandTitle{font-size:15px;font-weight:1000;color:#f2faff;margin-top:5px;letter-spacing:.2px}
+.s100MissionCommandMeta{font-size:6.3px;color:#82a4c2;margin-top:4px;line-height:1.45}
+.s100MissionCommandBtn{min-height:36px!important;border:1px solid #45cfff!important;background:linear-gradient(180deg,#0b6db8,#074a80)!important;color:#fff!important;padding:7px 10px!important;font-size:6.3px!important;font-weight:1000!important;letter-spacing:.8px!important}
+.s100MissionStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.s100MissionStat{border:1px solid #234e6d;background:#05111e;padding:8px 6px;text-align:center;min-width:0}
+.s100MissionStat b{display:block;color:#f4fbff;font-size:15px;line-height:1}.s100MissionStat span{display:block;color:#6cbede;font-size:5.2px;font-weight:1000;letter-spacing:.8px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Gerador compacto; abre só quando o usuário pede. */
+#view-missions #missionForge{display:none!important;margin:0 0 12px!important}
+#view-missions.s100ForgeOpen #missionForge{display:block!important;animation:s100ForgeIn .13s ease-out}
+#view-missions #missionForge .missionForgeHead p{max-width:410px!important}
+#view-missions #missionForge .missionForgeGrid{grid-template-columns:1fr 1fr 1fr!important}
+#view-missions #missionForge .missionForgeActions{grid-template-columns:1fr 1fr 1fr!important}
+@keyframes s100ForgeIn{from{opacity:.3;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+.s100MissionSection{margin-top:12px}
+.s100MissionSectionHead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 0 7px;padding:0 2px}
+.s100MissionSectionHead b{font-size:9px;letter-spacing:1px;color:#eaf8ff}.s100MissionSectionHead span{font-size:5.8px;letter-spacing:1px;color:#6488a6}
+.s100MissionList{display:grid;gap:8px}
+.s100MissionCard{--mc:#4bdcff;position:relative;overflow:hidden;border:1px solid color-mix(in srgb,var(--mc) 62%,#183a55);background:linear-gradient(135deg,#071827 0%,#06111e 72%);padding:11px;box-shadow:inset 3px 0 0 var(--mc),0 0 16px rgba(31,146,213,.06);isolation:isolate}
+.s100MissionCard::after{content:"";position:absolute;width:130px;height:130px;border:1px solid color-mix(in srgb,var(--mc) 18%,transparent);border-radius:50%;right:-65px;top:-76px;pointer-events:none}
+.s100MissionTop{display:flex;align-items:flex-start;justify-content:space-between;gap:9px}
+.s100MissionRank{min-width:35px;height:35px;display:grid;place-items:center;border:1px solid var(--mc);color:var(--mc);background:#06111d;font-size:8px;font-weight:1000;box-shadow:0 0 11px color-mix(in srgb,var(--mc) 18%,transparent)}
+.s100MissionMain{min-width:0;flex:1}.s100MissionName{font-size:10px;font-weight:1000;color:#f1f9ff;line-height:1.15}.s100MissionState{margin-top:4px;font-size:5.8px;color:var(--mc);font-weight:1000;letter-spacing:.8px}.s100MissionDesc{margin-top:7px;color:#9cb6cf;font-size:7px;line-height:1.42;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s100MissionMeta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.s100MissionMeta span{border:1px solid #244d6b;background:#06121e;padding:4px 6px;color:#b6cce0;font-size:5.6px;white-space:nowrap}.s100MissionReward{color:#ffe46f!important;border-color:#665b2d!important}
+.s100MissionFlow{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:9px}.s100MissionFlow i{height:3px;background:#18384f}.s100MissionFlow i.on{background:var(--mc);box-shadow:0 0 8px var(--mc)}
+.s100MissionActions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}.s100MissionActions button{min-height:36px!important;border:1px solid #2f6a91!important;background:#07182a!important;color:#dff6ff!important;font-size:6.2px!important;font-weight:1000!important;letter-spacing:.8px!important;padding:7px 10px!important}.s100MissionActions .primary{background:linear-gradient(180deg,#158dea,#075899)!important;border-color:#48b7ff!important;color:white!important}.s100MissionActions .proposal{background:linear-gradient(180deg,#6f58ee,#4834c6)!important;border-color:#987fff!important}.s100MissionEmpty{border:1px dashed #234a67;padding:18px 12px;text-align:center;color:#6f91ae;font-size:7px;line-height:1.5}
+
+/* O botão manual vira ferramenta secundária. */
+#view-missions .dashAction[onclick*="addMission"]{margin-top:12px!important;min-height:40px!important;background:#06131f!important;color:#91abc2!important;border-color:#274b66!important;font-size:6.4px!important}
+
+@media(max-width:430px){
+  .s100MissionStats{grid-template-columns:repeat(4,1fr);gap:4px}.s100MissionStat{padding:7px 3px}.s100MissionStat b{font-size:13px}.s100MissionStat span{font-size:4.7px}
+  #view-missions #missionForge .missionForgeGrid{grid-template-columns:1fr 1fr!important}#view-missions #missionForge .missionForgeGrid label:last-child{grid-column:1/-1!important}
+  #view-missions #missionForge .missionForgeActions{grid-template-columns:1fr 1fr!important}#view-missions #missionForge .missionForgeActions button:last-child{grid-column:1/-1!important}
+  .s100MissionActions{grid-template-columns:1fr 92px}
+}
+</style>
+<script id="sirius-v2300-mission-control-script">
+(function(){
+  const VERSION='v2.23.00';
+  const overlay=document.getElementById('missionOverlay');
+  let lastModalTouch=0;
+
+  function repairMissionModal(){
+    const o=document.getElementById('missionOverlay');if(!o)return;
+    if(o.classList.contains('show')){
+      o.style.removeProperty('pointer-events');
+      o.removeAttribute('inert');
+      let p=o.parentElement;while(p&&p!==document.documentElement){p.removeAttribute?.('inert');p=p.parentElement}
+      o.querySelectorAll('button,textarea,input,select').forEach(el=>{
+        el.removeAttribute('inert');el.style.setProperty('pointer-events','auto','important');
+        if(el.tagName==='BUTTON')el.type='button';
+      });
+    }
+  }
+
+  /* v2.22.81 podia deixar pointer-events:none inline quando o modal estava fechado no boot.
+     Todo caminho que abre a missão agora remove esse bloqueio explicitamente. */
+  const prevOpenMission=window.openMissionPanel;
+  if(typeof prevOpenMission==='function'){
+    window.openMissionPanel=function(n){
+      const r=prevOpenMission.apply(this,arguments);
+      const o=document.getElementById('missionOverlay');
+      if(o){o.style.removeProperty('pointer-events');o.removeAttribute('inert');o.classList.add('show')}
+      setTimeout(repairMissionModal,0);setTimeout(repairMissionModal,80);
+      return r;
+    };
+  }
+  const prevAdjust=window.openMissionAdjuster;
+  if(typeof prevAdjust==='function'){
+    window.openMissionAdjuster=function(){const r=prevAdjust.apply(this,arguments);const o=document.getElementById('missionOverlay');o?.style.removeProperty('pointer-events');setTimeout(repairMissionModal,0);return r};
+  }
+  const prevEvidence=window.openMissionEvidence;
+  if(typeof prevEvidence==='function'){
+    window.openMissionEvidence=function(){const r=prevEvidence.apply(this,arguments);const o=document.getElementById('missionOverlay');o?.style.removeProperty('pointer-events');setTimeout(repairMissionModal,0);return r};
+  }
+
+  if(overlay && overlay.dataset.s100TouchWired!=='1'){
+    overlay.dataset.s100TouchWired='1';
+    const modalButtonAt=(x,y)=>[...overlay.querySelectorAll('button')].find(b=>{const r=b.getBoundingClientRect();return r.width>0&&r.height>0&&x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null;
+    overlay.addEventListener('touchend',function(ev){
+      if(!overlay.classList.contains('show'))return;
+      const t=ev.changedTouches?.[0];
+      const btn=ev.target.closest?.('button') || (t?modalButtonAt(t.clientX,t.clientY):null);
+      if(!btn)return;
+      lastModalTouch=Date.now();
+      ev.preventDefault();ev.stopPropagation();
+      repairMissionModal();
+      try{
+        if(typeof btn.onclick==='function')btn.onclick.call(btn,ev);
+        else btn.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
+      }catch(err){console.error('SIRIUS mission modal touch',err)}
+    },{passive:false,capture:true});
+    overlay.addEventListener('click',function(ev){
+      if(Date.now()-lastModalTouch<700){ev.preventDefault();ev.stopImmediatePropagation();return}
+      repairMissionModal();
+    },true);
+    new MutationObserver(repairMissionModal).observe(overlay,{attributes:true,attributeFilter:['class','style'],subtree:false});
+  }
+
+  function stateName(m){
+    try{return missionStateName(m)}catch(e){
+      if(m?.done)return 'CONCLUÍDA';if(m?.missionState==='validation')return 'VALIDAÇÃO';if(m?.startedAt)return 'EM EXECUÇÃO';if(m?.acceptedAt)return 'APROVADA';return 'PROPOSTA';
+    }
+  }
+  function stateIndex(m){
+    const s=stateName(m).toUpperCase();
+    if(s.includes('CONCLU'))return 4;if(s.includes('VALID'))return 3;if(s.includes('EXEC'))return 2;if(s.includes('APROV'))return 1;return 0;
+  }
+  function colorFor(m){const a=String(m?.attr||'').toLowerCase();if(a.includes('fís')||a.includes('fis'))return '#ff6473';if(a.includes('intel'))return '#62a9ff';if(a.includes('discip'))return '#a579ff';if(a.includes('foco'))return '#5ae8ff';if(a.includes('comun'))return '#35e3c8';if(a.includes('rela'))return '#ff72cf';return '#5adeff'}
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function activeEntries(){return (data?.missions||[]).map((m,n)=>({m,n})).filter(x=>!x.m.done&&!x.m.queued&&!x.m.rejectedAt)}
+
+  function ensureCommand(){
+    const view=document.getElementById('view-missions'),toolbar=view?.querySelector('.sectionToolbar');if(!view||!toolbar)return null;
+    let box=document.getElementById('s100MissionCommand');
+    if(!box){box=document.createElement('div');box.id='s100MissionCommand';box.className='s100MissionCommand';toolbar.insertAdjacentElement('afterend',box)}
+    return box;
+  }
+  function renderCommand(){
+    const box=ensureCommand();if(!box)return;
+    const entries=activeEntries(),proposals=entries.filter(x=>stateIndex(x.m)===0).length,executing=entries.filter(x=>stateIndex(x.m)===2).length,validation=entries.filter(x=>stateIndex(x.m)===3).length;
+    let dq='—';try{const q=data?.s99DailyQuest;if(q)dq=q.claimed?'OK':(Object.values(q.objectives||{}).every(o=>Number(o.value)>=Number(o.target))?'PRONTA':'ATIVA')}catch(e){}
+    box.innerHTML=`<div class="s100MissionCommandTop"><div><div class="s100MissionCommandKicker">[ SIRIUS // CENTRAL DE MISSÕES ]</div><div class="s100MissionCommandTitle">PAINEL DE OPERAÇÕES</div><div class="s100MissionCommandMeta">Daily Quest, propostas, execução e validação em uma única fila.</div></div><button type="button" class="s100MissionCommandBtn" data-s100-forge>CRIAR MISSÃO</button></div><div class="s100MissionStats"><div class="s100MissionStat"><b>${esc(dq)}</b><span>DAILY</span></div><div class="s100MissionStat"><b>${proposals}</b><span>PROPOSTAS</span></div><div class="s100MissionStat"><b>${executing}</b><span>EXECUÇÃO</span></div><div class="s100MissionStat"><b>${validation}</b><span>VALIDAÇÃO</span></div></div>`;
+  }
+
+  function actionLabel(m){const i=stateIndex(m);if(i===0)return 'ANALISAR';if(i===1)return 'INICIAR';if(i===2)return 'CONTINUAR';if(i===3)return 'VALIDAR';return 'DETALHES'}
+  function card(entry){const {m,n}=entry,i=stateIndex(m),c=colorFor(m),rank=esc(m.questRank||m.rank||'D'),duration=Number(m.durationMin)||0,reward=`${Number(m.xp)||0} XP${Number(m.pd)?` + ${Number(m.pd)} PD`:''}`;return `<div class="s100MissionCard" style="--mc:${c}"><div class="s100MissionTop"><div class="s100MissionRank">${rank}</div><div class="s100MissionMain"><div class="s100MissionName">${esc(m.name||'MISSÃO')}</div><div class="s100MissionState">${esc(stateName(m))}</div><div class="s100MissionDesc">${esc(m.desc||'Objetivo registrado pelo SIRIUS.')}</div><div class="s100MissionMeta"><span>${esc(m.attr||'GERAL')}</span>${duration?`<span>◷ ${duration} MIN</span>`:''}<span>${esc(m.difficulty||'NORMAL')}</span><span class="s100MissionReward">${reward}</span></div><div class="s100MissionFlow">${[0,1,2,3,4].map(x=>`<i class="${x<=i?'on':''}"></i>`).join('')}</div><div class="s100MissionActions"><button type="button" class="primary ${i===0?'proposal':''}" data-s100-mission="${n}">${actionLabel(m)}</button><button type="button" data-s100-mission="${n}">DETALHES</button></div></div></div></div>`}
+  function renderMissionHub(){
+    const host=document.getElementById('dashMissions');if(!host)return;
+    const entries=activeEntries(),proposals=entries.filter(x=>stateIndex(x.m)===0),active=entries.filter(x=>stateIndex(x.m)>0);
+    host.innerHTML=`<div class="s100MissionSection"><div class="s100MissionSectionHead"><b>MISSÕES ATIVAS</b><span>${active.length} EM ANDAMENTO</span></div><div class="s100MissionList">${active.length?active.map(card).join(''):'<div class="s100MissionEmpty">Nenhuma missão em execução. Aceite uma proposta ou crie uma missão.</div>'}</div></div><div class="s100MissionSection"><div class="s100MissionSectionHead"><b>PROPOSTAS</b><span>${proposals.length} PARA ANALISAR</span></div><div class="s100MissionList">${proposals.length?proposals.map(card).join(''):'<div class="s100MissionEmpty">Nenhuma proposta pendente.</div>'}</div></div>`;
+  }
+
+  function setForge(open){
+    const view=document.getElementById('view-missions');if(!view)return;
+    view.classList.toggle('s100ForgeOpen',!!open);
+    const btn=document.querySelector('[data-s100-forge]');if(btn)btn.textContent=open?'FECHAR GERADOR':'CRIAR MISSÃO';
+    if(open)setTimeout(()=>document.getElementById('missionForgeGoal')?.focus(),120);
+  }
+  const oldFocus=window.focusMissionGenerator;
+  window.focusMissionGenerator=function(){setForge(true);document.getElementById('missionForge')?.scrollIntoView({behavior:'smooth',block:'center'});return true};
+
+  function wireMissionView(){
+    const view=document.getElementById('view-missions');if(!view||view.dataset.s100Wired==='1')return;view.dataset.s100Wired='1';
+    let last=0;
+    const activate=(btn,ev)=>{
+      if(btn.hasAttribute('data-s100-forge')){ev?.preventDefault?.();ev?.stopPropagation?.();setForge(!view.classList.contains('s100ForgeOpen'));return true}
+      if(btn.hasAttribute('data-s100-mission')){ev?.preventDefault?.();ev?.stopPropagation?.();const n=Number(btn.dataset.s100Mission);if(Number.isFinite(n)&&typeof window.openMissionPanel==='function')window.openMissionPanel(n);return true}
+      return false;
+    };
+    view.addEventListener('touchend',ev=>{const b=ev.target.closest?.('[data-s100-forge],[data-s100-mission]');if(b&&activate(b,ev))last=Date.now()},{passive:false,capture:true});
+    view.addEventListener('click',ev=>{if(Date.now()-last<650){ev.preventDefault();ev.stopPropagation();return}const b=ev.target.closest?.('[data-s100-forge],[data-s100-mission]');if(b)activate(b,ev)},true);
+  }
+
+  const prevRefresh=window.refreshDashboard;
+  if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);renderCommand();renderMissionHub();return r};
+  const prevDock=window.openDockView;
+  if(typeof prevDock==='function')window.openDockView=function(view){const r=prevDock.apply(this,arguments);if(view==='missions')setTimeout(()=>{renderCommand();renderMissionHub();repairMissionModal()},30);return r};
+
+  function init(){
+    renderCommand();renderMissionHub();wireMissionView();repairMissionModal();setForge(false);
+    const topGenerate=document.querySelector('#view-missions .sectionToolbar>button');if(topGenerate){topGenerate.type='button';topGenerate.onclick=()=>setForge(true)}
+    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);
+  window.addEventListener('load',()=>setTimeout(init,200),{once:true});
+
+  try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // CENTRAL DE MISSÕES OTIMIZADA E MODAL DE DECISÃO COM TOQUE CORRIGIDO.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);if(typeof save==='function')save()}}catch(e){}
+})();
+</script>
+
 </body></html>
