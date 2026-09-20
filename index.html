@@ -13645,7 +13645,6 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VE
   };
   function isTest(){try{return typeof window.s62IsTestMode==='function'&&!!window.s62IsTestMode()}catch(e){return false}}
   function needTest(){window.s62ShowSystemPanel?.({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]})}
-  function actionAtPoint(x,y){const buttons=[...document.querySelectorAll('#s62TestControls [data-s2308-action]')];return buttons.find(b=>{const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
   function rebuildLab(){
     const box=document.getElementById('s62TestControls'),g=box?.querySelector('.s62TestControlsGrid');if(!box||!g)return;
     g.innerHTML=`<button type="button" data-s2308-action="orientation">ORIENTAÇÃO DE QUEST</button><button type="button" data-s2308-action="message">MENSAGEM</button><button type="button" data-s2308-action="notice">AVISO DO SISTEMA</button><button type="button" data-s2308-action="reward">RECOMPENSA</button><button type="button" data-s2308-action="secret">QUEST SECRETA</button><button type="button" data-s2308-action="recovery">RECUPERAÇÃO</button><button type="button" data-s2308-action="penalty">PENALIDADE</button><button type="button" data-s2308-action="timer">TEMPORIZADOR</button><button type="button" id="s66TestInbox" data-s2308-action="inbox">CENTRAL / MENSAGEM</button><button type="button" id="s66TestReward" data-s2308-action="rewardPending">RECOMPENSA PENDENTE</button><button type="button" id="s66TestTimer" data-s2308-action="timerReal">TEMPORIZADOR REAL</button><button type="button" id="s66TestRecovery" data-s2308-action="recoveryEvent">RECUPERAÇÃO</button>`;
@@ -13655,14 +13654,19 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VE
   let lastLab=0;
   function runLabButton(btn,ev){if(!btn)return false;const n=Date.now();if(n-lastLab<380)return true;lastLab=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();if(!isTest()){needTest();return true}TEST_ACTIONS[btn.dataset.s2308Action]?.();return true}
   function labCapture(ev){
-    let btn=ev.target?.closest?.('#s62TestControls [data-s2308-action]');
-    const p=ev.changedTouches?.[0]||ev.touches?.[0]||ev;
-    if(!btn&&Number.isFinite(p.clientX)&&Number.isFinite(p.clientY))btn=actionAtPoint(p.clientX,p.clientY);
-    if(btn)runLabButton(btn,ev);
+    const box=document.getElementById('s62TestControls');
+    const btn=ev.target?.closest?.('#s62TestControls [data-s2308-action]');
+    if(!box||!btn||!box.contains(btn))return;
+    runLabButton(btn,ev);
   }
-  window.addEventListener('pointerup',labCapture,true);
-  window.addEventListener('touchend',labCapture,{capture:true,passive:false});
-  window.addEventListener('click',labCapture,true);
+  function wireLabLocally(){
+    const box=document.getElementById('s62TestControls');if(!box||box.dataset.s2310LocalWired==='1')return;
+    box.dataset.s2310LocalWired='1';
+    box.addEventListener('pointerup',labCapture,true);
+    box.addEventListener('touchend',labCapture,{capture:true,passive:false});
+    box.addEventListener('click',labCapture,true);
+  }
+  wireLabLocally();
 
   /* Reconstrói o componente oficial de mensagem uma única vez, sem listeners antigos acumulados. */
   let panelActions=[];
@@ -13679,11 +13683,7 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VE
     window.showSystemEvent=function(title,detail){window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',html:`<div class="s62MessageStrip"><div class="s62Body small"><div style="font-size:1.14em;margin-bottom:12px">[ ${typeof escapeHtml==='function'?escapeHtml(title):String(title||'')} ]</div><div>${typeof escapeHtml==='function'?escapeHtml(detail):String(detail||'')}</div></div></div>`,actions:[{label:'CONTINUAR'}]})};
   }
 
-  /* Quest diária: se uma camada invisível estiver sobre ATUALIZAR, resolve pelo ponto tocado. */
-  let dailyLast=0;
-  function dailyAtPoint(x,y){return [...document.querySelectorAll('[data-s2302-update]')].find(b=>{const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null}
-  function dailyCapture(ev){if(!document.getElementById('view-missions')?.classList.contains('active'))return;const p=ev.changedTouches?.[0]||ev.touches?.[0]||ev;if(!Number.isFinite(p.clientX)||!Number.isFinite(p.clientY))return;const b=dailyAtPoint(p.clientX,p.clientY);if(!b||ev.target===b||ev.target?.closest?.('[data-s2302-update]'))return;const n=Date.now();if(n-dailyLast<450)return;dailyLast=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();b.click()}
-  window.addEventListener('pointerup',dailyCapture,true);window.addEventListener('touchend',dailyCapture,{capture:true,passive:false});
+  /* Quest diária usa somente o alvo real do botão ATUALIZAR; sem captura global por coordenadas. */
 
   /* TESTE ATIVADO: durante a ativação suprime avisos legados; só o painel TESTE ATIVADO passa. */
   const prevToggle=window.toggleSiriusTestMode;
@@ -13978,12 +13978,12 @@ body.s2309-test-activation #s61EventOverlay{display:none!important}
       const btn=ev.target?.closest?.('[data-s2302-penalty]');
       if(!btn) return;
       const now=Date.now();
-      if(now-last<350) return;
+      if(now-last<500) return;
       last=now;
-      setTimeout(()=>{ try{ openKantPdf(); }catch(e){} }, 140);
+      try{ openKantPdf(); }catch(e){ console.warn('SIRIUS penalty material',e); }
     };
+    document.addEventListener('touchend',handler,{capture:true,passive:true});
     document.addEventListener('click',handler,true);
-    document.addEventListener('touchend',handler,{capture:true,passive:false});
   }
 
   function init(){
@@ -14008,6 +14008,23 @@ body.s2309-test-activation #s61EventOverlay{display:none!important}
   else setTimeout(init,90);
   window.addEventListener('load',()=>setTimeout(()=>{init();},260),{once:true});
   [900,2200,4200].forEach(ms=>setTimeout(()=>{ensureKantSource(); enhanceHub();},ms));
+})();
+</script>
+
+
+<!-- ===== SIRIUS v2.23.10 // ISOLAMENTO DE TOQUES + LEITURA KANT ===== -->
+<style id="sirius-v22310-touch-isolation-style">
+#s62TestControls{contain:layout paint!important}
+#s62TestControls .s62TestControlsGrid button,[data-s2302-update],[data-s2302-penalty]{touch-action:manipulation!important;pointer-events:auto!important}
+</style>
+<script id="sirius-v22310-touch-isolation-script">
+(function(){
+ const VERSION='v2.23.10';
+ function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+ function log(){try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // LABORATÓRIO ISOLADO, ATUALIZAR SEM ORIENTAÇÃO INDEVIDA, DADOS SEM AVISO DE TESTE E LEITURA DE KANT ABERTA DIRETAMENTE.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){}}
+ function init(){mark();log()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ window.addEventListener('load',mark,{once:true});[500,1500,3200].forEach(ms=>setTimeout(mark,ms));
 })();
 </script>
 
