@@ -14245,4 +14245,111 @@ body.s2309-test-activation #s61EventOverlay{display:none!important}
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.13 // JORNADA DO JOGADOR — NÚCLEO RPG ===== -->
+<style id="sirius-v22313-journey-rpg-style">
+#journeyOverlay{background:radial-gradient(circle at 50% -8%,rgba(106,63,255,.18),transparent 34%),linear-gradient(180deg,#01050d,#020711 48%,#01040a)!important}
+.s2313Hero{position:relative;overflow:hidden;border:1px solid #754dff;background:radial-gradient(circle at 82% 15%,rgba(121,78,255,.27),transparent 34%),linear-gradient(135deg,#130b2c,#06101d 58%,#04101b);padding:15px;margin-bottom:10px;box-shadow:0 0 26px rgba(111,69,255,.16),inset 0 0 28px rgba(94,66,255,.07)}
+.s2313Hero:after{content:"";position:absolute;right:-38px;bottom:-54px;width:175px;height:175px;border:1px solid rgba(96,213,255,.16);border-radius:50%;box-shadow:0 0 0 26px rgba(90,116,255,.025),0 0 0 52px rgba(90,116,255,.02);pointer-events:none}
+.s2313HeroTop{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;position:relative;z-index:1}
+.s2313Sigil{width:72px;height:72px;border-radius:18px;border:1px solid #62ddff;background:radial-gradient(circle,#173257,#071426 64%);display:grid;place-items:center;font-size:34px;color:#d8f8ff;box-shadow:0 0 20px rgba(69,210,255,.16)}
+.s2313Nick{font-size:18px;font-weight:1000;color:#fff;letter-spacing:.4px}.s2313Title{font-size:7px;color:#9bc0df;letter-spacing:1.5px;margin-top:4px;text-transform:uppercase}.s2313Rank{text-align:center;border:1px solid #54dfff;background:#061a2d;padding:9px 12px;min-width:72px}.s2313Rank b{display:block;font-size:22px;color:#eaffff}.s2313Rank span{font-size:6px;color:#68ddff;letter-spacing:1.2px}
+.s2313Archetype{margin-top:13px;border-top:1px solid rgba(94,185,235,.22);padding-top:11px;position:relative;z-index:1}.s2313ArchKicker{font-size:6px;color:#c592ff;letter-spacing:1.5px;font-weight:1000}.s2313ArchName{font-size:16px;color:#e7d9ff;font-weight:1000;margin-top:4px}.s2313ArchText{font-size:7px;line-height:1.55;color:#9db3ca;margin-top:5px;max-width:540px}.s2313ArchActions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}.s2313ArchActions button{border:1px solid #5e77b0;background:#07182a;color:#dff7ff;min-height:34px;padding:7px 10px;font-size:6.5px;font-weight:1000;letter-spacing:.8px}.s2313ArchActions button.primary{border-color:#985cff;background:linear-gradient(180deg,#5927ca,#2d1780)}
+.s2313Map{border:1px solid #2a7cad;background:linear-gradient(180deg,#061526,#030c17);padding:14px;margin-bottom:10px;overflow:hidden}.s2313MapHead{display:flex;justify-content:space-between;gap:10px;align-items:end}.s2313MapTitle{font-size:15px;font-weight:1000}.s2313MapSub{font-size:6px;letter-spacing:1.4px;color:#77a7c8;margin-top:3px}.s2313Chapter{font-size:7px;color:#82e9ff;border:1px solid #2d759d;padding:5px 7px;background:#061321}
+.s2313Road{position:relative;margin-top:18px;padding:4px 0 7px}.s2313Road:before{content:"";position:absolute;left:18px;right:18px;top:35px;height:3px;background:linear-gradient(90deg,#604dff var(--road-progress,0%),#19364f var(--road-progress,0%));box-shadow:0 0 10px rgba(98,84,255,.22)}
+.s2313Nodes{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.s2313Node{position:relative;z-index:1;text-align:center;border:0;background:transparent;color:#b8c8da;padding:0;touch-action:manipulation}.s2313Orb{width:54px;height:54px;border-radius:50%;margin:0 auto;display:grid;place-items:center;border:2px solid #2f5573;background:#06121f;color:#7292ad;font-size:18px;box-shadow:0 0 0 5px #06111e}.s2313Node.done .s2313Orb{border-color:#58e6bd;color:#b8ffe9;background:#073027;box-shadow:0 0 13px rgba(74,230,183,.23),0 0 0 5px #06111e}.s2313Node.active .s2313Orb{border-color:#8a66ff;color:#fff;background:#26166a;box-shadow:0 0 18px rgba(119,84,255,.36),0 0 0 5px #06111e}.s2313Node.locked{opacity:.48}.s2313Node b{display:block;margin-top:8px;font-size:7px;line-height:1.2}.s2313Node span{display:block;font-size:5.5px;color:#6f8da7;margin-top:3px;line-height:1.3}
+.s2313MissionGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.s2313Quest{border:1px solid #2d6f99;background:linear-gradient(180deg,#071a2b,#04101c);padding:11px;min-height:122px;display:flex;flex-direction:column}.s2313Quest.special{border-color:#7f59ff;background:radial-gradient(circle at 88% 8%,rgba(126,83,255,.18),transparent 32%),linear-gradient(180deg,#110b28,#05101d)}.s2313QuestK{font-size:5.8px;letter-spacing:1.2px;color:#69dcff;font-weight:1000}.s2313Quest.special .s2313QuestK{color:#c69cff}.s2313QuestT{font-size:12px;font-weight:1000;margin-top:5px}.s2313QuestD{font-size:7px;line-height:1.45;color:#9fb5c9;margin-top:5px;flex:1}.s2313QuestMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.s2313QuestMeta span{font-size:5.5px;border:1px solid #285b7b;padding:4px 5px;color:#a9c8df}.s2313Quest button{width:100%;min-height:35px;margin-top:9px;border:1px solid #45d9ff;background:#0a3a5e;color:#fff;font-size:6px;font-weight:1000;letter-spacing:.9px}
+.s2313ProfilePanel{border:1px solid #285f89;background:#051321;padding:12px;margin-bottom:10px}.s2313ProfileRow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.s2313Stat{border:1px solid #244d6d;background:#030d18;padding:9px;text-align:center}.s2313Stat b{font-size:15px;color:#f2fbff}.s2313Stat span{display:block;font-size:5.5px;color:#78a3c4;margin-top:3px;letter-spacing:.7px}
+@media(max-width:520px){.s2313HeroTop{grid-template-columns:58px minmax(0,1fr) 64px;gap:9px}.s2313Sigil{width:58px;height:58px;border-radius:14px;font-size:28px}.s2313Nick{font-size:15px}.s2313Rank{min-width:64px;padding:7px 6px}.s2313Rank b{font-size:19px}.s2313MissionGrid{grid-template-columns:1fr}.s2313Road:before{left:14px;right:14px}.s2313Orb{width:46px;height:46px;font-size:15px}.s2313Node b{font-size:6px}.s2313Node span{font-size:4.8px}.s2313Map{padding:11px}.s2313ProfileRow{grid-template-columns:repeat(3,1fr)}}
+</style>
+<script id="sirius-v22313-journey-rpg-script">
+(function(){
+  const VERSION='v2.23.13';
+  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  function persist(){try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
+  function ensure(){
+    data.journeyProfile=data.journeyProfile&&typeof data.journeyProfile==='object'?data.journeyProfile:{};
+    if(!data.journeyProfile.createdAt)data.journeyProfile.createdAt=new Date().toISOString();
+    if(!data.journeyProfile.archetype)data.journeyProfile.archetype=detectArchetype();
+    if(!data.journeyProfile.chapter)data.journeyProfile.chapter=1;
+    return data.journeyProfile;
+  }
+  function attrPd(name){return Number(data?.attrs?.[name]?.pd)||0}
+  function detectArchetype(){
+    const scores={
+      'BUSCADOR':attrPd('Intelecto')+attrPd('Foco')+(data.knowledgeArchive?.sources?.length||0)*4,
+      'VANGUARDA':attrPd('Físico')+attrPd('Disciplina')+(data.generatedWorkouts?.length||0)*3,
+      'ESTRATEGA':attrPd('Organização')+attrPd('Foco')+Math.min(20,(data.completedMissions||0)),
+      'ELO':attrPd('Comunicação')+attrPd('Relacionamento')
+    };
+    return Object.entries(scores).sort((a,b)=>b[1]-a[1])[0]?.[0]||'BUSCADOR';
+  }
+  const arch={
+    BUSCADOR:{glyph:'◇',title:'O BUSCADOR',text:'Você avança quando transforma curiosidade em conhecimento aplicado. Leitura, estudo e domínio de conceitos alimentam sua jornada.'},
+    VANGUARDA:{glyph:'▲',title:'A VANGUARDA',text:'Você avança através de ação física e disciplina. Treinos, consistência e execução prática tornam o progresso visível.'},
+    ESTRATEGA:{glyph:'⌁',title:'O ESTRATEGA',text:'Você avança organizando o caos em sistemas. Planejamento, foco e execução consistente são sua principal rota de evolução.'},
+    ELO:{glyph:'◎',title:'O ELO',text:'Você avança fortalecendo comunicação e relações. Clareza, presença e prática social movimentam sua jornada.'}
+  };
+  function playerName(){return data?.cosmetics?.nickname||'JOGADOR'}
+  function lv(){try{return Number(levelInfo().level)||1}catch(e){return 1}}
+  function rk(){try{return rank(lv())}catch(e){return 'E'}}
+  function completed(){return Math.max(Number(data.completedMissions)||0,(data.missions||[]).filter(m=>m.done).length)}
+  function active(){return (data.missions||[]).filter(m=>!m.done&&!m.queued&&!m.rejectedAt).length}
+  function currentBook(){return (data.knowledgeArchive?.sources||[]).slice().sort((a,b)=>Number(b.lastReadAt?Date.parse(b.lastReadAt):0)-Number(a.lastReadAt?Date.parse(a.lastReadAt):0))[0]||null}
+  function dailyQuest(){return data.s2302DailyQuest||data.dailyQuest||null}
+  function dailyProgress(){const q=dailyQuest();if(!q?.objectives)return 0;const vals=Object.values(q.objectives);if(!vals.length)return 0;return Math.round(vals.reduce((s,o)=>s+Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1)),0)/vals.length*100)}
+  function chapterState(){
+    const c=completed(),s=Number(data.streak)||0,b=currentBook(),dp=dailyProgress();
+    const nodes=[
+      {id:'wake',title:'DESPERTAR',sub:'Primeira missão',done:c>=1,action:'missions'},
+      {id:'routine',title:'ROTINA',sub:'Quest diária',done:dp>=100||s>=3,action:'missions'},
+      {id:'knowledge',title:'CONHECIMENTO',sub:'Livro + estudo',done:!!b&&(Number(b.progress)||0)>=10,action:'books'},
+      {id:'foundation',title:'FUNDAÇÃO',sub:'Boss do arco',done:typeof foundationBossDefeated==='function'?foundationBossDefeated():false,action:'journey'}
+    ];
+    const first=nodes.findIndex(n=>!n.done);nodes.forEach((n,i)=>{n.state=n.done?'done':(i===(first<0?nodes.length-1:first)?'active':'locked')});
+    return nodes;
+  }
+  function roadProgress(nodes){const done=nodes.filter(n=>n.done).length;return Math.round((done/Math.max(1,nodes.length))*100)}
+  function openArea(area){
+    if(area==='journey')return;
+    try{window.closeJourneyMode?.()}catch(e){}
+    setTimeout(()=>{try{if(typeof window.openDockView==='function')window.openDockView(area)}catch(e){}},80);
+  }
+  window.s2313JourneyOpenArea=openArea;
+  window.s2313RefreshArchetype=function(){const p=ensure();p.archetype=detectArchetype();persist();renderJourneyMode();window.showSystemEvent?.('ARQUÉTIPO ATUALIZADO',arch[p.archetype]?.title||p.archetype)};
+  window.s2313ChooseArchetype=function(){
+    const current=ensure().archetype;
+    const raw=(prompt('Escolha seu arquétipo de jornada:\nBUSCADOR\nVANGUARDA\nESTRATEGA\nELO',current)||'').trim().toUpperCase();
+    if(!arch[raw])return;
+    data.journeyProfile.archetype=raw;data.journeyProfile.manual=true;persist();renderJourneyMode();
+  };
+  function questCards(){
+    const q=dailyQuest(),dp=dailyProgress(),book=currentBook();
+    const dq=q?`<div class="s2313Quest special"><div class="s2313QuestK">QUEST DIÁRIA // ${dp}%</div><div class="s2313QuestT">PREPARANDO-SE PARA FICAR MAIS FORTE</div><div class="s2313QuestD">Complete os objetivos físicos do ciclo atual. Cada atualização movimenta a mesma quest exibida na aba MISSÕES.</div><div class="s2313QuestMeta"><span>${Object.values(q.objectives||{}).filter(o=>(Number(o.value)||0)>=(Number(o.target)||1)).length}/${Object.keys(q.objectives||{}).length} OBJETIVOS</span><span>DISCIPLINA</span></div><button onclick="s2313JourneyOpenArea('missions')">ABRIR QUEST DIÁRIA</button></div>`:'';
+    const bk=book?`<div class="s2313Quest"><div class="s2313QuestK">CONHECIMENTO // ${Number(book.progress)||0}%</div><div class="s2313QuestT">${esc(book.title||'LIVRO EM ANDAMENTO')}</div><div class="s2313QuestD">Sua leitura atual faz parte da Jornada. Avance no conteúdo e complete as missões de aprendizagem quando forem desbloqueadas.</div><div class="s2313QuestMeta"><span>INTELECTO</span><span>${Math.floor((Number(book.readingSeconds)||0)/60)} MIN LIDOS</span></div><button onclick="s2313JourneyOpenArea('books')">IR PARA BIBLIOTECA</button></div>`:`<div class="s2313Quest"><div class="s2313QuestK">CONHECIMENTO</div><div class="s2313QuestT">ESCOLHA SEU PRIMEIRO LIVRO</div><div class="s2313QuestD">Adicione um material à Biblioteca para criar uma rota real de estudo dentro da Jornada.</div><button onclick="s2313JourneyOpenArea('books')">ABRIR BIBLIOTECA</button></div>`;
+    return dq+bk;
+  }
+  function renderRpgJourney(){
+    const target=document.getElementById('journeyContent');if(!target)return;
+    const p=ensure(),a=arch[p.archetype]||arch.BUSCADOR,nodes=chapterState(),rp=roadProgress(nodes),li=lv();
+    const originalBoss=typeof journeyRequirements==='function'?journeyRequirements():null;
+    const bossReady=originalBoss?Object.values(originalBoss).every(r=>r.done):false;
+    const bossDone=typeof foundationBossDefeated==='function'?foundationBossDefeated():false;
+    target.innerHTML=`
+      <div class="s2313Hero"><div class="s2313HeroTop"><div class="s2313Sigil">${a.glyph}</div><div><div class="s2313Nick">${esc(playerName())}</div><div class="s2313Title">JOGADOR // NÍVEL ${li}</div></div><div class="s2313Rank"><b>${esc(rk())}</b><span>RANK</span></div></div><div class="s2313Archetype"><div class="s2313ArchKicker">ARQUÉTIPO DE JORNADA</div><div class="s2313ArchName">${a.title}</div><div class="s2313ArchText">${a.text}</div><div class="s2313ArchActions"><button class="primary" onclick="s2313ChooseArchetype()">ESCOLHER ARQUÉTIPO</button><button onclick="s2313RefreshArchetype()">DETECTAR PELO PROGRESSO</button></div></div></div>
+      <div class="s2313Map"><div class="s2313MapHead"><div><div class="s2313MapTitle">MAPA DA JORNADA</div><div class="s2313MapSub">ARCO 01 // FUNDAÇÃO</div></div><div class="s2313Chapter">${rp}% CONCLUÍDO</div></div><div class="s2313Road" style="--road-progress:${rp}%"><div class="s2313Nodes">${nodes.map((n,i)=>`<button class="s2313Node ${n.state}" ${n.state==='locked'?'disabled':''} onclick="s2313JourneyOpenArea('${n.action}')"><div class="s2313Orb">${n.done?'✓':(i+1)}</div><b>${n.title}</b><span>${n.sub}</span></button>`).join('')}</div></div></div>
+      <div class="s2313MissionGrid">${questCards()}</div>
+      <div class="bossCard"><div class="journeyKicker">[ BOSS // ARCO 01 ]</div><div class="bossTitle">${bossDone?'FUNDAÇÃO CONCLUÍDA':'CONSTRUA SUA BASE'}</div><div class="bossSub">${bossDone?'O próximo arco está disponível.':bossReady?'Todos os requisitos foram cumpridos. O Boss pode ser enfrentado.':'Complete os marcos da Jornada para liberar o Boss.'}</div>${originalBoss?`<div class="bossReqList">${Object.values(originalBoss).map(r=>`<div class="bossReq ${r.done?'done':''}"><span>${r.done?'✓':'○'} ${esc(r.label)}</span><b>${Math.min(r.value,r.target)} / ${r.target}</b></div>`).join('')}</div>`:''}<button class="bossButton" ${(!bossReady||bossDone)?'disabled':''} onclick="defeatFoundationBoss()">${bossDone?'BOSS VENCIDO':bossReady?'ENFRENTAR BOSS':'BOSS BLOQUEADO'}</button></div>
+      <div class="s2313ProfilePanel"><div class="weeklyTitle">REGISTRO DO JOGADOR</div><div class="weeklySub">PROGRESSO REAL CONVERTIDO EM ESTADO DE JOGO</div><div class="s2313ProfileRow"><div class="s2313Stat"><b>${completed()}</b><span>MISSÕES</span></div><div class="s2313Stat"><b>${active()}</b><span>ATIVAS</span></div><div class="s2313Stat"><b>${Number(data.streak)||0}</b><span>SEQUÊNCIA</span></div></div></div>`;
+  }
+  window.renderJourneyMode=renderRpgJourney;
+  const oldOpen=window.openJourneyMode;
+  window.openJourneyMode=function(){renderRpgJourney();document.getElementById('journeyOverlay')?.classList.add('show')};
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  function init(){ensure();persist();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // JORNADA DO JOGADOR COM ARQUÉTIPO, MAPA DE PROGRESSÃO, QUESTS CONECTADAS E REGISTRO RPG.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);persist()}}catch(e){console.warn('SIRIUS '+VERSION,e)}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,100),{once:true});else setTimeout(init,100);window.addEventListener('load',()=>setTimeout(init,280),{once:true});
+})();
+</script>
+
 </body></html>
