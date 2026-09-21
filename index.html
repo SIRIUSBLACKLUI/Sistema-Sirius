@@ -14352,4 +14352,80 @@ body.s2309-test-activation #s61EventOverlay{display:none!important}
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.14 // JORNADA VISÍVEL + ACESSO ROBUSTO ===== -->
+<style id="sirius-v22314-journey-access-style">
+#view-home .mainQuestCard{position:relative!important;isolation:isolate!important}
+#view-home .mainQuestCard button,
+#view-home [data-s2314-journey-open]{
+  position:relative!important;z-index:120!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important
+}
+#journeyOverlay{z-index:2147483600!important;pointer-events:none!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important}
+#journeyOverlay.show{display:block!important;pointer-events:auto!important}
+#journeyOverlay .journeyWindow,#journeyOverlay .journeyWindow *{pointer-events:auto}
+.s2314JourneyEntry{margin:10px 0 16px;border:1px solid #7346f0;background:linear-gradient(135deg,#110724,#071426);box-shadow:inset 0 0 28px rgba(118,70,240,.08),0 0 18px rgba(112,64,245,.12);padding:12px;position:relative;overflow:hidden}
+.s2314JourneyEntry:before{content:"";position:absolute;left:0;top:0;width:38%;height:2px;background:linear-gradient(90deg,#d05dff,#6347ff,transparent);box-shadow:0 0 10px #9d4cff}
+.s2314JourneyEntryTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.s2314JourneyEntryK{font-size:6.5px;letter-spacing:1.7px;color:#c98aff;font-weight:1000}.s2314JourneyEntryT{margin-top:5px;font-size:15px;font-weight:1000;color:#f7f0ff}.s2314JourneyEntryP{font-size:9px;color:#93a9c4;font-weight:900;white-space:nowrap}
+.s2314JourneyEntry button{width:100%;margin-top:10px;min-height:42px;border:1px solid #9b5cff;background:linear-gradient(180deg,#5224ad,#2a1064);color:#fff;font-size:7px;font-weight:1000;letter-spacing:1.2px}
+body.s2314-journey-open{overflow:hidden!important}
+</style>
+<script id="sirius-v22314-journey-access-script">
+(function(){
+  const VERSION='v2.23.14';
+  let opening=false;
+  function persist(){try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function lv(){try{return Number(levelInfo().level)||1}catch(e){return 1}}
+  function rk(){try{return typeof rank==='function'?rank(lv()):'E'}catch(e){return'E'}}
+  function dailyPct(){try{const q=data.s2302DailyQuest||data.dailyQuest;if(!q?.objectives)return 0;const a=Object.values(q.objectives);return a.length?Math.round(a.reduce((s,o)=>s+Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1)),0)/a.length*100):0}catch(e){return 0}}
+  function fallbackRender(){
+    const target=document.getElementById('journeyContent');if(!target)return;
+    const completed=Math.max(Number(data?.completedMissions)||0,(data?.missions||[]).filter(m=>m.done).length),streak=Number(data?.streak)||0,dp=dailyPct();
+    target.innerHTML=`<div class="s2313Hero"><div class="s2313HeroTop"><div class="s2313Sigil">◇</div><div><div class="s2313Nick">${esc(data?.cosmetics?.nickname||'JOGADOR')}</div><div class="s2313Title">JOGADOR // NÍVEL ${lv()}</div></div><div class="s2313Rank"><b>${esc(rk())}</b><span>RANK</span></div></div><div class="s2313Archetype"><div class="s2313ArchKicker">JORNADA DO JOGADOR</div><div class="s2313ArchName">ARCO 01 // FUNDAÇÃO</div><div class="s2313ArchText">Seu progresso real alimenta a Jornada. Complete missões, avance na Quest Diária e desenvolva sua base.</div></div></div><div class="s2313ProfilePanel"><div class="weeklyTitle">REGISTRO DO JOGADOR</div><div class="s2313ProfileRow"><div class="s2313Stat"><b>${completed}</b><span>MISSÕES</span></div><div class="s2313Stat"><b>${dp}%</b><span>QUEST DIÁRIA</span></div><div class="s2313Stat"><b>${streak}</b><span>SEQUÊNCIA</span></div></div></div>`;
+  }
+  function showJourney(){
+    if(opening)return;opening=true;
+    try{
+      if(typeof window.renderJourneyMode==='function')window.renderJourneyMode();
+      else if(typeof renderJourneyMode==='function')renderJourneyMode();
+      else fallbackRender();
+    }catch(err){console.error('SIRIUS journey render',err);fallbackRender()}
+    const o=document.getElementById('journeyOverlay');
+    if(o){o.classList.add('show');o.setAttribute('aria-hidden','false');o.style.display='block';o.style.pointerEvents='auto';o.scrollTop=0;document.body.classList.add('s2314-journey-open')}
+    opening=false;
+  }
+  function hideJourney(){const o=document.getElementById('journeyOverlay');if(o){o.classList.remove('show');o.setAttribute('aria-hidden','true');o.style.removeProperty('display');o.style.removeProperty('pointer-events')}document.body.classList.remove('s2314-journey-open')}
+  window.openJourneyMode=showJourney;
+  window.closeJourneyMode=hideJourney;
+
+  function bindPrimary(){
+    document.querySelectorAll('#view-home .mainQuestCard button').forEach(btn=>{
+      if(!/VER JORNADA/i.test(btn.textContent||''))return;
+      btn.dataset.s2314JourneyOpen='1';btn.type='button';btn.onclick=null;
+      if(btn.dataset.s2314Bound==='1')return;btn.dataset.s2314Bound='1';let last=0;
+      const run=ev=>{const n=Date.now();if(n-last<320){ev?.preventDefault?.();return}last=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();showJourney()};
+      btn.addEventListener('pointerup',run,true);btn.addEventListener('touchend',run,{capture:true,passive:false});btn.addEventListener('click',run,true);
+    });
+  }
+  function addHomeEntry(){
+    const home=document.getElementById('view-home');if(!home||document.getElementById('s2314JourneyEntry'))return;
+    const anchor=home.querySelector('.mainQuestCard');if(!anchor)return;
+    const e=document.createElement('div');e.id='s2314JourneyEntry';e.className='s2314JourneyEntry';e.innerHTML=`<div class="s2314JourneyEntryTop"><div><div class="s2314JourneyEntryK">[ SIRIUS // JORNADA DO JOGADOR ]</div><div class="s2314JourneyEntryT">ARCO 01 // FUNDAÇÃO</div></div><div class="s2314JourneyEntryP">RANK ${esc(rk())}</div></div><button type="button" data-s2314-journey-open="1">ABRIR MAPA DA JORNADA</button>`;
+    anchor.insertAdjacentElement('afterend',e);
+    const b=e.querySelector('button');let last=0;const run=ev=>{const n=Date.now();if(n-last<320)return;last=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();showJourney()};b.addEventListener('pointerup',run,true);b.addEventListener('touchend',run,{capture:true,passive:false});b.addEventListener('click',run,true);
+  }
+  function bindClose(){
+    const b=document.querySelector('#journeyOverlay .journeyClose');if(!b||b.dataset.s2314Bound==='1')return;b.dataset.s2314Bound='1';b.onclick=null;let last=0;const run=ev=>{const n=Date.now();if(n-last<300)return;last=n;ev?.preventDefault?.();ev?.stopPropagation?.();hideJourney()};b.addEventListener('pointerup',run,true);b.addEventListener('touchend',run,{capture:true,passive:false});b.addEventListener('click',run,true);
+  }
+  function install(){bindPrimary();addHomeEntry();bindClose()}
+  const mo=new MutationObserver(()=>install());mo.observe(document.body,{childList:true,subtree:true});
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  function init(){install();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // ACESSO DA JORNADA CORRIGIDO, ENTRADA SECUNDÁRIA NA HOME E OVERLAY RPG GARANTIDO.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);persist()}}catch(e){}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);
+  window.addEventListener('load',()=>setTimeout(init,220),{once:true});[500,1200,2600,5000].forEach(ms=>setTimeout(()=>{install();mark()},ms));
+})();
+</script>
+
 </body></html>
