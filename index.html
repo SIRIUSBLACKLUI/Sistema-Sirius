@@ -14028,4 +14028,221 @@ body.s2309-test-activation #s61EventOverlay{display:none!important}
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.12 // BASE v2.23.10 + HOME DAILY + TREINO/JORNADA + EPUB PERSISTENTE ===== -->
+<style id="sirius-v22312-fixes-style">
+/* Home: resumo compacto da Quest Diária no lugar da lista comum de missões. */
+#view-home .s2312DailyHome{border:1px solid #2f8fc4;background:linear-gradient(145deg,#061526,#06101d);box-shadow:inset 0 0 26px rgba(45,190,246,.05);padding:13px;position:relative;overflow:hidden}
+#view-home .s2312DailyHome:before{content:"";position:absolute;left:0;top:0;width:125px;height:2px;background:#58dcff;box-shadow:0 0 12px #58dcff}
+#view-home .s2312DailyTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#view-home .s2312DailyKicker{font-size:6px;letter-spacing:1.8px;color:#73e5ff;font-weight:1000}
+#view-home .s2312DailyTitle{font-size:15px;color:#f4fbff;font-weight:1000;margin-top:5px}
+#view-home .s2312DailyState{font-size:6px;letter-spacing:1px;border:1px solid #31a9d7;color:#c5efff;background:#061825;padding:6px 8px;white-space:nowrap;font-weight:1000}
+#view-home .s2312DailyRows{display:grid;gap:5px;margin-top:11px}
+#view-home .s2312DailyRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border-bottom:1px solid rgba(65,142,185,.16);padding:6px 2px}
+#view-home .s2312DailyRow:last-child{border-bottom:0}
+#view-home .s2312DailyRow span{font-size:7.3px;color:#dcebf5;font-weight:900}
+#view-home .s2312DailyRow.done span{color:#5ef18d}
+#view-home .s2312DailyRow b{font-size:7px;color:#eaf7ff;white-space:nowrap}
+#view-home .s2312DailyBar{height:6px;margin-top:10px;border:1px solid #214b66;background:#07111d;overflow:hidden}
+#view-home .s2312DailyBar span{display:block;height:100%;background:linear-gradient(90deg,#23bfff,#5aeaff);box-shadow:0 0 10px rgba(70,220,255,.5)}
+#view-home .s2312DailyActions{margin-top:10px}
+#view-home .s2312DailyActions button{width:100%;min-height:42px;border:1px solid #4bdcff;background:linear-gradient(180deg,#128fe1,#075c9c);color:#fff;font-size:7px;font-weight:1000;letter-spacing:1.2px;pointer-events:auto!important;touch-action:manipulation!important}
+
+/* Treino e Jornada: CTAs acima de toda decoração e sempre tocáveis. */
+#view-training .trainingCard{position:relative!important;pointer-events:auto!important}
+#view-training .trainingBtn{position:relative!important;z-index:80!important;pointer-events:auto!important;touch-action:manipulation!important}
+#view-home .mainQuestCard button{position:relative!important;z-index:80!important;pointer-events:auto!important;touch-action:manipulation!important}
+
+/* EPUB local: estado visível quando o arquivo precisa ser reanexado. */
+.s2312EpubMissing{display:inline-block;margin-top:5px;padding:4px 7px;border:1px solid #a64b58;color:#ffb8c1;background:#240c13;font-size:6px;font-weight:900;letter-spacing:.8px}
+</style>
+<script id="sirius-v22312-fixes-script">
+(function(){
+  const VERSION='v2.23.12';
+  const OBJECTIVE_ORDER=['pushups','plank','abs','squats','run'];
+  const BASE_NAMES=['Estudo','Revisão de memória','Prática de comunicação','Missão de disciplina'];
+
+  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function directPersist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));return true}catch(e){console.error('SIRIUS '+VERSION+' persist',e);return false}}
+  function sources(){return Array.isArray(data?.knowledgeArchive?.sources)?data.knowledgeArchive.sources:[]}
+  function normalize(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
+
+  /* ---------- MISSÕES MAIS ESPECÍFICAS ---------- */
+  function bestSource(review=false){
+    const all=sources().filter(s=>s&&s.title);
+    if(!all.length)return null;
+    return all.slice().sort((a,b)=>{
+      const sa=(review?(Number(a.progress)||0)*5:0)+(a.lastReadAt?1000:0)+(Number(a.progress)||0);
+      const sb=(review?(Number(b.progress)||0)*5:0)+(b.lastReadAt?1000:0)+(Number(b.progress)||0);
+      return sb-sa;
+    })[0]||null;
+  }
+  function latestCompleted(){return [...(data?.missions||[])].reverse().find(m=>m?.done&&m?.name)||null}
+  function detectBase(m){
+    if(m?.s2312BaseName)return m.s2312BaseName;
+    const n=String(m?.s2311BaseName||m?.name||'');
+    const hit=BASE_NAMES.find(x=>n===x||n.startsWith(x+' //'))||'';
+    if(hit)m.s2312BaseName=hit;
+    return hit;
+  }
+  function upgradeMissionSpecificity(){
+    let changed=false;
+    (data?.missions||[]).forEach(m=>{
+      if(!m||m.done||m.s2312Specificity)return;
+      const base=detectBase(m);if(!base)return;
+      const book=bestSource(base==='Revisão de memória');
+      const title=book?.title||'';
+      const progress=Math.max(0,Math.min(100,Number(book?.progress)||0));
+      if(base==='Estudo'){
+        if(title){m.name=`Estudo // ${title}`;m.desc=`Leia ${title} por 25 minutos a partir do ponto atual${progress?` (${progress}% registrado)`:''}. Depois feche o material e escreva, sem consulta, 3 ideias principais e 1 dúvida.`;m.sourceId=book.id;m.sourceTitle=title;}
+        else{m.name='Estudo // Biblioteca SIRIUS';m.desc='Escolha um material específico da Biblioteca, estude por 25 minutos e depois feche o material. Sem consultar, registre 3 ideias principais e 1 dúvida.';}
+        m.evidence='25 min de leitura + 3 ideias principais + 1 dúvida, sem consulta.';m.durationMin=25;m.learningMethod='Recuperação Ativa';m.focusMethod='Pomodoro';
+      }else if(base==='Revisão de memória'){
+        if(title){m.name=`Revisão // ${title}`;m.desc=`Sem abrir ${title}, escreva por 5 minutos tudo o que lembrar do trecho estudado${progress?` até cerca de ${progress}%`:''}. Depois confira o material e registre pelo menos 2 lacunas ou correções.`;m.sourceId=book.id;m.sourceTitle=title;}
+        else{m.name='Revisão // Conteúdo recente';m.desc='Escolha o conteúdo mais recente estudado. Sem consultar, escreva por 5 minutos tudo que lembrar; depois confira e registre pelo menos 2 lacunas ou correções.';}
+        m.evidence='5 min sem consulta + comparação + 2 lacunas/correções.';m.durationMin=12;m.learningMethod='Recuperação Ativa';
+      }else if(base==='Prática de comunicação'){
+        const topic=title?`uma ideia central de ${title}`:(latestCompleted()?.name?`o que aprendeu em “${latestCompleted().name}”`:'um assunto que domina');
+        m.name=title?`Comunicação // ${title}`:'Comunicação // Explicação de 2 minutos';
+        m.desc=`Grave um áudio de 2 minutos explicando ${topic}, com começo, meio e fim. Ouça uma vez e registre 1 ponto claro e 1 ponto específico para melhorar.`;
+        m.evidence='Áudio de 2 min + 1 ponto claro + 1 melhoria específica.';m.durationMin=8;if(book){m.sourceId=book.id;m.sourceTitle=title;}
+      }else if(base==='Missão de disciplina'){
+        const target=(data?.missions||[]).find(x=>x!==m&&!x.done&&!x.queued&&x.acceptedAt)?.name||(data?.missions||[]).find(x=>x!==m&&!x.done&&!x.queued)?.name;
+        m.name=target?`Disciplina // ${target}`:'Disciplina // Bloco único de 15 minutos';
+        m.desc=target?`Trabalhe exclusivamente na missão “${target}” por 15 minutos. Não troque de tarefa nem abra redes sociais; ao final, registre exatamente o que avançou.`:'Escolha uma pendência concreta, defina em uma frase o resultado desejado e execute 15 minutos sem trocar de tarefa. Ao final, registre o avanço.';
+        m.evidence='15 minutos contínuos + registro objetivo do avanço.';m.durationMin=15;
+      }
+      m.completionCondition=m.evidence;m.s2312Specificity=true;changed=true;
+    });
+    if(changed)directPersist();
+  }
+
+  /* ---------- QUEST DIÁRIA NA HOME ---------- */
+  function dailyQuest(){return data?.s2302DailyQuest||null}
+  function dailyPct(q){if(!q?.objectives)return 0;return Math.round(OBJECTIVE_ORDER.reduce((sum,k)=>{const o=q.objectives[k];return sum+Math.min(1,(Number(o?.value)||0)/Math.max(1,Number(o?.target)||1))},0)/OBJECTIVE_ORDER.length*100)}
+  function openDaily(){
+    try{if(typeof window.openDockView==='function')window.openDockView('missions');else if(typeof window.openDashView==='function')window.openDashView('missions',document.querySelector('.bottomDock [data-view="missions"],.bottomNav [data-view="missions"]'));}catch(e){}
+    setTimeout(()=>document.getElementById('s2302DailyHost')?.scrollIntoView({behavior:'smooth',block:'start'}),180);
+  }
+  window.s2312OpenDailyQuest=openDaily;
+  function renderDailyHome(){
+    const home=document.getElementById('view-home');const host=home?.querySelector('#dashMissionList');if(!host)return;
+    const panel=host.closest('.dashPanel');const titleEl=panel?.querySelector('.dashPanelTitle');if(titleEl)titleEl.textContent='QUEST DIÁRIA';
+    const q=dailyQuest();
+    if(!q?.objectives){host.innerHTML='<div class="small">Abra MISSÕES uma vez para inicializar a Quest Diária.</div>';return;}
+    const rows=OBJECTIVE_ORDER.map(k=>{const o=q.objectives[k]||{};const done=(Number(o.value)||0)>=(Number(o.target)||1);return `<div class="s2312DailyRow ${done?'done':''}"><span>[${done?'✓':' '}] ${esc(o.label||k)}</span><b>${Number(o.value)||0}/${Number(o.target)||0} ${esc(o.unit||'')}</b></div>`}).join('');
+    const completed=OBJECTIVE_ORDER.filter(k=>(Number(q.objectives[k]?.value)||0)>=(Number(q.objectives[k]?.target)||1)).length;
+    const pct=dailyPct(q);const sub=home.querySelector('#dashMissionCount');if(sub)sub.textContent=`${completed} / 5 OBJETIVOS // ${pct}%`;
+    host.innerHTML=`<div class="s2312DailyHome"><div class="s2312DailyTop"><div><div class="s2312DailyKicker">[ SIRIUS // OBJETIVOS DE HOJE ]</div><div class="s2312DailyTitle">PREPARANDO-SE PARA FICAR MAIS FORTE</div></div><div class="s2312DailyState">${q.rewardClaimed?'FINALIZADA':pct>=100?'RECOMPENSA':'ATIVA'}</div></div><div class="s2312DailyRows">${rows}</div><div class="s2312DailyBar"><span style="width:${pct}%"></span></div><div class="s2312DailyActions"><button type="button" data-s2312-daily>ABRIR QUEST DIÁRIA</button></div></div>`;
+    const b=host.querySelector('[data-s2312-daily]');if(b&&!b.dataset.s2312Bound){b.dataset.s2312Bound='1';let last=0;const go=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();openDaily()};b.addEventListener('touchend',go,{passive:false});b.addEventListener('click',go,true)}
+  }
+
+  /* ---------- BOTÕES ADICIONAR DO TREINO ---------- */
+  const TRAINING={
+    'AQUECIMENTO':['Aquecimento','Faça 8 minutos de mobilidade e aquecimento geral.',8],
+    'FORÇA DE BASE':['Força de Base','Complete uma sessão de força de 30 minutos com técnica controlada.',30],
+    'CONDICIONAMENTO':['Condicionamento','Faça 20 minutos de atividade aeróbica em ritmo moderado.',20],
+    'RECUPERAÇÃO':['Recuperação Física','Faça 8 minutos de mobilidade e alongamento sem dor.',8]
+  };
+  function wireTraining(){
+    document.querySelectorAll('#view-training .trainingCard').forEach(card=>{
+      const btn=card.querySelector('.trainingBtn');if(!btn)return;
+      const label=String(card.querySelector('h4')?.textContent||'').trim().toUpperCase();const cfg=TRAINING[label];if(!cfg)return;
+      if(btn.dataset.s2312Bound==='1')return;btn.dataset.s2312Bound='1';btn.type='button';btn.removeAttribute('onclick');
+      let last=0;const run=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();e?.stopImmediatePropagation?.();try{if(typeof window.addTrainingPreset==='function')window.addTrainingPreset(cfg[0],cfg[1],cfg[2]);else if(typeof addTrainingPreset==='function')addTrainingPreset(cfg[0],cfg[1],cfg[2]);}catch(err){console.error('SIRIUS training add',err)}};
+      btn.addEventListener('touchend',run,{passive:false});btn.addEventListener('click',run,true);
+    });
+  }
+
+  /* ---------- VER JORNADA ---------- */
+  function wireJourney(){
+    const btn=[...document.querySelectorAll('#view-home .mainQuestCard button')].find(b=>/VER JORNADA/i.test(b.textContent||''));if(!btn||btn.dataset.s2312Bound==='1')return;
+    btn.dataset.s2312Bound='1';btn.type='button';btn.removeAttribute('onclick');let last=0;
+    const run=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();try{if(typeof window.openJourneyMode==='function')window.openJourneyMode();else if(typeof openJourneyMode==='function')openJourneyMode();}catch(err){console.error('SIRIUS journey',err)}};
+    btn.addEventListener('touchend',run,{passive:false});btn.addEventListener('click',run,true);
+  }
+
+  /* ---------- EPUB LOCAL COM CONFIRMAÇÃO DE PERSISTÊNCIA ---------- */
+  window.openSiriusDb=function(){
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open('SIRIUS_LOCAL_FILES',3);
+      req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('epubs'))db.createObjectStore('epubs');if(!db.objectStoreNames.contains('recovery'))db.createObjectStore('recovery');if(!db.objectStoreNames.contains('epubMeta'))db.createObjectStore('epubMeta')};
+      req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);req.onblocked=()=>reject(new Error('indexeddb_blocked'));
+    });
+  };
+  async function requestPersistentStorage(){try{if(navigator.storage?.persist)await navigator.storage.persist()}catch(e){console.warn('SIRIUS persistent storage',e)}}
+  async function putVerifiedEpub(id,file){
+    await requestPersistentStorage();
+    const blob=file instanceof Blob?file.slice(0,file.size,file.type||'application/epub+zip'):new Blob([file],{type:'application/epub+zip'});
+    const meta={name:file.name||`${id}.epub`,type:file.type||'application/epub+zip',size:Number(file.size)||blob.size,lastModified:Number(file.lastModified)||Date.now(),savedAt:new Date().toISOString()};
+    const db=await window.openSiriusDb();
+    await new Promise((resolve,reject)=>{const tx=db.transaction(['epubs','epubMeta'],'readwrite');tx.objectStore('epubs').put(blob,id);tx.objectStore('epubMeta').put(meta,id);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('epub_tx_abort'))});db.close();
+    const check=await getVerifiedEpub(id);if(!check||Number(check.size)!==Number(blob.size))throw new Error('epub_verify_failed');return {blob:check,meta};
+  }
+  async function getVerifiedEpub(id){
+    const db=await window.openSiriusDb();
+    return new Promise((resolve,reject)=>{const tx=db.transaction('epubs','readonly');const req=tx.objectStore('epubs').get(id);req.onsuccess=()=>{const v=req.result;resolve(v?.blob instanceof Blob?v.blob:(v instanceof Blob?v:null))};req.onerror=()=>reject(req.error);tx.oncomplete=()=>db.close();tx.onerror=()=>{try{db.close()}catch(e){}}});
+  }
+  window.getLocalEpub=getVerifiedEpub;
+  window.putLocalEpub=async function(id,file){await putVerifiedEpub(id,file);return true};
+
+  const oldExtract=window.extractEpubMetadata||((file)=>Promise.resolve({title:file.name.replace(/\.epub$/i,''),author:'',coverUrl:''}));
+  window.importLocalEpub=async function(event){
+    const input=event?.target;const file=input?.files?.[0];if(!file)return;if(!/\.epub$/i.test(file.name)){alert('Selecione um arquivo EPUB.');return;}
+    try{
+      window.showToast?.('SALVANDO EPUB // AGUARDE A CONFIRMAÇÃO...');
+      const meta=await oldExtract(file);
+      data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];
+      const title=meta.title||file.name.replace(/\.epub$/i,'');
+      let source=data.knowledgeArchive.sources.find(s=>s?.localEpub&&(normalize(s.localFileName)===normalize(file.name)||normalize(s.title)===normalize(title)));
+      const id=source?.id||('src_'+Date.now());
+      const saved=await putVerifiedEpub(id,file);
+      if(!source){source={id,createdAt:new Date().toISOString(),progress:0,fileProgress:0,contentStartProgress:null,contentStartCfi:null,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[]};data.knowledgeArchive.sources.push(source)}
+      Object.assign(source,{title,author:meta.author||source.author||'',type:'Livro',area:source.area||'Conhecimento geral',section:source.section||'',materialUrl:'',localEpub:true,localEpubVerified:true,localEpubMissing:false,localFileName:file.name,localFileSize:saved.meta.size,localFileSavedAt:saved.meta.savedAt,coverUrl:meta.coverUrl||source.coverUrl||''});
+      if(!directPersist())throw new Error('metadata_persist_failed');
+      try{if(typeof render==='function')render();if(typeof refreshDashboard==='function')refreshDashboard()}catch(e){}
+      window.showSystemEvent?.('EPUB SALVO',`${title} foi gravado e verificado neste aparelho.`);
+    }catch(err){
+      console.error('SIRIUS EPUB import',err);alert('Não foi possível confirmar o salvamento deste EPUB. O livro não foi marcado como salvo.');
+    }finally{if(input)input.value=''}
+  };
+
+  async function verifyEpubSources(){
+    const locals=sources().filter(s=>s?.localEpub&&s?.id);let changed=false;
+    for(const s of locals){try{const blob=await getVerifiedEpub(s.id);const ok=!!blob;if(s.localEpubVerified!==ok||s.localEpubMissing===ok){s.localEpubVerified=ok;s.localEpubMissing=!ok;changed=true}}catch(e){if(!s.localEpubMissing){s.localEpubMissing=true;s.localEpubVerified=false;changed=true}}}
+    if(changed){directPersist();try{refreshDashboard?.()}catch(e){}}
+  }
+
+  const originalOpenLocal=window.openLocalEpubReader;
+  window.openLocalEpubReader=async function(id){
+    const s=sources().find(x=>x.id===id);if(!s)return;
+    let blob=null;try{blob=await getVerifiedEpub(id)}catch(e){}
+    if(!blob){s.localEpubMissing=true;s.localEpubVerified=false;directPersist();alert('O arquivo EPUB não está mais armazenado neste aparelho. Toque em + EPUB e selecione o mesmo arquivo para reanexá-lo sem perder o progresso do livro.');return;}
+    s.localEpubMissing=false;s.localEpubVerified=true;directPersist();
+    if(typeof originalOpenLocal==='function')return originalOpenLocal.call(this,id);
+  };
+
+  function decorateMissingEpubs(){
+    document.querySelectorAll('#view-books .libraryRealCard').forEach(card=>{const title=normalize(card.querySelector('.libraryRealTitle')?.textContent||'');const s=sources().find(x=>normalize(x.title)===title&&x.localEpub);if(s?.localEpubMissing&&!card.querySelector('.s2312EpubMissing'))card.querySelector('.libraryRealMeta')?.insertAdjacentHTML('beforeend','<br><span class="s2312EpubMissing">EPUB PRECISA SER REANEXADO</span>')});
+  }
+
+  /* ---------- RENDERIZAÇÕES SEM RECURSÃO ---------- */
+  const prevRefresh=window.refreshDashboard;
+  if(typeof prevRefresh==='function'&&!prevRefresh.__s2312Wrapped){
+    const wrapped=function(){const r=prevRefresh.apply(this,arguments);setTimeout(()=>{upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs()},0);return r};
+    wrapped.__s2312Wrapped=true;window.refreshDashboard=wrapped;
+  }
+  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
+  function init(){
+    upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs();mark();verifyEpubSources();
+    try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // BASE v2.23.10, QUEST DIÁRIA NA HOME, TREINO/JORNADA CORRIGIDOS, MISSÕES ESPECÍFICAS E EPUB COM SALVAMENTO VERIFICADO.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);directPersist()}}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);
+  window.addEventListener('load',()=>setTimeout(init,350),{once:true});
+  [900,1900,3600,6000].forEach(ms=>setTimeout(()=>{upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs();mark()},ms));
+})();
+</script>
+
 </body></html>
