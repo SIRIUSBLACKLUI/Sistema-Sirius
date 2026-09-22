@@ -4059,7 +4059,7 @@ function continueCurrentBook(){
  const current=[...sources].filter(s=>Number(s.progress||0)<100)
    .sort((a,b)=>Number(b.lastReadAt?Date.parse(b.lastReadAt):0)-Number(a.lastReadAt?Date.parse(a.lastReadAt):0))[0]||sources[0];
  if(!current){openDashView("books",document.querySelector("[data-view=books]"));return}
- if(current.materialUrl||current.localEpub){openKnowledgeMaterial(current.id);return}
+ if(current.materialUrl||current.localEpub||current.localFileName){openKnowledgeMaterial(current.id);return}
  openDashView("books",document.querySelector("[data-view=books]"));
 }
 
@@ -4270,7 +4270,7 @@ refreshDashboard=function(){
   }else{
    bl.innerHTML=filtered.length?filtered.map(s=>{
     const p=Math.max(0,Math.min(100,Number(s.progress)||0));
-    return `<div class="dashPanel" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${escapeHtml(s.title)}</div><div class="dashPanelSub">${escapeHtml(s.author||"Autor não informado")} // ${p}%</div><div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${(s.materialUrl||s.localEpub)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">LER AGORA</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}<button onclick="setBookCover('${s.id}')">CAPA</button></div></div></div></div>`;
+    return `<div class="dashPanel" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${escapeHtml(s.title)}</div><div class="dashPanelSub">${escapeHtml(s.author||"Autor não informado")} // ${p}%</div><div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${(s.materialUrl||s.localEpub||s.localFileName)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">LER AGORA</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}<button onclick="setBookCover('${s.id}')">CAPA</button></div></div></div></div>`;
    }).join(""):`<div class="small">Nenhum livro nesta categoria.</div>`;
   }
  }
@@ -4347,7 +4347,7 @@ function renderHudCurrentBook(){
    <div class="dashPanelSub">${escapeHtml(current.author||"Autor não informado")} // ${p}%</div>
    <div class="xp" style="margin-top:8px"><div class="bar" style="width:${p}%"></div></div>
    <div class="bookActions" style="margin-top:8px">
-    ${(current.materialUrl||current.localEpub)?`<button class="primary" onclick="openKnowledgeMaterial('${current.id}')">▣ LER AGORA</button>`:""}
+    ${(current.materialUrl||current.localEpub||current.localFileName)?`<button class="primary" onclick="openKnowledgeMaterial('${current.id}')">▣ LER AGORA</button>`:""}
     <button onclick="openDashView('books',document.querySelector('[data-view=books]'))">BIBLIOTECA</button>
    </div></div>
   </div>`;
@@ -4421,7 +4421,7 @@ refreshDashboard=function(){
       <div class="dashPanelSub">${escapeHtml(s.author||"Autor não informado")} // ${p}%</div>
       <div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div>
       <div class="bookActions">
-       ${(s.materialUrl||s.localEpub)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">LER AGORA</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}
+       ${(s.materialUrl||s.localEpub||s.localFileName)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">LER AGORA</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}
        <button onclick="setBookCover('${s.id}')">CAPA</button>
       </div>
       <div class="bookDangerRow"><button class="libraryDanger" onclick="removeBookFromLibrary('${s.id}')">REMOVER DA BIBLIOTECA</button></div>
@@ -4883,7 +4883,7 @@ function renderBottomHomeBook(){
   <div class="small" style="margin-top:8px">${p}% DO CONTEÚDO</div>
   <div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div>
   <div class="homeBookActions">
-   ${(current.materialUrl||current.localEpub)?`<button class="primary" onclick="openKnowledgeMaterial('${current.id}')">▣ LER AGORA</button>`:"<span></span>"}
+   ${(current.materialUrl||current.localEpub||current.localFileName)?`<button class="primary" onclick="openKnowledgeMaterial('${current.id}')">▣ LER AGORA</button>`:"<span></span>"}
    <button onclick="openDashView('books',document.querySelector('.bottomNav [data-view=books]'))">DETALHES</button>
   </div></div></div>`;
 }
@@ -5792,7 +5792,7 @@ const __refreshDashboard_v2212=refreshDashboard;refreshDashboard=function(){__re
     let filtered=all;
     if(libraryFilter==="reading")filtered=all.filter(s=>displayProgress(s)>0&&displayProgress(s)<100||s.lastReadAt);
     if(libraryFilter==="finished")filtered=all.filter(s=>displayProgress(s)>=100);
-    list.innerHTML=filtered.length?filtered.map(s=>{const fp=displayProgress(s),cp=contentProgress(s);return `<div class="libraryRealCard">${bookCoverMarkup(s)}<div><div class="libraryRealTitle">${escapeHtml(s.title||"LIVRO")}</div><div class="libraryRealMeta">${escapeHtml(s.author||"Autor não informado")} // ${escapeHtml(s.type||"MATERIAL")}${s.lastReadAt?`<br>ÚLTIMA LEITURA // ${new Date(s.lastReadAt).toLocaleDateString('pt-BR')}`:""}</div><div class="libraryProgressLabel"><span>ARQUIVO</span><b>${fp}%</b></div><div class="libraryProgressTrack"><div class="libraryProgressFill" style="width:${fp}%"></div></div>${s.contentStartProgress!==null&&s.contentStartProgress!==undefined?`<div class="libraryProgressLabel"><span>CONTEÚDO REAL</span><b>${cp}%</b></div>`:""}<div class="bookActions" style="margin-top:8px">${(s.materialUrl||s.localEpub)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">${fp>0?'CONTINUAR':'LER AGORA'}</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}<button onclick="removeBookFromLibrary('${s.id}')">REMOVER</button></div></div></div>`}).join(""):'<div class="small">Nenhum livro nesta categoria.</div>';
+    list.innerHTML=filtered.length?filtered.map(s=>{const fp=displayProgress(s),cp=contentProgress(s);return `<div class="libraryRealCard">${bookCoverMarkup(s)}<div><div class="libraryRealTitle">${escapeHtml(s.title||"LIVRO")}</div><div class="libraryRealMeta">${escapeHtml(s.author||"Autor não informado")} // ${escapeHtml(s.type||"MATERIAL")}${s.lastReadAt?`<br>ÚLTIMA LEITURA // ${new Date(s.lastReadAt).toLocaleDateString('pt-BR')}`:""}</div><div class="libraryProgressLabel"><span>ARQUIVO</span><b>${fp}%</b></div><div class="libraryProgressTrack"><div class="libraryProgressFill" style="width:${fp}%"></div></div>${s.contentStartProgress!==null&&s.contentStartProgress!==undefined?`<div class="libraryProgressLabel"><span>CONTEÚDO REAL</span><b>${cp}%</b></div>`:""}<div class="bookActions" style="margin-top:8px">${(s.materialUrl||s.localEpub||s.localFileName)?`<button class="primary" onclick="openKnowledgeMaterial('${s.id}')">${fp>0?'CONTINUAR':'LER AGORA'}</button>`:`<button onclick="setMaterialLink('${s.id}')">ASSOCIAR</button>`}<button onclick="removeBookFromLibrary('${s.id}')">REMOVER</button></div></div></div>`}).join(""):'<div class="small">Nenhum livro nesta categoria.</div>';
   }
 
   function installOrb(){
@@ -7259,7 +7259,7 @@ html.siriusPaused [class*="glow"]{animation-play-state:paused!important}
     const cover=typeof bookCoverMarkup==='function'?bookCoverMarkup(b):`<div class="bookCover">${esc(b.title||'LIVRO')}</div>`;
     target.innerHTML=`<div class="s28BookHero"><div class="s28BookCover">${cover}</div><div class="s28BookCopy"><div class="s28BookTitle">${esc(b.title||'Livro')}</div><div class="s28BookAuthor">${esc(b.author||'Autor não informado')}</div><div class="s28BookProgress">${p}% DO CONTEÚDO</div><div class="s28BookBar"><span style="width:${p}%"></span></div><div class="s28BookActions"><button class="primary" data-s28-read>LER AGORA</button><button data-s28-details>DETALHES</button></div></div></div>`;
     target.querySelector('[data-s28-read]')?.addEventListener('click',()=>{
-      if(b.materialUrl && typeof openKnowledgeMaterial==='function') openKnowledgeMaterial(b.id); else if(typeof showKnowledgeArchive==='function') showKnowledgeArchive(); else openBooks();
+      if((b.materialUrl||b.localEpub||b.localFileName) && typeof openKnowledgeMaterial==='function') openKnowledgeMaterial(b.id); else if(typeof showKnowledgeArchive==='function') showKnowledgeArchive(); else openBooks();
     });
     target.querySelector('[data-s28-details]')?.addEventListener('click',openBooks);
   }
@@ -9985,7 +9985,6 @@ button,[role="button"],.bottomDock button,.bottomNav button,.sideNav button{
   }
 
   function maybeTriggerSecret(){
-    try{if(typeof window.s62IsTestMode==='function'&&window.s62IsTestMode())return}catch(e){}
     const state=ensureSecretState();
     if(!state.unlocked && requirementsMet())unlockSecretMission(true);
     else if(state.unlocked && !state.accepted && state.refused){
@@ -10568,11 +10567,12 @@ body.s64-test-active #s62TestControls [data-test]{
       active=true;
       runs=[];
       renderLab();
-      /* Ativar o laboratório não dispara render global: evita iniciar quests/eventos automaticamente. */
+      try{if(typeof render==='function')render()}catch(e){}
+      renderLab();
       if(typeof s62ShowSystemPanel==='function'){
-        s62ShowSystemPanel({type:'notice',title:'TESTE ATIVADO',body:'<span class="green">TESTE ATIVADO.</span>',actions:[{label:'CONTINUAR'}]});
+        s62ShowSystemPanel({type:'notice',title:'AVISO',body:'<span class="green">MODO DE TESTE ATIVO.</span><br><br>TODOS OS REQUISITOS FORAM LIBERADOS TEMPORARIAMENTE.<br><br>NADA DESTE MODO SERÁ GRAVADO NO PROGRESSO REAL.',actions:[{label:'CONTINUAR'}]});
       }else if(typeof showSystemEvent==='function'){
-        showSystemEvent('TESTE ATIVADO','Modo de teste ativo.');
+        showSystemEvent('MODO DE TESTE ATIVO','Tudo liberado temporariamente. Nenhum progresso real será salvo.');
       }
     }catch(err){
       active=false;
@@ -11897,213 +11897,6 @@ body.s95-more-open > *:not(#moreSheet){
 }
 </style>
 
-
-
-<!-- ===== SIRIUS v2.23.03 // ABA MAIS NO FORMATO DO MOCKUP APROVADO ===== -->
-<style id="sirius-v22303-more-photo-match">
-#moreSheet{
-  align-items:flex-end!important;
-  justify-content:center!important;
-  padding:0 18px calc(108px + env(safe-area-inset-bottom))!important;
-  background:rgba(1,7,15,.14)!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-#moreSheet .s94Backdrop{background:transparent!important}
-#moreSheet .s94Panel{
-  width:min(820px,calc(100vw - 36px))!important;
-  max-width:820px!important;
-  margin:0 auto!important;
-  padding:16px 18px calc(18px + env(safe-area-inset-bottom))!important;
-  border:2px solid #18bfff!important;
-  border-radius:42px!important;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(44,170,255,.16),transparent 32%),
-    linear-gradient(180deg,rgba(5,18,34,.98),rgba(2,10,22,.985))!important;
-  box-shadow:
-    0 0 0 1px rgba(92,222,255,.18) inset,
-    0 0 30px rgba(0,150,255,.22),
-    0 14px 48px rgba(0,0,0,.42)!important;
-  overflow:hidden!important;
-}
-#moreSheet .s94Panel::before{
-  inset:8px!important;
-  border-radius:34px!important;
-  border:1px solid rgba(70,215,255,.34)!important;
-  background:none!important;
-}
-#moreSheet .s94Header{
-  margin:0 0 16px!important;
-  min-height:12px!important;
-}
-#moreSheet .s94Line{display:none!important}
-#moreSheet .s94Glyph{
-  width:78px!important;
-  height:8px!important;
-  border-radius:999px!important;
-  background:linear-gradient(90deg,#39bfff,#7be4ff,#39bfff)!important;
-  clip-path:none!important;
-  filter:drop-shadow(0 0 10px rgba(70,215,255,.45))!important;
-}
-#moreSheet .s94Grid{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  grid-auto-rows:116px!important;
-  gap:18px 20px!important;
-  margin:0 6px!important;
-}
-#moreSheet .s94Card{
-  height:116px!important;
-  min-height:116px!important;
-  max-height:116px!important;
-  border-radius:18px!important;
-  border:1.5px solid rgba(53,205,255,.95)!important;
-  background:
-    radial-gradient(circle at 50% 30%,rgba(25,150,255,.08),transparent 52%),
-    linear-gradient(180deg,rgba(4,18,35,.98),rgba(2,10,20,.99))!important;
-  box-shadow:
-    0 0 0 1px rgba(120,228,255,.08) inset,
-    0 0 18px rgba(19,155,255,.14)!important;
-}
-#moreSheet .s94Card::before{display:none!important}
-#moreSheet .s94Card::after{
-  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0) 30%,rgba(1,8,18,.08) 100%)!important;
-}
-#moreSheet .s94CardInner{
-  height:100%!important;
-  padding:14px 14px 12px!important;
-  justify-content:flex-start!important;
-  align-items:center!important;
-  position:relative!important;
-}
-#moreSheet .s94CardInner::after{
-  content:"›"!important;
-  position:absolute!important;
-  right:12px!important;
-  bottom:12px!important;
-  color:#2fd0ff!important;
-  font-size:26px!important;
-  line-height:1!important;
-  font-weight:900!important;
-  text-shadow:0 0 12px rgba(47,208,255,.22)!important;
-}
-#moreSheet .s94Card svg{
-  width:34px!important;
-  height:34px!important;
-  margin:8px 0 22px!important;
-  stroke:#27d1ff!important;
-  stroke-width:1.85!important;
-  filter:drop-shadow(0 0 12px rgba(31,193,255,.24))!important;
-}
-#moreSheet .s94Card span{
-  position:absolute!important;
-  left:14px!important;
-  right:28px!important;
-  bottom:16px!important;
-  min-height:auto!important;
-  padding:0!important;
-  border:none!important;
-  border-radius:0!important;
-  background:none!important;
-  box-shadow:none!important;
-  color:#f6fbff!important;
-  display:block!important;
-  text-align:left!important;
-  font-size:10px!important;
-  font-weight:950!important;
-  letter-spacing:1.8px!important;
-  line-height:1.2!important;
-  text-shadow:0 0 8px rgba(33,198,255,.14)!important;
-}
-#moreSheet .s94Close{
-  min-height:72px!important;
-  margin:20px 6px 0!important;
-  border-radius:20px!important;
-  border:1.5px solid rgba(53,205,255,.95)!important;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(33,170,255,.14),transparent 55%),
-    linear-gradient(180deg,rgba(5,20,38,.98),rgba(2,10,20,.99))!important;
-  box-shadow:
-    0 0 0 1px rgba(120,228,255,.08) inset,
-    0 0 18px rgba(19,155,255,.12)!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:14px!important;
-  color:#eef9ff!important;
-  letter-spacing:2.6px!important;
-  font-size:10px!important;
-}
-#moreSheet .s94Close::after{display:none!important}
-#moreSheet .s94Close::before{
-  content:"×"!important;
-  position:static!important;
-  width:auto!important;
-  height:auto!important;
-  background:none!important;
-  color:#27d1ff!important;
-  font-size:30px!important;
-  line-height:1!important;
-  font-weight:400!important;
-  opacity:1!important;
-  margin-top:-1px!important;
-}
-#moreSheet .s94Close span{
-  font-size:10px!important;
-  font-weight:950!important;
-  letter-spacing:2.8px!important;
-}
-@media(max-width:520px){
-  #moreSheet{
-    padding:0 18px calc(110px + env(safe-area-inset-bottom))!important;
-  }
-  #moreSheet .s94Panel{
-    width:calc(100vw - 36px)!important;
-    max-width:none!important;
-    padding:14px 14px calc(16px + env(safe-area-inset-bottom))!important;
-    border-radius:36px!important;
-  }
-  #moreSheet .s94Panel::before{inset:7px!important;border-radius:29px!important}
-  #moreSheet .s94Grid{
-    grid-auto-rows:96px!important;
-    gap:12px!important;
-    margin:0 4px!important;
-  }
-  #moreSheet .s94Card{
-    height:96px!important;
-    min-height:96px!important;
-    max-height:96px!important;
-    border-radius:16px!important;
-  }
-  #moreSheet .s94CardInner{padding:10px 10px 10px!important}
-  #moreSheet .s94Card svg{
-    width:28px!important;
-    height:28px!important;
-    margin:8px 0 18px!important;
-  }
-  #moreSheet .s94Card span{
-    left:10px!important;
-    right:22px!important;
-    bottom:12px!important;
-    font-size:8.2px!important;
-    letter-spacing:1.25px!important;
-  }
-  #moreSheet .s94CardInner::after{
-    right:8px!important;
-    bottom:8px!important;
-    font-size:20px!important;
-  }
-  #moreSheet .s94Close{
-    min-height:62px!important;
-    margin:16px 4px 0!important;
-    border-radius:18px!important;
-    gap:10px!important;
-  }
-  #moreSheet .s94Close::before{font-size:25px!important}
-  #moreSheet .s94Close span{font-size:8.6px!important;letter-spacing:2.15px!important}
-}
-</style>
-
 <script id="sirius-v22296-final-more-script">
 (function(){
   const VERSION='v2.22.96';
@@ -13018,1582 +12811,342 @@ body.s95-more-open > *:not(#moreSheet){
 
 
 
-<!-- ===== SIRIUS v2.23.02 // DAILY QUEST 06:00 + PENALTY + REWARD CHOICE ===== -->
-<style id="sirius-v2302-daily-quest-style">
-/* A Daily Quest antiga permanece no arquivo como compatibilidade, mas não é exibida. */
-#s99DailyQuestHost{display:none!important}
-#s2302DailyHost{position:relative;z-index:46;margin:0 0 14px;pointer-events:auto!important}
-.s2302Quest{--q:#47cfff;position:relative;width:100%;max-width:430px;margin:0 auto;padding:22px 18px 18px;color:#eefaff;background:linear-gradient(180deg,#07182a 0%,#06111f 48%,#050e19 100%);border:1px solid #2f8dc0;box-shadow:inset 0 0 40px rgba(36,157,220,.09),0 0 24px rgba(31,164,230,.12);overflow:hidden;isolation:isolate}
-.s2302Quest:before{content:"";position:absolute;inset:6px;border:1px solid rgba(73,194,243,.28);pointer-events:none}
-.s2302Quest:after{content:"";position:absolute;left:17%;right:17%;top:0;height:2px;background:linear-gradient(90deg,transparent,#70e7ff 20%,#70e7ff 80%,transparent);box-shadow:0 0 11px #55dfff;pointer-events:none}
-.s2302Corner{position:absolute;width:42px;height:42px;pointer-events:none;opacity:.95}
-.s2302Corner:before,.s2302Corner:after{content:"";position:absolute;background:#5bdcff;box-shadow:0 0 8px rgba(91,220,255,.55)}
-.s2302Corner:before{width:30px;height:1px}.s2302Corner:after{width:1px;height:30px}
-.s2302Corner.tl{left:5px;top:5px}.s2302Corner.tr{right:5px;top:5px;transform:scaleX(-1)}.s2302Corner.bl{left:5px;bottom:5px;transform:scaleY(-1)}.s2302Corner.br{right:5px;bottom:5px;transform:scale(-1)}
-.s2302Corner i{position:absolute;left:0;top:0;width:12px;height:12px;border-left:2px solid #9af3ff;border-top:2px solid #9af3ff}
-.s2302Header{text-align:center;padding:3px 12px 14px;border-bottom:1px solid rgba(74,162,206,.2)}
-.s2302HeaderKicker{font-size:7px;letter-spacing:3px;color:#71ddff;font-weight:1000;text-shadow:0 0 8px rgba(87,219,255,.55)}
-.s2302HeaderTitle{margin-top:11px;font-size:16px;line-height:1.35;font-weight:1000;letter-spacing:.7px;color:#f6fbff;text-shadow:0 0 8px rgba(255,255,255,.08)}
-.s2302State{display:inline-block;margin-top:9px;padding:4px 11px;border:1px solid #3ca9d4;color:#bfefff;background:#06131f;font-size:6.2px;font-weight:1000;letter-spacing:1.5px}
-.s2302ObjectivesTitle{text-align:center;color:#51ff6e;font-size:8px;font-weight:1000;letter-spacing:2.1px;margin:15px 0 7px;text-shadow:0 0 8px rgba(67,255,102,.32)}
-.s2302Objective{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;min-height:45px;padding:6px 2px;border-bottom:1px solid rgba(59,133,170,.17)}
-.s2302Objective:last-child{border-bottom:0}.s2302ObjText{min-width:0}.s2302ObjLine{display:flex;align-items:center;gap:7px;font-size:8.1px;font-weight:1000;color:#f2f7fb;line-height:1.25}.s2302Check{color:#5e7180;font-size:10px}.s2302Objective.done .s2302Check,.s2302Objective.done .s2302ObjLine{color:#5ef18d}.s2302ObjSub{font-size:5.8px;color:#6f8da7;margin-top:3px;letter-spacing:.6px}.s2302ObjRight{display:flex;align-items:center;gap:7px}.s2302Count{min-width:58px;text-align:right;font-size:8.2px;font-weight:1000;color:#dbe8f1;white-space:nowrap}.s2302Update{min-width:68px;min-height:32px!important;padding:6px 8px!important;border:1px solid #337fa6!important;background:#071827!important;color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.8px!important;touch-action:manipulation!important;pointer-events:auto!important;position:relative!important;z-index:48!important}
-.s2302Progress{height:4px;background:#102332;border:1px solid #1b435c;margin:13px 2px 0;overflow:hidden}.s2302Progress span{display:block;height:100%;background:#55dcff;box-shadow:0 0 8px #55dcff;transition:width .2s ease}
-.s2302Attention{margin-top:15px;padding:11px 12px 10px;border-top:1px solid rgba(172,42,47,.35);border-bottom:1px solid rgba(172,42,47,.22);text-align:center}.s2302Attention b{display:block;color:#ff343a;font-size:9px;letter-spacing:2.3px;margin-bottom:5px;text-shadow:0 0 7px rgba(255,52,58,.28)}.s2302Attention span{font-size:7px;color:#b8c2cb;line-height:1.5}
-.s2302Timer{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:13px;color:#d8eaf2}.s2302Clock{width:24px;height:24px;border:2px solid #e8f6fb;border-radius:50%;position:relative;opacity:.9}.s2302Clock:before{content:"";position:absolute;left:10px;top:4px;width:1px;height:7px;background:#e8f6fb}.s2302Clock:after{content:"";position:absolute;left:10px;top:10px;width:6px;height:1px;background:#e8f6fb;transform:rotate(25deg);transform-origin:left center}.s2302TimerText{font-size:9px;font-weight:1000;letter-spacing:1.2px}.s2302TimerSub{font-size:5.8px;color:#66869f;margin-top:2px;letter-spacing:.8px}
-.s2302Complete{width:100%;min-height:40px!important;margin-top:12px!important;border:1px solid #49dfff!important;background:linear-gradient(180deg,#118ad8,#07538d)!important;color:#fff!important;font-size:7px!important;font-weight:1000!important;letter-spacing:1.4px!important;touch-action:manipulation!important}.s2302Complete[disabled]{opacity:.38!important;filter:grayscale(.6)!important}.s2302Complete.done{border-color:#44d892!important;background:#073b2f!important;color:#8fffc7!important}
-.s2302Penalty{margin-top:13px;border:1px solid #8d2d36;background:linear-gradient(180deg,#210b11,#10090d);padding:12px;text-align:center}.s2302PenaltyTitle{color:#ff5158;font-size:9px;font-weight:1000;letter-spacing:2px}.s2302PenaltyText{margin-top:7px;color:#d9c6c8;font-size:7px;line-height:1.5}.s2302PenaltyTimer{margin-top:9px;color:#fff;font-size:14px;font-weight:1000;letter-spacing:1px}.s2302Penalty button{margin-top:9px;min-height:36px;border:1px solid #b43d46;background:#2a0d14;color:#ffd9dc;font-size:6.5px;font-weight:1000;letter-spacing:1px;padding:7px 10px}
-.s2302Modal{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(1,5,10,.9);backdrop-filter:blur(5px)}.s2302Modal.show{display:flex}.s2302ModalCard{width:min(92vw,390px);border:1px solid #42cfff;background:linear-gradient(180deg,#071a2c,#050d18);padding:18px;box-shadow:0 0 36px rgba(53,205,255,.18);position:relative}.s2302ModalKicker{font-size:6.5px;letter-spacing:2px;color:#75e6ff;font-weight:1000}.s2302ModalTitle{font-size:16px;font-weight:1000;margin-top:7px}.s2302ModalText{font-size:7px;color:#89a7c0;line-height:1.5;margin-top:6px}.s2302Modal input{width:100%;min-height:48px;margin-top:13px;background:#040b13;color:#fff;border:1px solid #347ca4;padding:11px;font-size:16px}.s2302ModalActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.s2302ModalActions button,.s2302RewardChoice{min-height:40px;border:1px solid #347ca4;background:#071827;color:#e8f8ff;font-size:6.7px;font-weight:1000;letter-spacing:1px}.s2302ModalActions .primary{border-color:#56dfff;background:#0c6dab}.s2302RewardGrid{display:grid;gap:8px;margin-top:13px}.s2302RewardChoice{text-align:left;padding:11px}.s2302RewardChoice b{display:block;font-size:8px;color:#fff}.s2302RewardChoice span{display:block;font-size:6.3px;color:#89abc4;margin-top:4px;line-height:1.4}
-@media(max-width:430px){.s2302Quest{padding:19px 11px 14px}.s2302HeaderTitle{font-size:13.5px}.s2302Objective{grid-template-columns:minmax(0,1fr) auto}.s2302ObjLine{font-size:7.2px}.s2302Count{min-width:48px;font-size:7.2px}.s2302Update{min-width:59px;font-size:5.2px!important;padding:5px!important}.s2302ObjRight{gap:4px}}
-</style>
-<script id="sirius-v2302-daily-quest-script">
-(function(){
-  const VERSION='v2.23.02',KEY='s2302DailyQuest';
-  const OBJECTIVE_ORDER=['pushups','plank','abs','squats','run'];
-  const DEFAULTS={
-    pushups:{label:'FLEXÃO',target:10,unit:'REP'},
-    plank:{label:'PRANCHA',target:60,unit:'SEG'},
-    abs:{label:'ABDOMINAL',target:15,unit:'REP'},
-    squats:{label:'AGACHAMENTO',target:20,unit:'REP'},
-    run:{label:'CORRER',target:10,unit:'MIN'}
-  };
-  let timerId=null,penaltyTimerId=null;
-  function saveNow(){try{if(typeof save==='function')save();else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
-  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-  function cycleBounds(now=new Date()){
-    const start=new Date(now);start.setHours(6,0,0,0);if(now<start)start.setDate(start.getDate()-1);
-    const end=new Date(start);end.setDate(end.getDate()+1);
-    return {start,end,key:`${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}-0600`};
-  }
-  function makeQuest(bounds=cycleBounds()){
-    const objectives={};OBJECTIVE_ORDER.forEach(k=>objectives[k]={...DEFAULTS[k],value:0,updatedAt:null});
-    return {cycleKey:bounds.key,cycleStart:bounds.start.toISOString(),cycleEnd:bounds.end.toISOString(),objectives,completed:false,completedAt:null,rewardClaimed:false,reward:null,failed:false,penalty:null,createdAt:new Date().toISOString()};
-  }
-  function done(q){return OBJECTIVE_ORDER.every(k=>Number(q?.objectives?.[k]?.value||0)>=Number(q?.objectives?.[k]?.target||1))}
-  function pct(q){return Math.round(OBJECTIVE_ORDER.reduce((s,k)=>{const o=q?.objectives?.[k]||DEFAULTS[k];return s+Math.min(1,Number(o.value||0)/Math.max(1,Number(o.target||1)))},0)/OBJECTIVE_ORDER.length*100)}
-  function ensureQuest(){
-    if(typeof data==='undefined'||!data||typeof data!=='object')return null;
-    const b=cycleBounds();let q=data[KEY];
-    if(!q){q=data[KEY]=makeQuest(b);saveNow();return q}
-    if(q.cycleKey!==b.key){
-      data.s2302DailyHistory=Array.isArray(data.s2302DailyHistory)?data.s2302DailyHistory:[];
-      if(!q.completed){q.failed=true;q.failedAt=b.start.toISOString();q.penalty={type:'READING',title:'KANT — OS PRINCÍPIOS DA METAFÍSICA',durationSec:600,status:'PENDING',startedAt:null,completedAt:null};}
-      data.s2302DailyHistory.unshift(JSON.parse(JSON.stringify(q)));data.s2302DailyHistory=data.s2302DailyHistory.slice(0,45);
-      const nq=makeQuest(b);
-      if(q.penalty&&q.penalty.status!=='COMPLETED')nq.penalty=q.penalty;
-      q=data[KEY]=nq;saveNow();
-      try{if(typeof addSystemLog==='function')addSystemLog('mission',q.penalty?'PENALIDADE ATIVA: LEITURA DE KANT POR 10 MINUTOS':'NOVO CICLO DA QUEST DIÁRIA ÀS 06:00')}catch(e){}
-    }
-    /* Migração segura caso a estrutura evolua. */
-    q.objectives=q.objectives||{};OBJECTIVE_ORDER.forEach(k=>{if(!q.objectives[k])q.objectives[k]={...DEFAULTS[k],value:0,updatedAt:null};else{q.objectives[k].label=DEFAULTS[k].label;q.objectives[k].unit=DEFAULTS[k].unit;if(!Number(q.objectives[k].target))q.objectives[k].target=DEFAULTS[k].target}});
-    return q;
-  }
-  function host(){
-    let h=document.getElementById('s2302DailyHost');if(h)return h;
-    const old=document.getElementById('s99DailyQuestHost'),forge=document.getElementById('missionForge');if(!old&&!forge)return null;
-    h=document.createElement('div');h.id='s2302DailyHost';(old||forge).parentNode.insertBefore(h,old||forge);return h;
-  }
-  function remainingText(){const b=cycleBounds();let sec=Math.max(0,Math.floor((b.end-Date.now())/1000));const h=Math.floor(sec/3600);sec%=3600;const m=Math.floor(sec/60),s=sec%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
-  function penaltyRemaining(q){const p=q?.penalty;if(!p||p.status!=='RUNNING'||!p.startedAt)return Number(p?.durationSec||600);return Math.max(0,Number(p.durationSec||600)-Math.floor((Date.now()-new Date(p.startedAt).getTime())/1000))}
-  function penaltyHtml(q){const p=q?.penalty;if(!p||p.status==='COMPLETED')return '';const rem=penaltyRemaining(q);const mm=Math.floor(rem/60),ss=rem%60;return `<div class="s2302Penalty"><div class="s2302PenaltyTitle">MISSÃO DE PENALIDADE</div><div class="s2302PenaltyText">Quest diária anterior não concluída.<br><b>LER 10 MINUTOS DE KANT — OS PRINCÍPIOS DA METAFÍSICA.</b><br>O material poderá ser vinculado à Biblioteca quando você adicioná-lo.</div><div class="s2302PenaltyTimer">${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}</div><button type="button" data-s2302-penalty>${p.status==='RUNNING'?'LEITURA EM ANDAMENTO':'INICIAR LEITURA DE 10 MIN'}</button></div>`}
-  function render(){
-    const q=ensureQuest(),h=host();if(!q||!h)return;const ready=done(q),progress=pct(q);
-    const rows=OBJECTIVE_ORDER.map(k=>{const o=q.objectives[k],ok=Number(o.value)>=Number(o.target);return `<div class="s2302Objective ${ok?'done':''}"><div class="s2302ObjText"><div class="s2302ObjLine"><span class="s2302Check">[${ok?'✓':' '}]</span><span>${esc(o.label)}</span></div><div class="s2302ObjSub">OBJETIVO DIÁRIO</div></div><div class="s2302ObjRight"><div class="s2302Count">${Number(o.value)||0}/${Number(o.target)||0} ${esc(o.unit)}</div><button type="button" class="s2302Update" data-s2302-update="${k}">ATUALIZAR</button></div></div>`}).join('');
-    h.innerHTML=`<div class="s2302Quest"><span class="s2302Corner tl"><i></i></span><span class="s2302Corner tr"><i></i></span><span class="s2302Corner bl"><i></i></span><span class="s2302Corner br"><i></i></span><div class="s2302Header"><div class="s2302HeaderKicker">ORIENTAÇÃO DE QUEST</div><div class="s2302HeaderTitle">QUEST DIÁRIA<br>PREPARANDO-SE PARA FICAR MAIS FORTE</div><div class="s2302State">${q.rewardClaimed?'FINALIZADA':ready?'RECOMPENSA DISPONÍVEL':'ATIVA'}</div></div><div class="s2302ObjectivesTitle">OBJETIVOS</div>${rows}<div class="s2302Progress"><span style="width:${progress}%"></span></div><div class="s2302Attention"><b>ATENÇÃO!</b><span>O CICLO TERMINA ÀS 06:00. SE A QUEST NÃO FOR CONCLUÍDA, UMA MISSÃO DE PENALIDADE SERÁ ATIVADA.</span></div><div class="s2302Timer"><span class="s2302Clock"></span><div><div class="s2302TimerText" data-s2302-timer>${remainingText()} RESTANTES</div><div class="s2302TimerSub">NOVO CICLO DIÁRIO ÀS 06:00</div></div></div><button type="button" class="s2302Complete ${q.rewardClaimed?'done':''}" data-s2302-complete ${(ready&&!q.rewardClaimed)?'':'disabled'}>${q.rewardClaimed?'RECOMPENSA ESCOLHIDA':ready?'CONCLUIR E ESCOLHER RECOMPENSA':'CONCLUA TODOS OS OBJETIVOS'}</button>${penaltyHtml(q)}</div>`;
-    tickPenalty();
-  }
-  function openModal(html){let m=document.getElementById('s2302Modal');if(!m){m=document.createElement('div');m.id='s2302Modal';m.className='s2302Modal';document.body.appendChild(m)}m.innerHTML=html;m.classList.add('show')}
-  function closeModal(){document.getElementById('s2302Modal')?.classList.remove('show')}
-  function editObjective(key){const q=ensureQuest(),o=q?.objectives?.[key];if(!o||q.rewardClaimed)return;openModal(`<div class="s2302ModalCard"><div class="s2302ModalKicker">[ SIRIUS // PROGRESSO ]</div><div class="s2302ModalTitle">${esc(o.label)}</div><div class="s2302ModalText">META: ${Number(o.target)} ${esc(o.unit)} // informe o total concluído até agora.</div><input id="s2302ProgressInput" inputmode="decimal" type="number" min="0" max="9999" step="1" value="${Number(o.value)||0}"><div class="s2302ModalActions"><button type="button" data-s2302-close>CANCELAR</button><button type="button" class="primary" data-s2302-save="${key}">SALVAR PROGRESSO</button></div></div>`);setTimeout(()=>document.getElementById('s2302ProgressInput')?.focus(),80)}
-  function saveObjective(key){const q=ensureQuest(),o=q?.objectives?.[key],inp=document.getElementById('s2302ProgressInput');if(!o||!inp)return;const n=Math.max(0,Math.min(9999,Math.round(Number(String(inp.value).replace(',','.'))||0)));o.value=n;o.updatedAt=new Date().toISOString();saveNow();closeModal();render();try{if(typeof refreshDashboard==='function')refreshDashboard()}catch(e){}}
-  function rewards(){
-    const q=ensureQuest();if(!q||!done(q)||q.rewardClaimed)return;
-    openModal(`<div class="s2302ModalCard"><div class="s2302ModalKicker">[ SIRIUS // RECOMPENSA DA QUEST ]</div><div class="s2302ModalTitle">ESCOLHA 1 RECOMPENSA</div><div class="s2302ModalText">A escolha é definitiva para este ciclo diário.</div><div class="s2302RewardGrid"><button type="button" class="s2302RewardChoice" data-s2302-reward="xp"><b>01 // XP</b><span>Receber +50 XP imediatamente.</span></button><button type="button" class="s2302RewardChoice" data-s2302-reward="recovery"><b>02 // RECURSO DE RECUPERAÇÃO</b><span>Receber 1 Crédito de Recuperação para o inventário SIRIUS.</span></button><button type="button" class="s2302RewardChoice" data-s2302-reward="box"><b>03 // CAIXA ALEATÓRIA</b><span>Pode conceder XP, item cosmético ou uma Chave de Dungeon.</span></button></div><div class="s2302ModalActions"><button type="button" data-s2302-close>VOLTAR</button></div></div>`)
-  }
-  function chooseReward(type){const q=ensureQuest();if(!q||q.rewardClaimed||!done(q))return;let label='';data.s2302Inventory=data.s2302Inventory||{recoveryCredits:0,dungeonKeys:0,cosmetics:[]};if(type==='xp'){data.xp=(Number(data.xp)||0)+50;label='+50 XP'}else if(type==='recovery'){data.s2302Inventory.recoveryCredits=Number(data.s2302Inventory.recoveryCredits||0)+1;label='1 CRÉDITO DE RECUPERAÇÃO'}else{const roll=Math.floor(Math.random()*3);if(roll===0){data.xp=(Number(data.xp)||0)+35;label='CAIXA: +35 XP'}else if(roll===1){data.s2302Inventory.cosmetics.push({id:'daily-'+Date.now(),name:'EMBLEMA // CAÇADOR DIÁRIO',obtainedAt:new Date().toISOString()});label='CAIXA: EMBLEMA COSMÉTICO'}else{data.s2302Inventory.dungeonKeys=Number(data.s2302Inventory.dungeonKeys||0)+1;label='CAIXA: CHAVE DE DUNGEON'}}q.completed=true;q.completedAt=q.completedAt||new Date().toISOString();q.rewardClaimed=true;q.reward={type,label,claimedAt:new Date().toISOString()};data.completedMissions=(Number(data.completedMissions)||0)+1;saveNow();closeModal();render();try{if(typeof addSystemLog==='function')addSystemLog('reward',`QUEST DIÁRIA CONCLUÍDA // ${label}`);if(typeof refreshDashboard==='function')refreshDashboard();if(typeof showSystemEvent==='function')showSystemEvent('RECOMPENSA RECEBIDA',label)}catch(e){}}
-  function startPenalty(){const q=ensureQuest(),p=q?.penalty;if(!p||p.status==='COMPLETED')return;if(p.status!=='RUNNING'){p.status='RUNNING';p.startedAt=new Date().toISOString();saveNow()}render();tickPenalty()}
-  function tickPenalty(){if(penaltyTimerId){clearInterval(penaltyTimerId);penaltyTimerId=null}const q=ensureQuest(),p=q?.penalty;if(!p||p.status!=='RUNNING')return;const update=()=>{const cur=ensureQuest(),rem=penaltyRemaining(cur);const el=document.querySelector('.s2302PenaltyTimer');if(el){const mm=Math.floor(rem/60),ss=rem%60;el.textContent=`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`}if(rem<=0){clearInterval(penaltyTimerId);penaltyTimerId=null;cur.penalty.status='COMPLETED';cur.penalty.completedAt=new Date().toISOString();saveNow();render();try{if(typeof addSystemLog==='function')addSystemLog('mission','PENALIDADE CONCLUÍDA: 10 MINUTOS DE LEITURA DE KANT');if(typeof showSystemEvent==='function')showSystemEvent('PENALIDADE CONCLUÍDA','10 minutos de leitura registrados.')}catch(e){}}};update();penaltyTimerId=setInterval(update,1000)}
-  function wire(){
-    const view=document.getElementById('view-missions');if(view&&view.dataset.s2302Wired!=='1'){view.dataset.s2302Wired='1';view.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s2302-update],[data-s2302-complete],[data-s2302-penalty]');if(!b)return;ev.preventDefault();ev.stopPropagation();if(b.dataset.s2302Update)editObjective(b.dataset.s2302Update);else if(b.hasAttribute('data-s2302-complete'))rewards();else startPenalty()},false);view.addEventListener('touchend',ev=>{const b=ev.target.closest?.('[data-s2302-update],[data-s2302-complete],[data-s2302-penalty]');if(!b)return;ev.preventDefault();ev.stopPropagation();b.click()},{passive:false,capture:false})}
-    document.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-s2302-close],[data-s2302-save],[data-s2302-reward]');if(!b)return;if(b.hasAttribute('data-s2302-close'))closeModal();else if(b.dataset.s2302Save)saveObjective(b.dataset.s2302Save);else if(b.dataset.s2302Reward)chooseReward(b.dataset.s2302Reward)},false)
-  }
-  function tick(){const q=ensureQuest();const t=document.querySelector('[data-s2302-timer]');if(t)t.textContent=remainingText()+' RESTANTES';const b=cycleBounds();if(q&&q.cycleKey!==b.key)render()}
-  function init(){ensureQuest();render();wire();if(timerId)clearInterval(timerId);timerId=setInterval(tick,1000);document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // DAILY QUEST 06:00, 5 OBJETIVOS, PENALIDADE KANT E ESCOLHA DE RECOMPENSA.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);saveNow()}}catch(e){}}
-  const prevDock=window.openDockView;if(typeof prevDock==='function')window.openDockView=function(v){const r=prevDock.apply(this,arguments);if(v==='missions')setTimeout(render,40);return r};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);window.addEventListener('load',()=>setTimeout(()=>{render();wire()},260),{once:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){ensureQuest();render()}},{passive:true});
-})();
-</script>
-
-
-<!-- ===== SIRIUS v2.23.04 // ABA MAIS COMPACTA — PROPORÇÃO DO MOCKUP ===== -->
-<style id="sirius-v22304-more-compact">
-/* Override final: reduz drasticamente a altura do menu MAIS no iPhone,
-   preservando a grade 4x2 e todas as ações existentes. */
-@media (max-width:520px){
-  #moreSheet{
-    align-items:flex-end!important;
-    justify-content:center!important;
-    padding:0 9px calc(104px + env(safe-area-inset-bottom))!important;
-    background:rgba(1,7,15,.08)!important;
-  }
-  #moreSheet .s94Panel{
-    width:calc(100vw - 18px)!important;
-    max-width:none!important;
-    padding:9px 10px calc(10px + env(safe-area-inset-bottom))!important;
-    border-width:1.5px!important;
-    border-radius:27px!important;
-    box-shadow:0 0 0 1px rgba(92,222,255,.12) inset,0 0 20px rgba(0,150,255,.15),0 10px 28px rgba(0,0,0,.32)!important;
-  }
-  #moreSheet .s94Panel::before{
-    inset:5px!important;
-    border-radius:22px!important;
-  }
-  #moreSheet .s94Header{
-    min-height:6px!important;
-    height:6px!important;
-    margin:0 0 8px!important;
-  }
-  #moreSheet .s94Glyph{
-    width:42px!important;
-    height:5px!important;
-  }
-  #moreSheet .s94Grid{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    grid-auto-rows:64px!important;
-    gap:8px!important;
-    margin:0 3px!important;
-  }
-  #moreSheet .s94Card{
-    height:64px!important;
-    min-height:64px!important;
-    max-height:64px!important;
-    border-width:1px!important;
-    border-radius:13px!important;
-    box-shadow:0 0 0 1px rgba(120,228,255,.05) inset,0 0 10px rgba(19,155,255,.10)!important;
-  }
-  #moreSheet .s94CardInner{
-    padding:5px 6px 6px!important;
-  }
-  #moreSheet .s94Card svg{
-    width:22px!important;
-    height:22px!important;
-    margin:3px 0 0!important;
-    stroke-width:1.8!important;
-  }
-  #moreSheet .s94Card span{
-    left:7px!important;
-    right:15px!important;
-    bottom:7px!important;
-    font-size:6.1px!important;
-    letter-spacing:.85px!important;
-    line-height:1.05!important;
-    white-space:normal!important;
-    overflow:visible!important;
-  }
-  #moreSheet .s94CardInner::after{
-    right:5px!important;
-    bottom:5px!important;
-    font-size:14px!important;
-  }
-  #moreSheet .s94Close{
-    min-height:45px!important;
-    height:45px!important;
-    margin:9px 3px 0!important;
-    border-width:1px!important;
-    border-radius:14px!important;
-    gap:8px!important;
-    box-shadow:0 0 0 1px rgba(120,228,255,.05) inset,0 0 10px rgba(19,155,255,.09)!important;
-  }
-  #moreSheet .s94Close::before{
-    font-size:19px!important;
-  }
-  #moreSheet .s94Close span{
-    font-size:7px!important;
-    letter-spacing:1.8px!important;
-  }
-}
-@media (max-width:380px){
-  #moreSheet{padding-left:7px!important;padding-right:7px!important}
-  #moreSheet .s94Panel{width:calc(100vw - 14px)!important;padding-left:8px!important;padding-right:8px!important}
-  #moreSheet .s94Grid{grid-auto-rows:60px!important;gap:7px!important}
-  #moreSheet .s94Card{height:60px!important;min-height:60px!important;max-height:60px!important}
-  #moreSheet .s94Card svg{width:20px!important;height:20px!important}
-  #moreSheet .s94Card span{font-size:5.7px!important;letter-spacing:.7px!important}
-  #moreSheet .s94Close{height:42px!important;min-height:42px!important}
-}
-</style>
-<script id="sirius-v22304-version-mark">
-(function(){
-  const VERSION='v2.23.04';
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mark,{once:true});else mark();
-  window.addEventListener('load',()=>setTimeout(mark,250),{once:true});
-})();
-</script>
-
-
-
-<!-- ===== SIRIUS v2.23.05 // MAIS COMPACTO + PADRÃO ÚNICO DE MENSAGENS ===== -->
-<style id="sirius-v22305-unified-dialogs">
-/* 1) Mantém a ATT anterior da aba MAIS e fecha a proporção no formato compacto aprovado. */
-@media (max-width:520px){
-  #moreSheet{padding:0 10px calc(106px + env(safe-area-inset-bottom))!important}
-  #moreSheet .s94Panel{
-    width:min(94vw,520px)!important;
-    max-width:520px!important;
-    padding:10px 10px calc(11px + env(safe-area-inset-bottom))!important;
-    border-radius:28px!important;
-  }
-  #moreSheet .s94Panel::before{inset:6px!important;border-radius:22px!important}
-  #moreSheet .s94Header{margin:0 0 8px!important;min-height:7px!important}
-  #moreSheet .s94Glyph{width:50px!important;height:5px!important}
-  #moreSheet .s94Grid{grid-auto-rows:72px!important;gap:8px!important;margin:0 3px!important}
-  #moreSheet .s94Card{height:72px!important;min-height:72px!important;max-height:72px!important;border-radius:13px!important}
-  #moreSheet .s94CardInner{padding:6px 7px!important}
-  #moreSheet .s94Card svg{width:23px!important;height:23px!important;margin:5px 0 14px!important}
-  #moreSheet .s94Card span{left:7px!important;right:17px!important;bottom:8px!important;font-size:6.4px!important;letter-spacing:.85px!important}
-  #moreSheet .s94CardInner::after{right:5px!important;bottom:6px!important;font-size:15px!important}
-  #moreSheet .s94Close{min-height:46px!important;margin:10px 3px 0!important;border-radius:13px!important;gap:7px!important}
-  #moreSheet .s94Close::before{font-size:19px!important}
-  #moreSheet .s94Close span{font-size:7px!important;letter-spacing:1.65px!important}
-}
-
-/* 2) Padrão visual oficial para caixas de mensagem: mesma moldura, só muda o conteúdo. */
-:root{--msg-cyan:#69ecff;--msg-blue:#0b497c;--msg-deep:#061a30;--msg-text:#f7fbff;--msg-muted:#b5d0e3}
-
-.systemOverlay,
-.s62SystemOverlay,
-.s2302Modal,
-.validationOverlay{
-  background:rgba(0,5,13,.72)!important;
-  backdrop-filter:blur(4px)!important;
-  -webkit-backdrop-filter:blur(4px)!important;
-  align-items:center!important;
-  justify-content:center!important;
-  padding:18px!important;
-}
-
-.systemWindow,
-.s62SystemPanel,
-.s2302ModalCard,
-.validationWindow{
-  width:min(86vw,430px)!important;
-  max-width:430px!important;
-  border:1px solid rgba(105,236,255,.82)!important;
-  border-radius:0!important;
-  background:
-    radial-gradient(circle at 50% -8%,rgba(105,236,255,.16),transparent 32%),
-    linear-gradient(180deg,rgba(10,63,108,.985),rgba(5,39,72,.99))!important;
-  color:var(--msg-text)!important;
-  box-shadow:0 0 32px rgba(63,207,255,.22),inset 0 0 42px rgba(77,194,255,.08)!important;
-  padding:28px 22px 24px!important;
-  text-align:center!important;
+<!-- ===== SIRIUS v2.23.01 // DAILY QUEST INTERACTION + ORIENTATION HUD ===== -->
+<style id="sirius-v2301-daily-quest-style">
+/* ORIENTAÇÃO DE QUEST — estética vertical cinematográfica, sem copiar a referência literalmente. */
+#view-missions .s99DailyQuest{
   position:relative!important;
-  overflow:hidden!important;
-}
-.systemWindow::before,.systemWindow::after,
-.s2302ModalCard::before,.s2302ModalCard::after,
-.validationWindow::before,.validationWindow::after{
-  content:""!important;position:absolute!important;pointer-events:none!important;z-index:0!important
-}
-.systemWindow::before,.s2302ModalCard::before,.validationWindow::before{
-  inset:9px!important;
-  border-left:2px solid rgba(105,236,255,.72)!important;
-  border-right:2px solid rgba(105,236,255,.72)!important;
+  margin:0 0 14px!important;
+  padding:18px 16px 16px!important;
+  border:1px solid #3ddcff!important;
   background:
-    linear-gradient(#69ecff,#69ecff) left top/42px 2px no-repeat,
-    linear-gradient(#69ecff,#69ecff) right top/42px 2px no-repeat,
-    linear-gradient(#69ecff,#69ecff) left bottom/42px 2px no-repeat,
-    linear-gradient(#69ecff,#69ecff) right bottom/42px 2px no-repeat!important;
-  opacity:.82!important
+    radial-gradient(circle at 50% 0%,rgba(47,139,211,.16),transparent 31%),
+    linear-gradient(180deg,#07182b 0%,#061426 52%,#05111f 100%)!important;
+  box-shadow:0 0 28px rgba(54,211,255,.12),inset 0 0 34px rgba(55,190,255,.055)!important;
+  overflow:visible!important;
+  isolation:isolate!important;
 }
-.systemWindow::after,.s2302ModalCard::after,.validationWindow::after{
-  left:50%!important;top:9px!important;transform:translateX(-50%)!important;
-  width:112px!important;height:26px!important;
-  background:linear-gradient(90deg,transparent,#69ecff 18%,#69ecff 82%,transparent) center bottom/100% 1px no-repeat!important;
-  opacity:.78!important
+#view-missions .s99DailyQuest::before{
+  content:""!important;position:absolute!important;left:42px!important;right:42px!important;top:0!important;height:2px!important;
+  background:linear-gradient(90deg,transparent,#66ebff 24%,#66ebff 76%,transparent)!important;
+  box-shadow:0 0 12px #5ee8ff!important;pointer-events:none!important;
 }
-.systemWindow>* ,.s2302ModalCard>* ,.validationWindow>*{position:relative!important;z-index:2!important}
+#view-missions .s99DailyQuest::after{
+  content:"";position:absolute;inset:7px;z-index:-1;pointer-events:none;
+  border:1px solid rgba(81,197,244,.20);
+  clip-path:polygon(0 18px,18px 18px,18px 0,calc(100% - 18px) 0,calc(100% - 18px) 18px,100% 18px,100% calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,18px calc(100% - 18px),0 calc(100% - 18px));
+}
+#view-missions .s99DQTop{display:block!important;text-align:center!important;padding:0 6px!important}
+#view-missions .s99DQKicker{
+  display:inline-block!important;position:relative!important;margin:0 auto 15px!important;padding:7px 18px!important;
+  color:#e7f8ff!important;font-size:8.2px!important;letter-spacing:1.25px!important;font-weight:1000!important;
+  border-top:1px solid #2d779d!important;border-bottom:1px solid #2d779d!important;text-shadow:0 0 10px #7aeaff55!important;
+}
+#view-missions .s99DQKicker::before{content:"!";display:inline-grid;place-items:center;width:17px;height:17px;margin-right:7px;border:1px solid #ff6570;border-radius:50%;color:#ff7c82;vertical-align:-1px;font-size:10px;box-shadow:0 0 10px #ff657033}
+#view-missions .s99DQTitle{margin:0 auto!important;max-width:94%!important;font-size:15px!important;line-height:1.22!important;letter-spacing:.15px!important;color:#f6fbff!important;text-transform:uppercase!important}
+#view-missions .s99DQSub{margin-top:7px!important;color:#7e9fbe!important;font-size:6.6px!important;letter-spacing:.35px!important}
+#view-missions .s99DQState{position:absolute!important;right:15px!important;top:14px!important;padding:5px 7px!important;font-size:5.3px!important;border-color:#3c86a9!important;background:#061421!important;color:#9bdff8!important}
+#view-missions .s99DQObjectives{margin-top:18px!important;padding-top:13px!important;border-top:1px solid rgba(57,139,180,.36)!important}
+#view-missions .s99DQObjectivesTitle{font-size:10px!important;letter-spacing:1.5px!important;color:#67ff72!important;margin-bottom:12px!important;text-shadow:0 0 10px #55ff7750!important}
+#view-missions .s99DQRow{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 68px 68px!important;gap:7px!important;align-items:center!important;
+  min-height:48px!important;padding:5px 0!important;border-bottom:1px solid rgba(59,138,181,.15)!important;
+}
+#view-missions .s99DQObj{font-size:8.2px!important;line-height:1.35!important;font-weight:1000!important;color:#f1f7ff!important;letter-spacing:.05px!important}
+#view-missions .s99DQObj.done{color:#72f3a2!important}
+#view-missions .s99DQCount{font-size:9.2px!important;color:#dcecff!important;font-weight:1000!important;letter-spacing:.2px!important}
+#view-missions .s99DQRow button{
+  min-height:34px!important;border:1px solid #3a88b5!important;background:linear-gradient(180deg,#0a2036,#071726)!important;
+  color:#dff8ff!important;font-size:5.8px!important;font-weight:1000!important;letter-spacing:.75px!important;padding:6px 4px!important;
+  box-shadow:inset 0 0 12px rgba(61,202,255,.04)!important;touch-action:manipulation!important;
+}
+#view-missions .s99DQRow button:active{transform:scale(.97)!important;background:#0c2b48!important;border-color:#5fe5ff!important}
+#view-missions .s99DQProgress{margin-top:12px!important;height:5px!important;border-color:#23516f!important;background:#06101b!important}
+#view-missions .s99DQFooter{margin-top:12px!important}
+#view-missions .s99DQReward{font-size:6.4px!important;line-height:1.55!important}
+#view-missions .s99DQClaim{min-height:41px!important}
+#view-missions .s99DQAdjust{margin-top:10px!important;min-height:42px!important;background:#061522!important;border-color:#2d6f97!important}
+#view-missions .s99DQWarning{
+  margin:14px -2px 0!important;padding:13px 8px 4px!important;border-top:1px solid rgba(206,61,75,.28)!important;
+  text-align:center!important;font-size:7px!important;line-height:1.55!important;color:#cbd8e5!important;font-weight:800!important;
+}
+#view-missions .s99DQWarning b{display:block!important;margin-bottom:4px!important;color:#ff4f58!important;font-size:12px!important;letter-spacing:.4px!important;text-shadow:0 0 10px #ff4f5845!important}
 
-/* Cabeçalho no padrão da imagem de referência. */
-.systemKicker,
-.s2302ModalKicker{
-  margin:1px 0 14px!important;
-  color:#effcff!important;
-  font-family:Impact,"Arial Narrow",sans-serif!important;
-  font-size:0!important;
-  font-weight:500!important;
-  letter-spacing:.7px!important;
-  text-transform:uppercase!important;
-  text-shadow:0 2px 3px #00152c,0 0 9px rgba(255,255,255,.12)!important;
-}
-.systemKicker::after,.s2302ModalKicker::after{
-  content:"✉  MENSAGEM"!important;
-  display:block!important;
-  font-size:25px!important;
-  letter-spacing:.8px!important;
-}
-.systemBig,.s2302ModalTitle,.validationWindow h3{
-  margin:8px 0 10px!important;
-  color:#fff!important;
-  font-family:Impact,"Arial Narrow",sans-serif!important;
-  font-size:24px!important;
-  line-height:1.16!important;
-  letter-spacing:.6px!important;
-  font-weight:500!important;
-  text-transform:uppercase!important;
-  text-shadow:0 2px 3px #00152c,0 0 8px rgba(255,255,255,.08)!important;
-}
-.systemDetail,.s2302ModalText,.validationText{
-  color:var(--msg-text)!important;
-  font-size:14px!important;
-  line-height:1.45!important;
-  font-weight:800!important;
-  letter-spacing:.25px!important;
-  white-space:pre-line!important;
-}
-
-/* Ações no mesmo estilo ACCEPT/RECUSAR da referência. */
-.systemClose,
-.s2302ModalActions button,
-.s2302RewardChoice,
-.validationActions button{
-  min-height:48px!important;
-  border:1px solid rgba(123,245,255,.9)!important;
-  border-radius:0!important;
-  background:linear-gradient(180deg,rgba(36,132,153,.92),rgba(11,82,105,.96))!important;
-  color:#fff!important;
-  box-shadow:0 0 13px rgba(88,232,255,.20),inset 0 0 12px rgba(255,255,255,.04)!important;
-  font-size:11px!important;
-  font-weight:1000!important;
-  letter-spacing:1.4px!important;
-  text-transform:uppercase!important;
-}
-.systemClose{width:min(230px,78%)!important;margin:20px auto 0!important;display:block!important}
-.s2302ModalActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:17px!important}
-.s2302ModalActions:has(> button:only-child){grid-template-columns:1fr!important}
-.s2302ModalActions:has(> button:only-child) button{width:min(230px,100%)!important;justify-self:center!important}
-.s2302ModalActions .primary,.validationActions .primary{background:linear-gradient(180deg,rgba(39,151,173,.98),rgba(13,92,117,.98))!important}
-
-/* Recompensa: continua com 3 escolhas, mas dentro da mesma caixa oficial. */
-.s2302RewardGrid{display:grid!important;gap:9px!important;margin-top:16px!important}
-.s2302RewardChoice{text-align:left!important;padding:11px 13px!important;background:linear-gradient(180deg,rgba(11,67,102,.96),rgba(6,43,73,.98))!important}
-.s2302RewardChoice b{display:block!important;font-size:12px!important;color:#fff!important;letter-spacing:1.2px!important}
-.s2302RewardChoice span{display:block!important;font-size:10px!important;color:#cae4f2!important;line-height:1.35!important;margin-top:4px!important;letter-spacing:.35px!important}
-.s2302Modal input,.validationWindow input,.validationWindow textarea{
-  width:100%!important;background:#04101d!important;color:#fff!important;border:1px solid rgba(105,236,255,.68)!important;border-radius:0!important;padding:11px!important;font-size:16px!important;box-shadow:inset 0 0 12px rgba(68,197,255,.06)!important
-}
-
-/* O painel s62 já era o mais próximo da referência; é fixado como modelo oficial. */
-.s62SystemPanel{width:min(86vw,430px)!important;max-width:430px!important;padding:28px 22px 24px!important}
-.s62Header{font-size:25px!important}.s62HeaderIcon{width:31px!important;height:31px!important;flex-basis:31px!important}
-.s62Actions{gap:12px!important}.s62Actions button{min-height:48px!important;font-size:12px!important}
-
-@media(max-width:390px){
-  .systemWindow,.s62SystemPanel,.s2302ModalCard,.validationWindow{width:min(90vw,390px)!important;padding:24px 17px 20px!important}
-  .systemKicker::after,.s2302ModalKicker::after{font-size:22px!important}
-  .systemBig,.s2302ModalTitle,.validationWindow h3{font-size:21px!important}
-  .systemDetail,.s2302ModalText,.validationText{font-size:12px!important}
-  .s2302RewardChoice b{font-size:10px!important}.s2302RewardChoice span{font-size:9px!important}
+/* Modal nativo do SIRIUS para atualizar progresso: evita dependência de prompt() no iPhone/PWA. */
+#s101DQOverlay{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(1,5,12,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none}
+#s101DQOverlay.show{display:flex;pointer-events:auto}
+#s101DQModal{width:min(92vw,390px);position:relative;border:1px solid #47ddff;background:linear-gradient(180deg,#071a2d,#06111e);padding:18px;box-shadow:0 0 42px rgba(56,210,255,.22),inset 0 0 26px rgba(52,176,255,.06)}
+#s101DQModal::before{content:"";position:absolute;left:20%;right:20%;top:0;height:2px;background:#60ebff;box-shadow:0 0 12px #60ebff}
+.s101DQKicker{text-align:center;color:#72eaff;font-size:7px;font-weight:1000;letter-spacing:1.5px}.s101DQModalTitle{text-align:center;margin-top:9px;color:#f5fbff;font-size:14px;font-weight:1000;line-height:1.25}
+.s101DQModalMeta{text-align:center;margin-top:7px;color:#85a7c5;font-size:7px;line-height:1.45}.s101DQInputLabel{display:block;margin-top:15px;color:#63ff79;font-size:7px;font-weight:1000;letter-spacing:1.1px}
+#s101DQValue{width:100%;margin-top:6px;min-height:48px;border:1px solid #347ca5;background:#040e19;color:#fff;padding:10px 12px;font-size:20px;font-weight:1000;text-align:center;outline:none;-webkit-appearance:none;border-radius:0}
+#s101DQValue:focus{border-color:#66e8ff;box-shadow:0 0 14px rgba(76,219,255,.18)}
+.s101DQActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.s101DQActions button{min-height:42px;border:1px solid #34749a;background:#071725;color:#c7e3f5;font-size:7px;font-weight:1000;letter-spacing:.9px;touch-action:manipulation}
+.s101DQActions .primary{border-color:#50dfff;background:linear-gradient(180deg,#1289dc,#07538f);color:#fff}.s101DQHint{text-align:center;margin-top:10px;color:#6f8da8;font-size:6px;line-height:1.45}
+@media(max-width:430px){
+  #view-missions .s99DailyQuest{padding:16px 12px 14px!important}
+  #view-missions .s99DQState{position:static!important;display:inline-block!important;margin-top:9px!important}
+  #view-missions .s99DQRow{grid-template-columns:minmax(0,1fr) 58px 62px!important;gap:5px!important}
+  #view-missions .s99DQObj{font-size:7.2px!important}#view-missions .s99DQCount{font-size:8px!important}
 }
 </style>
-<script id="sirius-v22305-version">
+<div id="s101DQOverlay" aria-hidden="true">
+  <div id="s101DQModal" role="dialog" aria-modal="true" aria-labelledby="s101DQModalTitle">
+    <div class="s101DQKicker">[ SIRIUS // ATUALIZAÇÃO DE OBJETIVO ]</div>
+    <div id="s101DQModalTitle" class="s101DQModalTitle">OBJETIVO</div>
+    <div id="s101DQModalMeta" class="s101DQModalMeta"></div>
+    <label class="s101DQInputLabel" for="s101DQValue">TOTAL CONCLUÍDO ATÉ AGORA</label>
+    <input id="s101DQValue" type="number" inputmode="numeric" min="0" max="999" step="1" autocomplete="off">
+    <div class="s101DQActions"><button type="button" data-s101-cancel>CANCELAR</button><button type="button" class="primary" data-s101-save>SALVAR PROGRESSO</button></div>
+    <div class="s101DQHint">O valor salvo substitui o progresso atual deste objetivo.</div>
+  </div>
+</div>
+<script id="sirius-v2301-daily-quest-script">
 (function(){
-  const VERSION='v2.23.05';
+  'use strict';
+  const VERSION='v2.23.01';
+  let currentKey=null,lastTouch=0;
+  const overlay=document.getElementById('s101DQOverlay');
+  const title=document.getElementById('s101DQModalTitle');
+  const meta=document.getElementById('s101DQModalMeta');
+  const input=document.getElementById('s101DQValue');
+
+  function quest(){return (typeof data==='object'&&data)?data.s99DailyQuest:null}
+  function closeEditor(){currentKey=null;overlay?.classList.remove('show');overlay?.setAttribute('aria-hidden','true');if(input)input.blur()}
+  function openEditor(key){
+    const q=quest(),o=q?.objectives?.[key];if(!q||!o||q.claimed)return;
+    currentKey=key;
+    if(title)title.textContent=o.label||'OBJETIVO';
+    if(meta)meta.textContent=`META DE HOJE // ${Number(o.target)||0} ${o.unit||''}`;
+    if(input)input.value=String(Number(o.value)||0);
+    overlay?.classList.add('show');overlay?.setAttribute('aria-hidden','false');
+    setTimeout(()=>{try{input?.focus({preventScroll:true});input?.select()}catch(e){input?.focus()}},80);
+  }
+  function saveEditor(){
+    const q=quest(),o=q?.objectives?.[currentKey];if(!q||!o||q.claimed){closeEditor();return}
+    const parsed=Number(String(input?.value??'0').replace(',','.'));
+    const value=Math.max(0,Math.min(999,Math.round(Number.isFinite(parsed)?parsed:0)));
+    const savedKey=currentKey;
+    o.value=value;o.updatedAt=new Date().toISOString();
+    try{if(typeof save==='function')save();else if(typeof STORAGE_KEY!=='undefined')localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){console.error('SIRIUS daily save',e)}
+    closeEditor();
+    /* A renderização original continua sendo a fonte de verdade visual. */
+    try{window.refreshDashboard?.()}catch(e){}
+    const host=document.getElementById('s99DailyQuestHost');
+    if(host){
+      const map={pushups:0,abs:1,squats:2,cardio:3};
+      const rows=host.querySelectorAll('.s99DQRow');
+      const row=rows[map[savedKey]??-1];
+      if(row){const c=row.querySelector('.s99DQCount');if(c)c.textContent=`${value}/${Number(o.target)||0} ${o.unit||''}`}
+    }
+    /* Força a rotina legada a redesenhar sem depender do prompt. */
+    try{document.dispatchEvent(new Event('visibilitychange'))}catch(e){}
+    setTimeout(()=>{
+      const buttons=document.querySelectorAll('#s99DailyQuestHost [data-s99-dq]');
+      buttons.forEach(b=>{b.type='button';b.style.pointerEvents='auto'});
+    },30);
+  }
+
+  /* Captura antes do listener legado instalado em #view-missions. */
+  document.addEventListener('touchend',function(ev){
+    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
+    lastTouch=Date.now();ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
+  },{passive:false,capture:true});
+  document.addEventListener('click',function(ev){
+    const btn=ev.target?.closest?.('#view-missions [data-s99-dq]');if(!btn)return;
+    if(Date.now()-lastTouch<700){ev.preventDefault();ev.stopImmediatePropagation();return}
+    ev.preventDefault();ev.stopImmediatePropagation();openEditor(btn.dataset.s99Dq);
+  },true);
+
+  overlay?.addEventListener('touchend',function(ev){
+    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(!b)return;
+    ev.preventDefault();ev.stopPropagation();lastTouch=Date.now();b.hasAttribute('data-s101-save')?saveEditor():closeEditor();
+  },{passive:false});
+  overlay?.addEventListener('click',function(ev){
+    if(Date.now()-lastTouch<650){ev.preventDefault();return}
+    const b=ev.target?.closest?.('[data-s101-cancel],[data-s101-save]');if(b){b.hasAttribute('data-s101-save')?saveEditor():closeEditor();return}
+    if(ev.target===overlay)closeEditor();
+  });
+  input?.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveEditor()}else if(ev.key==='Escape')closeEditor()});
+
   function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  mark();setTimeout(mark,250);setTimeout(mark,1500);
+  mark();setTimeout(mark,250);setTimeout(mark,1200);
   try{
     data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
-      if(typeof addSystemLog==='function')addSystemLog('version','VERSÃO INSTALADA: '+VERSION+' // ABA MAIS COMPACTA + PADRÃO ÚNICO DE CAIXAS DE MENSAGEM.');
-      if(typeof save==='function')save(); else if(typeof STORAGE_KEY==='string')localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-    }
-  }catch(e){console.warn('SIRIUS '+VERSION,e)}
+    const msg=`VERSÃO INSTALADA: ${VERSION} // DAILY QUEST COM ATUALIZAÇÃO TÁTIL E ORIENTAÇÃO VISUAL REFINADA.`;
+    if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){if(typeof addSystemLog==='function')addSystemLog('version',msg);if(typeof save==='function')save()}
+  }catch(e){}
 })();
 </script>
 
 
-
-<!-- ===== SIRIUS v2.23.06 // TEST LAB TOUCH FIX + DARK CONTROLS ===== -->
-<style id="sirius-v22306-test-lab-fix">
-/* Remove o preenchimento azul-claro residual do laboratório. */
-#s62TestControls{
-  position:relative!important;
-  z-index:8!important;
-  isolation:isolate!important;
-  background:linear-gradient(180deg,#04101d,#020914)!important;
-  border:1px solid #214f72!important;
-  box-shadow:inset 0 0 18px rgba(52,190,255,.035)!important;
-}
-#s62TestControls .s62TestControlsGrid{
-  position:relative!important;
-  z-index:10!important;
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:8px!important;
-  pointer-events:auto!important;
-}
-#s62TestControls .s62TestControlsGrid button,
-#s62TestControls .s62TestControlsGrid button:disabled,
-body.s64-test-active #s62TestControls .s62TestControlsGrid button{
-  -webkit-appearance:none!important;
-  appearance:none!important;
-  position:relative!important;
-  z-index:20!important;
-  min-height:52px!important;
-  opacity:1!important;
-  filter:none!important;
-  pointer-events:auto!important;
-  touch-action:manipulation!important;
-  -webkit-tap-highlight-color:rgba(76,213,255,.12)!important;
-  border:1px solid #2a638b!important;
-  border-radius:0!important;
-  background:linear-gradient(180deg,#061522,#03101b)!important;
-  color:#b9cad6!important;
-  box-shadow:inset 0 0 14px rgba(57,193,255,.025)!important;
-  font-size:9px!important;
-  font-weight:950!important;
-  letter-spacing:1.3px!important;
-  cursor:pointer!important;
-}
-#s62TestControls .s62TestControlsGrid button.s86-needs-test{opacity:.78!important}
-#s62TestControls .s62TestControlsGrid button:active{
-  background:#082033!important;
-  border-color:#55dfff!important;
-  color:#fff!important;
-}
-#s62TestControls .s62TestControlsTitle,
-#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important}
-#s62TestControls::before,#s62TestControls::after{pointer-events:none!important}
-</style>
-<script id="sirius-v22306-test-lab-script">
+<!-- ===== SIRIUS v2.23.02 // BIBLIOTECA EPUB COMPATIBILIDADE ===== -->
+<script id="sirius-v22302-library-repair">
 (function(){
-  const VERSION='v2.23.06';
-  const mapByText={
-    'ORIENTAÇÃO DE QUEST':'s62TestQuestOrientation',
-    'MENSAGEM':'s62TestMessage',
-    'AVISO DO SISTEMA':'s62TestNoticeGrowth',
-    'RECOMPENSA':'s62TestRewards',
-    'QUEST SECRETA':'s62TestSecret',
-    'RECUPERAÇÃO':'s62TestPenaltyZone',
-    'PENALIDADE':'s62TestNoticePenalty',
-    'TEMPORIZADOR':'s62TestRewardsTimer'
-  };
-  function isTest(){try{return typeof window.s62IsTestMode==='function'&&window.s62IsTestMode()}catch(e){return false}}
-  function showNeedTest(){
-    if(typeof window.s62ShowSystemPanel==='function'){
-      window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]});
-    }else if(typeof window.showToast==='function')window.showToast('ATIVE O MODO DE TESTE');
+  "use strict";
+  const PATCH_VERSION="v2.23.02";
+  const previousOpenKnowledgeMaterial=window.openKnowledgeMaterial;
+  const previousOpenLocalEpubReader=window.openLocalEpubReader;
+
+  function sourceById(id){
+    return (data?.knowledgeArchive?.sources||[]).find(x=>x&&x.id===id)||null;
   }
-  function ensureEventCenter(){
-    if(typeof data==='undefined')return null;
-    data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};
-    data.eventCenter.messages=Array.isArray(data.eventCenter.messages)?data.eventCenter.messages:[];
-    data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];
-    data.eventCenter.recoveries=Array.isArray(data.eventCenter.recoveries)?data.eventCenter.recoveries:[];
-    data.eventCenter.timers=Array.isArray(data.eventCenter.timers)?data.eventCenter.timers:[];
-    return data.eventCenter;
+  function normalizedFileName(value){
+    return String(value||"").trim().toLowerCase().replace(/\s+/g," ");
   }
-  function runSpecial(id){
-    if(id==='s66TestInbox'){
-      window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');
-      window.s66OpenEventCenter?.();
-      return true;
-    }
-    if(id==='s66TestReward'){
-      const ec=ensureEventCenter();if(!ec)return true;
-      const rid='reward_test_'+Date.now();
-      ec.rewards.unshift({id:rid,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});
-      window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:rid});
-      window.s66OpenEventCenter?.();
-      return true;
-    }
-    if(id==='s66TestTimer'){
-      if(typeof data!=='undefined'){
-        data.missions=Array.isArray(data.missions)?data.missions:[];
-        let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);
-        if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}
-        window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');
-        window.s66OpenEventCenter?.();
-      }
-      return true;
-    }
-    if(id==='s66TestRecovery'){
-      window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório');
-      return true;
-    }
-    return false;
+  function baseName(value){
+    return normalizedFileName(value).replace(/\.epub$/i,"");
   }
-  function resolveButton(btn){
-    if(!btn)return null;
-    if(runSpecial.bind && /^s66Test/.test(btn.id||''))return {special:btn.id};
-    const label=String(btn.textContent||'').trim().toUpperCase();
-    const fn=mapByText[label];
-    return fn?{fn}:null;
-  }
-  function execute(btn){
-    if(!isTest()){showNeedTest();return}
-    const action=resolveButton(btn);if(!action)return;
-    if(action.special){runSpecial(action.special);return}
-    const fn=window[action.fn];if(typeof fn==='function')fn();
-  }
-  function arm(){
-    const box=document.getElementById('s62TestControls');if(!box)return;
-    const buttons=box.querySelectorAll('.s62TestControlsGrid button');
-    buttons.forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.style.pointerEvents='auto';b.onclick=null});
-    if(box.dataset.s2306Wired==='1')return;
-    box.dataset.s2306Wired='1';
-    let last=0;
-    const handler=function(ev){
-      const b=ev.target&&ev.target.closest?ev.target.closest('#s62TestControls .s62TestControlsGrid button'):null;
-      if(!b||!box.contains(b))return;
-      const now=Date.now();if(now-last<420){ev.preventDefault();ev.stopImmediatePropagation();return}
-      last=now;ev.preventDefault();ev.stopImmediatePropagation();execute(b);
-    };
-    box.addEventListener('pointerup',handler,true);
-    box.addEventListener('click',handler,true);
-  }
-  function init(){arm();setTimeout(arm,250);setTimeout(arm,900)}
-  const prevRefresh=window.refreshDashboard;
-  window.refreshDashboard=function(){const r=typeof prevRefresh==='function'?prevRefresh.apply(this,arguments):undefined;setTimeout(arm,20);return r};
-  const prevToggle=window.toggleSiriusTestMode;
-  window.toggleSiriusTestMode=function(){const r=typeof prevToggle==='function'?prevToggle.apply(this,arguments):undefined;setTimeout(arm,30);return r};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-  window.addEventListener('load',()=>setTimeout(arm,150),{once:true});
-  const mark=()=>document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
-  mark();setTimeout(mark,300);setTimeout(mark,1400);
-})();
-</script>
-
-
-<!-- ===== SIRIUS v2.23.07 // TEST LAB FINAL FIX ===== -->
-<style id="sirius-v22307-test-lab-final-style">
-#s62TestControls{position:relative!important;isolation:isolate!important;overflow:visible!important;background:#020914!important;background-image:none!important;border:1px solid #214f72!important;box-shadow:inset 0 0 14px rgba(37,145,205,.035)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#s62TestControls::before,#s62TestControls::after,#s62TestControls .s62TestControlsGrid::before,#s62TestControls .s62TestControlsGrid::after,#s62TestControls .s62TestNotice::before,#s62TestControls .s62TestNotice::after,#s62TestControls .s62TestControlsGrid button::before,#s62TestControls .s62TestControlsGrid button::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important}
-#s62TestControls .s62TestControlsGrid{position:relative!important;z-index:50!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;background:transparent!important;background-image:none!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#s62TestControls .s62TestControlsTitle,#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important;background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#s62TestControls .s62TestControlsGrid button{-webkit-appearance:none!important;appearance:none!important;position:relative!important;z-index:100!important;min-height:52px!important;opacity:1!important;filter:none!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-user-select:none!important;user-select:none!important;-webkit-tap-highlight-color:rgba(76,213,255,.12)!important;border:1px solid #2a638b!important;border-radius:0!important;background:linear-gradient(180deg,#061522,#03101b)!important;color:#b9cad6!important;box-shadow:inset 0 0 14px rgba(57,193,255,.025)!important;font-size:9px!important;font-weight:950!important;letter-spacing:1.3px!important;cursor:pointer!important}
-#s62TestControls .s62TestControlsGrid button:active{background:#082033!important;border-color:#55dfff!important;color:#fff!important}
-#s2302DailyHost,.s2302Quest,.s2302Objective,.s2302ObjRight,.s2302Update,.s2302Complete,[data-s2302-update],[data-s2302-complete]{pointer-events:auto!important}.s2302Update,[data-s2302-update]{position:relative!important;z-index:25!important;touch-action:manipulation!important}
-</style>
-<script id="sirius-v22307-test-lab-final-script">
-(function(){
-const VERSION='v2.23.07';let lastTap=0;
-function isTest(){try{return typeof window.s62IsTestMode==='function'&&!!window.s62IsTestMode()}catch(e){return false}}
-function need(){if(window.s62ShowSystemPanel)window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]});else window.showToast?.('ATIVE O MODO DE TESTE')}
-function activated(){if(window.s62ShowSystemPanel)window.s62ShowSystemPanel({type:'notice',title:'TESTE ATIVADO',body:'<span class="green">TESTE ATIVADO.</span>',actions:[{label:'CONTINUAR'}]});else window.showSystemEvent?.('TESTE ATIVADO','Modo de teste ativo.')}
-function ec(){if(typeof data==='undefined')return null;data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};['messages','rewards','recoveries','timers'].forEach(k=>data.eventCenter[k]=Array.isArray(data.eventCenter[k])?data.eventCenter[k]:[]);return data.eventCenter}
-function special(a){if(a==='inbox'){window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');window.s66OpenEventCenter?.();return}if(a==='rewardPending'){const x=ec();if(!x)return;const id='reward_test_'+Date.now();x.rewards.unshift({id,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:id});window.s66OpenEventCenter?.();return}if(a==='timerReal'){data.missions=Array.isArray(data.missions)?data.missions:[];let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');window.s66OpenEventCenter?.();return}if(a==='recoveryEvent')window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório')}
-const acts={orientation:()=>window.s62TestQuestOrientation?.(),message:()=>window.s62TestMessage?.(),notice:()=>window.s62TestNoticeGrowth?.(),reward:()=>window.s62TestRewards?.(),secret:()=>window.s62TestSecret?.(),recovery:()=>window.s62TestPenaltyZone?.(),penalty:()=>window.s62TestNoticePenalty?.(),timer:()=>window.s62TestRewardsTimer?.(),inbox:()=>special('inbox'),rewardPending:()=>special('rewardPending'),timerReal:()=>special('timerReal'),recoveryEvent:()=>special('recoveryEvent')};
-function rebuild(){const g=document.querySelector('#s62TestControls .s62TestControlsGrid');if(!g)return;if(g.dataset.s2307Built!=='1'){g.innerHTML=`<button type="button" data-s2307-action="orientation">ORIENTAÇÃO DE QUEST</button><button type="button" data-s2307-action="message">MENSAGEM</button><button type="button" data-s2307-action="notice">AVISO DO SISTEMA</button><button type="button" data-s2307-action="reward">RECOMPENSA</button><button type="button" data-s2307-action="secret">QUEST SECRETA</button><button type="button" data-s2307-action="recovery">RECUPERAÇÃO</button><button type="button" data-s2307-action="penalty">PENALIDADE</button><button type="button" data-s2307-action="timer">TEMPORIZADOR</button><button type="button" id="s66TestInbox" data-s2307-action="inbox">CENTRAL / MENSAGEM</button><button type="button" id="s66TestReward" data-s2307-action="rewardPending">RECOMPENSA PENDENTE</button><button type="button" id="s66TestTimer" data-s2307-action="timerReal">TEMPORIZADOR REAL</button><button type="button" id="s66TestRecovery" data-s2307-action="recoveryEvent">RECUPERAÇÃO</button>`;g.dataset.s2307Built='1'}g.querySelectorAll('button').forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.style.pointerEvents='auto'})}
-function tap(ev){const b=ev.target?.closest?.('#s62TestControls [data-s2307-action]');if(!b)return;const n=Date.now();if(ev.type==='click'&&n-lastTap<650){ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();return}lastTap=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();if(!isTest()){need();return}acts[b.dataset.s2307Action]?.()}
-document.addEventListener('touchend',tap,{capture:true,passive:false});document.addEventListener('pointerup',e=>{if(e.pointerType!=='touch')tap(e)},true);document.addEventListener('click',tap,true);
-const prev=window.toggleSiriusTestMode;if(typeof prev==='function'&&!prev.__s2307Wrapped){const w=function(){const was=isTest(),r=prev.apply(this,arguments),now=isTest();rebuild();if(!was&&now)activated();return r};w.__s2307Wrapped=true;window.toggleSiriusTestMode=w}
-function init(){rebuild();document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();window.addEventListener('load',()=>setTimeout(init,80),{once:true});[250,900,1800,3200].forEach(ms=>setTimeout(init,ms));
-try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // LABORATÓRIO: TOQUE RESTAURADO, FAIXA AZUL REMOVIDA E ATIVAÇÃO SEM DISPARO DE MISSÕES.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){console.warn('SIRIUS '+VERSION,e)}
-})();
-</script>
-
-
-<!-- ===== SIRIUS v2.23.08 // TOUCH LAYER + MESSAGE STANDARD AUDIT ===== -->
-<style id="sirius-v22308-final-fixes-style">
-/* LABORATÓRIO: remove qualquer camada visual residual e mantém a grade como camada interativa superior. */
-#s62TestControls{position:relative!important;isolation:auto!important;overflow:hidden!important;background:#020914!important;background-image:none!important;box-shadow:inset 0 0 14px rgba(37,145,205,.035)!important}
-#s62TestControls>*:not(.s62TestControlsTitle):not(.s62TestControlsGrid):not(.s62TestNotice){display:none!important}
-#s62TestControls .s62TestControlsTitle,#s62TestControls .s62TestNotice{position:relative!important;z-index:2!important;background:transparent!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#s62TestControls .s62TestControlsGrid{position:relative!important;z-index:2147483000!important;isolation:isolate!important;overflow:visible!important;background:#020914!important;background-image:none!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#s62TestControls .s62TestControlsGrid::before,#s62TestControls .s62TestControlsGrid::after,#s62TestControls::before,#s62TestControls::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important}
-#s62TestControls .s62TestControlsGrid button{position:relative!important;z-index:2147483001!important;pointer-events:auto!important;touch-action:manipulation!important;opacity:1!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transform:none!important}
-
-/* CENTRAL: elimina a arte que estava parecendo um contador/ícone corrompido e reposiciona o badge. */
-#moreSheet #s66EventsCard::before{display:none!important;background-image:none!important}
-#moreSheet #s66EventsCard .s94CardInner{background:radial-gradient(circle at 50% 30%,rgba(47,208,255,.10),transparent 50%)!important}
-#moreSheet #s66EventsCard svg{display:block!important;opacity:1!important;visibility:visible!important;width:26px!important;height:26px!important;stroke:#64e6ff!important;filter:drop-shadow(0 0 5px rgba(70,220,255,.42))!important;transform:none!important}
-#moreSheet #s66EventsCard .s67InnerBadge{left:auto!important;right:5px!important;top:5px!important;bottom:auto!important;transform:none!important;z-index:50!important;min-width:16px!important;height:16px!important;padding:0 4px!important;font-size:6.5px!important;line-height:16px!important}
-
-/* PADRÃO OFICIAL DE MENSAGEM: s62 e o fluxo legado de quest secreta usam a mesma linguagem visual. */
-#s62SystemOverlay,#s61EventOverlay{background:rgba(1,5,12,.91)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
-#s62SystemPanel,#s61EventOverlay .s61EventPanel{border:1px solid #4fd8ff!important;background:linear-gradient(180deg,rgba(5,27,49,.98),rgba(2,12,24,.99))!important;box-shadow:0 0 0 1px rgba(91,224,255,.10) inset,0 0 34px rgba(22,177,255,.18)!important;color:#edfaff!important}
-#s61EventOverlay .s61EventKicker{font-size:0!important;color:#e9faff!important}
-#s61EventOverlay .s61EventKicker::after{content:"✉  MENSAGEM"!important;font-size:12px!important;letter-spacing:2.4px!important;color:#e9faff!important}
-#s61EventOverlay .s61EventTitle{color:#fff!important;text-shadow:0 0 13px rgba(91,224,255,.24)!important}
-#s61EventOverlay .s61EventActions button,#s62SystemActions button{pointer-events:auto!important;touch-action:manipulation!important;position:relative!important;z-index:60!important;min-height:48px!important;border:1px solid #55dfff!important;background:linear-gradient(180deg,#0a3355,#061c32)!important;color:#f4fbff!important;box-shadow:inset 0 0 14px rgba(68,211,255,.07),0 0 12px rgba(35,172,255,.08)!important}
-#s61EventOverlay .s61EventActions button.reject{border-color:#55758e!important;background:#091521!important;color:#d4e2ec!important}
-#s62SystemPanel::before,#s62SystemPanel::after,#s61EventOverlay .s61EventPanel::before,#s61EventOverlay .s61EventPanel::after{pointer-events:none!important}
-
-/* DAILY QUEST: mantém os controles sempre na camada de toque. */
-#s2302DailyHost,.s2302Quest,.s2302Objective,.s2302ObjRight{position:relative!important;pointer-events:auto!important}
-.s2302Update,[data-s2302-update]{position:relative!important;z-index:2147482000!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(85,223,255,.16)!important}
-</style>
-<script id="sirius-v22308-final-fixes-script">
-(function(){
-  const VERSION='v2.23.08';
-  const TEST_ACTIONS={
-    orientation:()=>window.s62TestQuestOrientation?.(),
-    message:()=>window.s62TestMessage?.(),
-    notice:()=>window.s62TestNoticeGrowth?.(),
-    reward:()=>window.s62TestRewards?.(),
-    secret:()=>window.s62TestSecret?.(),
-    recovery:()=>window.s62TestPenaltyZone?.(),
-    penalty:()=>window.s62TestNoticePenalty?.(),
-    timer:()=>window.s62TestRewardsTimer?.(),
-    inbox:()=>{window.s66AddSystemMessage?.('message','MENSAGEM DO SISTEMA','Evento de teste registrado na Central.');window.s66OpenEventCenter?.()},
-    rewardPending:()=>{try{data.eventCenter=data.eventCenter&&typeof data.eventCenter==='object'?data.eventCenter:{};data.eventCenter.rewards=Array.isArray(data.eventCenter.rewards)?data.eventCenter.rewards:[];const id='reward_test_'+Date.now();data.eventCenter.rewards.unshift({id,mission:'MISSÃO DE TESTE',xp:50,pd:5,attr:'Disciplina',source:'test',at:new Date().toISOString(),claimed:false});window.s66AddSystemMessage?.('reward','RECOMPENSA DISPONÍVEL','MISSÃO DE TESTE // 50 XP + 5 PD Disciplina',{rewardId:id});window.s66OpenEventCenter?.()}catch(e){console.warn(e)}},
-    timerReal:()=>{try{data.missions=Array.isArray(data.missions)?data.missions:[];let i=data.missions.findIndex(m=>m.name==='MISSÃO TEMPORIZADA DE TESTE'&&!m.done);if(i<0){data.missions.push({name:'MISSÃO TEMPORIZADA DE TESTE',desc:'Teste do temporizador.',xp:20,pd:2,attr:'Disciplina',validation:'action',done:false});i=data.missions.length-1}window.s66StartMissionTimer?.(i,2,'TESTE // 2 MINUTOS');window.s66OpenEventCenter?.()}catch(e){console.warn(e)}},
-    recoveryEvent:()=>window.s66CreateRecoveryMission?.({name:'MISSÃO SIMULADA',xp:20,pd:4,attr:'Disciplina'},'Falha simulada no laboratório')
-  };
-  function isTest(){try{return typeof window.s62IsTestMode==='function'&&!!window.s62IsTestMode()}catch(e){return false}}
-  function needTest(){window.s62ShowSystemPanel?.({type:'message',title:'MENSAGEM',icon:'✉',body:'ATIVE O MODO DE TESTE PARA EXECUTAR ESTA SIMULAÇÃO.',actions:[{label:'CONTINUAR'}]})}
-  function rebuildLab(){
-    const box=document.getElementById('s62TestControls'),g=box?.querySelector('.s62TestControlsGrid');if(!box||!g)return;
-    g.innerHTML=`<button type="button" data-s2308-action="orientation">ORIENTAÇÃO DE QUEST</button><button type="button" data-s2308-action="message">MENSAGEM</button><button type="button" data-s2308-action="notice">AVISO DO SISTEMA</button><button type="button" data-s2308-action="reward">RECOMPENSA</button><button type="button" data-s2308-action="secret">QUEST SECRETA</button><button type="button" data-s2308-action="recovery">RECUPERAÇÃO</button><button type="button" data-s2308-action="penalty">PENALIDADE</button><button type="button" data-s2308-action="timer">TEMPORIZADOR</button><button type="button" id="s66TestInbox" data-s2308-action="inbox">CENTRAL / MENSAGEM</button><button type="button" id="s66TestReward" data-s2308-action="rewardPending">RECOMPENSA PENDENTE</button><button type="button" id="s66TestTimer" data-s2308-action="timerReal">TEMPORIZADOR REAL</button><button type="button" id="s66TestRecovery" data-s2308-action="recoveryEvent">RECUPERAÇÃO</button>`;
-    g.querySelectorAll('button').forEach(b=>{b.disabled=false;b.removeAttribute('disabled');b.onclick=null;b.style.pointerEvents='auto'});
-    [...box.children].forEach(el=>{if(!el.classList.contains('s62TestControlsTitle')&&!el.classList.contains('s62TestControlsGrid')&&!el.classList.contains('s62TestNotice'))el.remove()});
-  }
-  let lastLab=0;
-  function runLabButton(btn,ev){if(!btn)return false;const n=Date.now();if(n-lastLab<380)return true;lastLab=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();if(!isTest()){needTest();return true}TEST_ACTIONS[btn.dataset.s2308Action]?.();return true}
-  function labCapture(ev){
-    const box=document.getElementById('s62TestControls');
-    const btn=ev.target?.closest?.('#s62TestControls [data-s2308-action]');
-    if(!box||!btn||!box.contains(btn))return;
-    runLabButton(btn,ev);
-  }
-  function wireLabLocally(){
-    const box=document.getElementById('s62TestControls');if(!box||box.dataset.s2310LocalWired==='1')return;
-    box.dataset.s2310LocalWired='1';
-    box.addEventListener('pointerup',labCapture,true);
-    box.addEventListener('touchend',labCapture,{capture:true,passive:false});
-    box.addEventListener('click',labCapture,true);
-  }
-  wireLabLocally();
-
-  /* Reconstrói o componente oficial de mensagem uma única vez, sem listeners antigos acumulados. */
-  let panelActions=[];
-  function installMessagePanel(){
-    const old=document.getElementById('s62SystemOverlay');if(!old)return;
-    const fresh=old.cloneNode(true);old.replaceWith(fresh);
-    const els=()=>({overlay:document.getElementById('s62SystemOverlay'),head:document.getElementById('s62HeaderText'),icon:document.getElementById('s62HeaderIcon'),content:document.getElementById('s62SystemContent'),actions:document.getElementById('s62SystemActions')});
-    function close(){const e=els();e.overlay?.classList.remove('show');e.overlay?.setAttribute('aria-hidden','true')}
-    function run(i){const a=panelActions[i];close();if(a&&typeof a.onClick==='function')setTimeout(()=>{try{a.onClick()}catch(err){console.error('SIRIUS panel action',err)}},80)}
-    window.s62CloseSystemPanel=close;
-    window.s62ShowSystemPanel=function(cfg={}){const e=els();if(!e.overlay)return;e.head.textContent=cfg.title||'MENSAGEM';e.icon.textContent=cfg.icon||(cfg.type==='message'?'✉':'!');e.content.innerHTML=cfg.html||`<div class="s62Body">${cfg.body||''}</div>`;panelActions=Array.isArray(cfg.actions)&&cfg.actions.length?cfg.actions:[{label:'CONTINUAR'}];e.actions.className='s62Actions'+(panelActions.length===1?' one':'');e.actions.innerHTML=panelActions.map((a,i)=>`<button type="button" data-s2308-panel="${i}">${String(a.label||'CONTINUAR').replace(/[<>]/g,'')}</button>`).join('');e.overlay.classList.add('show');e.overlay.setAttribute('aria-hidden','false')};
-    let last=0;function panelTap(ev){const b=ev.target?.closest?.('[data-s2308-panel]');if(b){const n=Date.now();if(n-last<350){ev.preventDefault();ev.stopImmediatePropagation();return}last=n;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();run(Number(b.dataset.s2308Panel));return}if(ev.target?.id==='s62SystemClose'||ev.target===fresh){ev.preventDefault();ev.stopPropagation();close()}}
-    fresh.addEventListener('pointerup',panelTap,true);fresh.addEventListener('touchend',panelTap,{capture:true,passive:false});fresh.addEventListener('click',panelTap,true);
-    window.showSystemEvent=function(title,detail){window.s62ShowSystemPanel({type:'message',title:'MENSAGEM',icon:'✉',html:`<div class="s62MessageStrip"><div class="s62Body small"><div style="font-size:1.14em;margin-bottom:12px">[ ${typeof escapeHtml==='function'?escapeHtml(title):String(title||'')} ]</div><div>${typeof escapeHtml==='function'?escapeHtml(detail):String(detail||'')}</div></div></div>`,actions:[{label:'CONTINUAR'}]})};
-  }
-
-  /* Quest diária usa somente o alvo real do botão ATUALIZAR; sem captura global por coordenadas. */
-
-  /* TESTE ATIVADO: durante a ativação suprime avisos legados; só o painel TESTE ATIVADO passa. */
-  const prevToggle=window.toggleSiriusTestMode;
-  if(typeof prevToggle==='function'&&!prevToggle.__s2308Wrapped){
-    const wrapped=function(){
-      const before=isTest();
-      if(!before){
-        const realPanel=window.s62ShowSystemPanel;
-        window.s62ShowSystemPanel=function(cfg={}){if(String(cfg.title||'').toUpperCase()==='TESTE ATIVADO')return realPanel?.(cfg)};
-        try{return prevToggle.apply(this,arguments)}finally{window.s62ShowSystemPanel=realPanel;rebuildLab()}
-      }
-      const r=prevToggle.apply(this,arguments);rebuildLab();return r;
-    };
-    wrapped.__s2308Wrapped=true;window.toggleSiriusTestMode=wrapped;
-  }
-
-  function fixCentral(){const c=document.getElementById('s66EventsCard');if(!c)return;const badge=c.querySelector('.s67InnerBadge');if(badge){badge.style.left='auto';badge.style.right='5px';badge.style.top='5px';badge.style.transform='none'}}
-  function markVersion(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  function init(){installMessagePanel();rebuildLab();fixCentral();markVersion();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // TOQUE DO LABORATÓRIO REFORÇADO, FAIXA VISUAL REMOVIDA, CENTRAL CORRIGIDA E CAIXAS DE SISTEMA AUDITADAS NO PADRÃO OFICIAL.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){console.warn('SIRIUS '+VERSION,e)}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);window.addEventListener('load',()=>setTimeout(()=>{rebuildLab();fixCentral();markVersion()},220),{once:true});[450,1200,2600,3600,5200].forEach(ms=>setTimeout(()=>{rebuildLab();fixCentral();markVersion()},ms));
-})();
-</script>
-
-
-
-<!-- ===== SIRIUS v2.23.09 // CORREÇÕES CONQUISTAS + TESTE + CENTRAL + KANT PDF ===== -->
-<style id="sirius-v22309-fixes-style">
-/* CONQUISTAS: volta para um fundo uniforme com thumbs menores em quadrado. */
-#view-achievements .s98AchCard,
-#dashAchievements .s98AchCard{
-  background:linear-gradient(180deg,#081628 0%,#07111e 58%,#060d17 100%)!important;
-  box-shadow:0 0 18px rgba(27,170,235,.10),inset 0 0 22px rgba(38,161,221,.05)!important;
-}
-#view-achievements .s98AchCard::before,
-#view-achievements .s98AchCard::after,
-#dashAchievements .s98AchCard::before,
-#dashAchievements .s98AchCard::after{
-  display:none!important;
-  content:none!important;
-}
-#view-achievements .s98AchInner,
-#dashAchievements .s98AchInner{
-  grid-template-columns:64px 44px minmax(0,1fr)!important;
-  gap:10px!important;
-  min-height:120px!important;
-  padding:12px 13px!important;
-}
-#view-achievements .s98AchThumb,
-#dashAchievements .s98AchThumb{
-  width:64px!important;
-  height:64px!important;
-  border-radius:14px!important;
-  background-size:cover!important;
-  background-position:center!important;
-}
-#view-achievements .s98AchIconWrap,
-#dashAchievements .s98AchIconWrap{
-  width:42px!important;height:42px!important;
-}
-#view-achievements .s98AchIconWrap svg,
-#view-achievements .s98AchBadge svg,
-#view-achievements .s98AchMetaIcon svg,
-#dashAchievements .s98AchIconWrap svg,
-#dashAchievements .s98AchBadge svg,
-#dashAchievements .s98AchMetaIcon svg{
-  width:19px!important;height:19px!important;
-}
-#view-achievements .s98AchBody,
-#dashAchievements .s98AchBody{padding-right:124px!important}
-#view-achievements .s98AchTitle,
-#dashAchievements .s98AchTitle{font-size:16px!important;line-height:1.02!important}
-#view-achievements .s98AchDesc,
-#dashAchievements .s98AchDesc{font-size:8.6px!important;max-width:220px!important}
-#view-achievements .s98AchBadge,
-#dashAchievements .s98AchBadge{width:116px!important;height:42px!important;font-size:7px!important}
-@media(min-width:760px){
-  #view-achievements .s98AchInner,
-  #dashAchievements .s98AchInner{grid-template-columns:88px 58px minmax(0,1fr)!important;min-height:148px!important;padding:17px 18px!important;gap:16px!important}
-  #view-achievements .s98AchThumb,
-  #dashAchievements .s98AchThumb{width:88px!important;height:88px!important;border-radius:18px!important}
-  #view-achievements .s98AchIconWrap,
-  #dashAchievements .s98AchIconWrap{width:56px!important;height:56px!important}
-  #view-achievements .s98AchBody,
-  #dashAchievements .s98AchBody{padding-right:170px!important}
-  #view-achievements .s98AchTitle,
-  #dashAchievements .s98AchTitle{font-size:24px!important}
-  #view-achievements .s98AchDesc,
-  #dashAchievements .s98AchDesc{font-size:12px!important}
-  #view-achievements .s98AchBadge,
-  #dashAchievements .s98AchBadge{width:170px!important;height:54px!important;font-size:9px!important}
-}
-
-/* CENTRAL: reforço de toque e botão auxiliar de redirecionamento. */
-#s66EventHub .s66HubItem,
-#s66EventHub .s66HubItem *{pointer-events:auto!important}
-#s66EventHub .s66HubItem.reward .rewardBtn,
-#s66EventHub .s2309HubAction{
-  position:relative!important;z-index:6!important;touch-action:manipulation!important;
-}
-#s66EventHub .s66HubItem.timer{cursor:pointer}
-#s66EventHub .s2309HubActions{display:flex;gap:8px;margin-top:10px}
-#s66EventHub .s2309HubAction{
-  width:100%;min-height:40px;border:1px solid #49dfff;background:#082743;color:#ecfbff;
-  font-size:7px;font-weight:1000;letter-spacing:1.1px;padding:9px 10px
-}
-
-/* Durante a ativação do teste, overlays automáticos antigos ficam ocultos por instantes. */
-body.s2309-test-activation #s61EventOverlay{display:none!important}
-</style>
-<script id="sirius-v22309-fixes-script">
-(function(){
-  const VERSION='v2.23.09';
-  const KANT_ID='kant_metafisica_costumes_pdf';
-  const KANT_URL='./hdh_kant_metafisica_costumes.pdf';
-  const KANT_TITLE='Kant — Os Princípios da Metafísica dos Costumes';
-
-  function safeSave(){
-    try{ if(typeof save==='function') return save(); }catch(e){}
-    try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(data)); }catch(e){}
-  }
-  function ensureArchive(){
-    data.knowledgeArchive=data.knowledgeArchive&&typeof data.knowledgeArchive==='object'?data.knowledgeArchive:{};
-    data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];
-    return data.knowledgeArchive.sources;
-  }
-  function ensureKantSource(){
-    const sources=ensureArchive();
-    let s=sources.find(x=>x && (x.id===KANT_ID || /metaf[ií]sica dos costumes/i.test(String(x.title||''))));
-    if(!s){
-      s={
-        id:KANT_ID,
-        title:KANT_TITLE,
-        author:'Immanuel Kant',
-        type:'Livro',
-        area:'Filosofia',
-        section:'Missão de penalidade',
-        materialUrl:KANT_URL,
-        progress:0,
-        fileProgress:0,
-        epubCfi:null,
-        readingSeconds:0,
-        lastReadAt:null,
-        milestonesSeen:[],
-        learningMilestonesCreated:[],
-        createdAt:new Date().toISOString()
-      };
-      sources.unshift(s);
-    }else{
-      if(!s.materialUrl) s.materialUrl=KANT_URL;
-      if(!s.title) s.title=KANT_TITLE;
-      if(!s.author) s.author='Immanuel Kant';
-      if(!s.type) s.type='Livro';
-      if(!s.area) s.area='Filosofia';
-      if(!s.section) s.section='Missão de penalidade';
-      if(!Array.isArray(s.milestonesSeen)) s.milestonesSeen=[];
-      if(!Array.isArray(s.learningMilestonesCreated)) s.learningMilestonesCreated=[];
-      if(s.fileProgress===undefined || s.fileProgress===null) s.fileProgress=Number(s.progress)||0;
-      if(s.readingSeconds===undefined || s.readingSeconds===null) s.readingSeconds=0;
-    }
-    return s;
-  }
-  function openKantPdf(){
-    const s=ensureKantSource();
-    safeSave();
+  async function requestPersistentStorage(){
     try{
-      if(typeof openKnowledgeMaterial==='function'){ openKnowledgeMaterial(s.id); return true; }
-    }catch(e){ console.warn('SIRIUS '+VERSION+' openKnowledgeMaterial',e); }
-    try{ window.open(KANT_URL,'_blank','noopener'); return true; }catch(e){}
-    return false;
+      if(navigator.storage&&typeof navigator.storage.persist==="function") await navigator.storage.persist();
+    }catch(e){ console.warn("SIRIUS storage persist",e); }
   }
-
-  function suppressTestNoise(ms=1800){
-    document.body.classList.add('s2309-test-activation');
-    const closeLegacy=()=>{ try{ document.getElementById('s61EventOverlay')?.classList.remove('show'); }catch(e){} };
-    const closeGeneric=()=>{
-      try{
-        const title=String(document.getElementById('s62HeaderText')?.textContent||'').trim().toUpperCase();
-        if(title && title!=='TESTE ATIVADO') window.s62CloseSystemPanel?.();
-      }catch(e){}
-    };
-    [30,120,280,650,1100,1600].forEach(t=>setTimeout(()=>{closeLegacy();closeGeneric();},t));
-    setTimeout(()=>document.body.classList.remove('s2309-test-activation'),ms);
-  }
-
-  function wrapTestToggle(){
-    const prev=window.toggleSiriusTestMode;
-    if(typeof prev!=='function' || prev.__s2309Wrapped) return;
-    const wrapped=function(){
-      let before=false;
-      try{ before=typeof window.s62IsTestMode==='function' && window.s62IsTestMode(); }catch(e){}
-      if(!before) suppressTestNoise(1800);
-      const out=prev.apply(this,arguments);
-      if(!before){
-        ensureKantSource();
-        safeSave();
-      }
-      return out;
-    };
-    wrapped.__s2309Wrapped=true;
-    window.toggleSiriusTestMode=wrapped;
-  }
-
-  function dedupePanels(){
-    const prev=window.s62ShowSystemPanel;
-    if(typeof prev!=='function' || prev.__s2309Wrapped) return;
-    let lastSig=''; let lastAt=0;
-    const wrapped=function(cfg={}){
-      const sig=(String(cfg.title||'')+'::'+String(cfg.body||cfg.html||'')).replace(/\s+/g,' ').trim();
-      const now=Date.now();
-      if(sig && sig===lastSig && now-lastAt<1500) return;
-      lastSig=sig; lastAt=now;
-      return prev.call(this,cfg);
-    };
-    wrapped.__s2309Wrapped=true;
-    window.s62ShowSystemPanel=wrapped;
-  }
-
-  function findMissionIndexByTitle(title){
-    const t=String(title||'').trim().toUpperCase();
-    if(!t || !Array.isArray(data?.missions)) return -1;
-    return data.missions.findIndex(m=>String(m?.name||'').trim().toUpperCase()===t);
-  }
-  function openMissionByTitle(title){
-    const run=()=>{
-      const idx=findMissionIndexByTitle(title);
-      if(idx>=0 && typeof window.openMissionPanel==='function') return window.openMissionPanel(idx);
-      const row=[...document.querySelectorAll('#view-missions .missionListRow,#view-missions [data-s100-mission]')].find(el=>String(el.textContent||'').toUpperCase().includes(String(title||'').trim().toUpperCase()));
-      if(row){ row.scrollIntoView?.({behavior:'smooth',block:'center'}); row.click?.(); }
-    };
-    try{ if(typeof window.openDockView==='function') window.openDockView('missions'); }catch(e){}
-    [90,260,520].forEach(ms=>setTimeout(run,ms));
-  }
-
-  function rewardIdFromButton(btn){
-    const raw=btn?.dataset?.s2309RewardId || btn?.getAttribute?.('data-s2309-reward-id');
-    if(raw) return raw;
-    const onclick=btn?.getAttribute?.('onclick')||'';
-    const m=onclick.match(/s66ClaimReward\('([^']+)'\)/);
-    return m?m[1]:'';
-  }
-  function bindTap(el,fn,key){
-    if(!el || (key && el.dataset[key]==='1')) return;
-    if(key) el.dataset[key]='1';
-    let last=0;
-    const fire=(ev)=>{
-      const now=Date.now();
-      if(now-last<350){ ev?.preventDefault?.(); ev?.stopPropagation?.(); return; }
-      last=now; ev?.preventDefault?.(); ev?.stopPropagation?.(); fn(ev);
-    };
-    el.addEventListener('touchend',fire,{passive:false});
-    el.addEventListener('click',fire,true);
-  }
-  function enhanceHub(){
-    const host=document.getElementById('s66EventHub');
-    if(!host) return;
-
-    host.querySelectorAll('.s66HubItem.reward').forEach(item=>{
-      const btn=item.querySelector('.rewardBtn, button');
-      if(!btn) return;
-      const id=rewardIdFromButton(btn);
-      if(id) btn.dataset.s2309RewardId=id;
-      btn.type='button';
-      bindTap(btn,()=>{ const rid=rewardIdFromButton(btn); if(rid && typeof window.s66ClaimReward==='function') window.s66ClaimReward(rid); },'s2309Bound');
-    });
-
-    host.querySelectorAll('.s66HubItem.timer').forEach(item=>{
-      if(item.dataset.s2309Enhanced==='1') return;
-      item.dataset.s2309Enhanced='1';
-      const title=(item.querySelector('.s66HubTitle')?.textContent||'').trim();
-      item.dataset.s2309MissionTitle=title;
-      const actions=document.createElement('div');
-      actions.className='s2309HubActions';
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.className='s2309HubAction';
-      btn.textContent='VER MISSÃO';
-      actions.appendChild(btn);
-      item.appendChild(actions);
-      bindTap(btn,()=>openMissionByTitle(title),'s2309Bound');
-      bindTap(item,(ev)=>{ if(ev?.target?.closest?.('button')) return; openMissionByTitle(title); },'s2309CardBound');
-    });
-  }
-  function observeHub(){
-    const mo=new MutationObserver(()=>enhanceHub());
-    mo.observe(document.body,{childList:true,subtree:true});
-    [120,420,1200,2400].forEach(ms=>setTimeout(enhanceHub,ms));
-  }
-
-  function wirePenaltyRedirect(){
-    let last=0;
-    const handler=(ev)=>{
-      const btn=ev.target?.closest?.('[data-s2302-penalty]');
-      if(!btn) return;
-      const now=Date.now();
-      if(now-last<500) return;
-      last=now;
-      try{ openKantPdf(); }catch(e){ console.warn('SIRIUS penalty material',e); }
-    };
-    document.addEventListener('touchend',handler,{capture:true,passive:true});
-    document.addEventListener('click',handler,true);
-  }
-
-  function init(){
-    ensureKantSource();
-    dedupePanels();
-    wrapTestToggle();
-    observeHub();
-    enhanceHub();
-    wirePenaltyRedirect();
+  async function findLegacyEpubForSource(source){
+    if(!source||typeof window.openSiriusDb!=="function")return null;
+    const wantedName=normalizedFileName(source.localFileName);
+    const wantedTitle=baseName(source.title);
     try{
-      data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
-      const msg='VERSÃO INSTALADA: '+VERSION+' // CONQUISTAS COM FUNDO UNIFORME, TESTE SEM POPUP INDEVIDO, CENTRAL COM TOQUES CORRIGIDOS E PDF DE KANT INTEGRADO À PENALIDADE.';
-      if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){
-        window.addSystemLog?.('version',msg);
-        safeSave();
-      }
-    }catch(e){ console.warn('SIRIUS '+VERSION,e); }
-    document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+      const db=await window.openSiriusDb();
+      return await new Promise((resolve,reject)=>{
+        const tx=db.transaction("epubs","readonly");
+        const store=tx.objectStore("epubs");
+        const req=store.openCursor();
+        let titleCandidate=null;
+        req.onsuccess=()=>{
+          const cursor=req.result;
+          if(!cursor){ db.close(); resolve(titleCandidate); return; }
+          const file=cursor.value;
+          const name=normalizedFileName(file?.name);
+          const fileBase=baseName(file?.name);
+          if(wantedName&&name===wantedName){ db.close(); resolve({file,key:cursor.key,reason:"filename"}); return; }
+          if(!titleCandidate&&wantedTitle&&fileBase===wantedTitle) titleCandidate={file,key:cursor.key,reason:"title"};
+          cursor.continue();
+        };
+        req.onerror=()=>{ const err=req.error; db.close(); reject(err); };
+      });
+    }catch(e){ console.warn("SIRIUS legacy EPUB lookup",e); return null; }
   }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,90),{once:true});
-  else setTimeout(init,90);
-  window.addEventListener('load',()=>setTimeout(()=>{init();},260),{once:true});
-  [900,2200,4200].forEach(ms=>setTimeout(()=>{ensureKantSource(); enhanceHub();},ms));
-})();
-</script>
-
-
-<!-- ===== SIRIUS v2.23.10 // ISOLAMENTO DE TOQUES + LEITURA KANT ===== -->
-<style id="sirius-v22310-touch-isolation-style">
-#s62TestControls{contain:layout paint!important}
-#s62TestControls .s62TestControlsGrid button,[data-s2302-update],[data-s2302-penalty]{touch-action:manipulation!important;pointer-events:auto!important}
-</style>
-<script id="sirius-v22310-touch-isolation-script">
-(function(){
- const VERSION='v2.23.10';
- function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
- function log(){try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // LABORATÓRIO ISOLADO, ATUALIZAR SEM ORIENTAÇÃO INDEVIDA, DADOS SEM AVISO DE TESTE E LEITURA DE KANT ABERTA DIRETAMENTE.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);window.save?.()}}catch(e){}}
- function init(){mark();log()}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
- window.addEventListener('load',mark,{once:true});[500,1500,3200].forEach(ms=>setTimeout(mark,ms));
-})();
-</script>
-
-
-
-<!-- ===== SIRIUS v2.23.12 // BASE v2.23.10 + HOME DAILY + TREINO/JORNADA + EPUB PERSISTENTE ===== -->
-<style id="sirius-v22312-fixes-style">
-/* Home: resumo compacto da Quest Diária no lugar da lista comum de missões. */
-#view-home .s2312DailyHome{border:1px solid #2f8fc4;background:linear-gradient(145deg,#061526,#06101d);box-shadow:inset 0 0 26px rgba(45,190,246,.05);padding:13px;position:relative;overflow:hidden}
-#view-home .s2312DailyHome:before{content:"";position:absolute;left:0;top:0;width:125px;height:2px;background:#58dcff;box-shadow:0 0 12px #58dcff}
-#view-home .s2312DailyTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-#view-home .s2312DailyKicker{font-size:6px;letter-spacing:1.8px;color:#73e5ff;font-weight:1000}
-#view-home .s2312DailyTitle{font-size:15px;color:#f4fbff;font-weight:1000;margin-top:5px}
-#view-home .s2312DailyState{font-size:6px;letter-spacing:1px;border:1px solid #31a9d7;color:#c5efff;background:#061825;padding:6px 8px;white-space:nowrap;font-weight:1000}
-#view-home .s2312DailyRows{display:grid;gap:5px;margin-top:11px}
-#view-home .s2312DailyRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border-bottom:1px solid rgba(65,142,185,.16);padding:6px 2px}
-#view-home .s2312DailyRow:last-child{border-bottom:0}
-#view-home .s2312DailyRow span{font-size:7.3px;color:#dcebf5;font-weight:900}
-#view-home .s2312DailyRow.done span{color:#5ef18d}
-#view-home .s2312DailyRow b{font-size:7px;color:#eaf7ff;white-space:nowrap}
-#view-home .s2312DailyBar{height:6px;margin-top:10px;border:1px solid #214b66;background:#07111d;overflow:hidden}
-#view-home .s2312DailyBar span{display:block;height:100%;background:linear-gradient(90deg,#23bfff,#5aeaff);box-shadow:0 0 10px rgba(70,220,255,.5)}
-#view-home .s2312DailyActions{margin-top:10px}
-#view-home .s2312DailyActions button{width:100%;min-height:42px;border:1px solid #4bdcff;background:linear-gradient(180deg,#128fe1,#075c9c);color:#fff;font-size:7px;font-weight:1000;letter-spacing:1.2px;pointer-events:auto!important;touch-action:manipulation!important}
-
-/* Treino e Jornada: CTAs acima de toda decoração e sempre tocáveis. */
-#view-training .trainingCard{position:relative!important;pointer-events:auto!important}
-#view-training .trainingBtn{position:relative!important;z-index:80!important;pointer-events:auto!important;touch-action:manipulation!important}
-#view-home .mainQuestCard button{position:relative!important;z-index:80!important;pointer-events:auto!important;touch-action:manipulation!important}
-
-/* EPUB local: estado visível quando o arquivo precisa ser reanexado. */
-.s2312EpubMissing{display:inline-block;margin-top:5px;padding:4px 7px;border:1px solid #a64b58;color:#ffb8c1;background:#240c13;font-size:6px;font-weight:900;letter-spacing:.8px}
-</style>
-<script id="sirius-v22312-fixes-script">
-(function(){
-  const VERSION='v2.23.12';
-  const OBJECTIVE_ORDER=['pushups','plank','abs','squats','run'];
-  const BASE_NAMES=['Estudo','Revisão de memória','Prática de comunicação','Missão de disciplina'];
-
-  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-  function directPersist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));return true}catch(e){console.error('SIRIUS '+VERSION+' persist',e);return false}}
-  function sources(){return Array.isArray(data?.knowledgeArchive?.sources)?data.knowledgeArchive.sources:[]}
-  function normalize(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
-
-  /* ---------- MISSÕES MAIS ESPECÍFICAS ---------- */
-  function bestSource(review=false){
-    const all=sources().filter(s=>s&&s.title);
-    if(!all.length)return null;
-    return all.slice().sort((a,b)=>{
-      const sa=(review?(Number(a.progress)||0)*5:0)+(a.lastReadAt?1000:0)+(Number(a.progress)||0);
-      const sb=(review?(Number(b.progress)||0)*5:0)+(b.lastReadAt?1000:0)+(Number(b.progress)||0);
-      return sb-sa;
-    })[0]||null;
-  }
-  function latestCompleted(){return [...(data?.missions||[])].reverse().find(m=>m?.done&&m?.name)||null}
-  function detectBase(m){
-    if(m?.s2312BaseName)return m.s2312BaseName;
-    const n=String(m?.s2311BaseName||m?.name||'');
-    const hit=BASE_NAMES.find(x=>n===x||n.startsWith(x+' //'))||'';
-    if(hit)m.s2312BaseName=hit;
-    return hit;
-  }
-  function upgradeMissionSpecificity(){
-    let changed=false;
-    (data?.missions||[]).forEach(m=>{
-      if(!m||m.done||m.s2312Specificity)return;
-      const base=detectBase(m);if(!base)return;
-      const book=bestSource(base==='Revisão de memória');
-      const title=book?.title||'';
-      const progress=Math.max(0,Math.min(100,Number(book?.progress)||0));
-      if(base==='Estudo'){
-        if(title){m.name=`Estudo // ${title}`;m.desc=`Leia ${title} por 25 minutos a partir do ponto atual${progress?` (${progress}% registrado)`:''}. Depois feche o material e escreva, sem consulta, 3 ideias principais e 1 dúvida.`;m.sourceId=book.id;m.sourceTitle=title;}
-        else{m.name='Estudo // Biblioteca SIRIUS';m.desc='Escolha um material específico da Biblioteca, estude por 25 minutos e depois feche o material. Sem consultar, registre 3 ideias principais e 1 dúvida.';}
-        m.evidence='25 min de leitura + 3 ideias principais + 1 dúvida, sem consulta.';m.durationMin=25;m.learningMethod='Recuperação Ativa';m.focusMethod='Pomodoro';
-      }else if(base==='Revisão de memória'){
-        if(title){m.name=`Revisão // ${title}`;m.desc=`Sem abrir ${title}, escreva por 5 minutos tudo o que lembrar do trecho estudado${progress?` até cerca de ${progress}%`:''}. Depois confira o material e registre pelo menos 2 lacunas ou correções.`;m.sourceId=book.id;m.sourceTitle=title;}
-        else{m.name='Revisão // Conteúdo recente';m.desc='Escolha o conteúdo mais recente estudado. Sem consultar, escreva por 5 minutos tudo que lembrar; depois confira e registre pelo menos 2 lacunas ou correções.';}
-        m.evidence='5 min sem consulta + comparação + 2 lacunas/correções.';m.durationMin=12;m.learningMethod='Recuperação Ativa';
-      }else if(base==='Prática de comunicação'){
-        const topic=title?`uma ideia central de ${title}`:(latestCompleted()?.name?`o que aprendeu em “${latestCompleted().name}”`:'um assunto que domina');
-        m.name=title?`Comunicação // ${title}`:'Comunicação // Explicação de 2 minutos';
-        m.desc=`Grave um áudio de 2 minutos explicando ${topic}, com começo, meio e fim. Ouça uma vez e registre 1 ponto claro e 1 ponto específico para melhorar.`;
-        m.evidence='Áudio de 2 min + 1 ponto claro + 1 melhoria específica.';m.durationMin=8;if(book){m.sourceId=book.id;m.sourceTitle=title;}
-      }else if(base==='Missão de disciplina'){
-        const target=(data?.missions||[]).find(x=>x!==m&&!x.done&&!x.queued&&x.acceptedAt)?.name||(data?.missions||[]).find(x=>x!==m&&!x.done&&!x.queued)?.name;
-        m.name=target?`Disciplina // ${target}`:'Disciplina // Bloco único de 15 minutos';
-        m.desc=target?`Trabalhe exclusivamente na missão “${target}” por 15 minutos. Não troque de tarefa nem abra redes sociais; ao final, registre exatamente o que avançou.`:'Escolha uma pendência concreta, defina em uma frase o resultado desejado e execute 15 minutos sem trocar de tarefa. Ao final, registre o avanço.';
-        m.evidence='15 minutos contínuos + registro objetivo do avanço.';m.durationMin=15;
-      }
-      m.completionCondition=m.evidence;m.s2312Specificity=true;changed=true;
-    });
-    if(changed)directPersist();
-  }
-
-  /* ---------- QUEST DIÁRIA NA HOME ---------- */
-  function dailyQuest(){return data?.s2302DailyQuest||null}
-  function dailyPct(q){if(!q?.objectives)return 0;return Math.round(OBJECTIVE_ORDER.reduce((sum,k)=>{const o=q.objectives[k];return sum+Math.min(1,(Number(o?.value)||0)/Math.max(1,Number(o?.target)||1))},0)/OBJECTIVE_ORDER.length*100)}
-  function openDaily(){
-    try{if(typeof window.openDockView==='function')window.openDockView('missions');else if(typeof window.openDashView==='function')window.openDashView('missions',document.querySelector('.bottomDock [data-view="missions"],.bottomNav [data-view="missions"]'));}catch(e){}
-    setTimeout(()=>document.getElementById('s2302DailyHost')?.scrollIntoView({behavior:'smooth',block:'start'}),180);
-  }
-  window.s2312OpenDailyQuest=openDaily;
-  function renderDailyHome(){
-    const home=document.getElementById('view-home');const host=home?.querySelector('#dashMissionList');if(!host)return;
-    const panel=host.closest('.dashPanel');const titleEl=panel?.querySelector('.dashPanelTitle');if(titleEl)titleEl.textContent='QUEST DIÁRIA';
-    const q=dailyQuest();
-    if(!q?.objectives){host.innerHTML='<div class="small">Abra MISSÕES uma vez para inicializar a Quest Diária.</div>';return;}
-    const rows=OBJECTIVE_ORDER.map(k=>{const o=q.objectives[k]||{};const done=(Number(o.value)||0)>=(Number(o.target)||1);return `<div class="s2312DailyRow ${done?'done':''}"><span>[${done?'✓':' '}] ${esc(o.label||k)}</span><b>${Number(o.value)||0}/${Number(o.target)||0} ${esc(o.unit||'')}</b></div>`}).join('');
-    const completed=OBJECTIVE_ORDER.filter(k=>(Number(q.objectives[k]?.value)||0)>=(Number(q.objectives[k]?.target)||1)).length;
-    const pct=dailyPct(q);const sub=home.querySelector('#dashMissionCount');if(sub)sub.textContent=`${completed} / 5 OBJETIVOS // ${pct}%`;
-    host.innerHTML=`<div class="s2312DailyHome"><div class="s2312DailyTop"><div><div class="s2312DailyKicker">[ SIRIUS // OBJETIVOS DE HOJE ]</div><div class="s2312DailyTitle">PREPARANDO-SE PARA FICAR MAIS FORTE</div></div><div class="s2312DailyState">${q.rewardClaimed?'FINALIZADA':pct>=100?'RECOMPENSA':'ATIVA'}</div></div><div class="s2312DailyRows">${rows}</div><div class="s2312DailyBar"><span style="width:${pct}%"></span></div><div class="s2312DailyActions"><button type="button" data-s2312-daily>ABRIR QUEST DIÁRIA</button></div></div>`;
-    const b=host.querySelector('[data-s2312-daily]');if(b&&!b.dataset.s2312Bound){b.dataset.s2312Bound='1';let last=0;const go=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();openDaily()};b.addEventListener('touchend',go,{passive:false});b.addEventListener('click',go,true)}
-  }
-
-  /* ---------- BOTÕES ADICIONAR DO TREINO ---------- */
-  const TRAINING={
-    'AQUECIMENTO':['Aquecimento','Faça 8 minutos de mobilidade e aquecimento geral.',8],
-    'FORÇA DE BASE':['Força de Base','Complete uma sessão de força de 30 minutos com técnica controlada.',30],
-    'CONDICIONAMENTO':['Condicionamento','Faça 20 minutos de atividade aeróbica em ritmo moderado.',20],
-    'RECUPERAÇÃO':['Recuperação Física','Faça 8 minutos de mobilidade e alongamento sem dor.',8]
-  };
-  function wireTraining(){
-    document.querySelectorAll('#view-training .trainingCard').forEach(card=>{
-      const btn=card.querySelector('.trainingBtn');if(!btn)return;
-      const label=String(card.querySelector('h4')?.textContent||'').trim().toUpperCase();const cfg=TRAINING[label];if(!cfg)return;
-      if(btn.dataset.s2312Bound==='1')return;btn.dataset.s2312Bound='1';btn.type='button';btn.removeAttribute('onclick');
-      let last=0;const run=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();e?.stopImmediatePropagation?.();try{if(typeof window.addTrainingPreset==='function')window.addTrainingPreset(cfg[0],cfg[1],cfg[2]);else if(typeof addTrainingPreset==='function')addTrainingPreset(cfg[0],cfg[1],cfg[2]);}catch(err){console.error('SIRIUS training add',err)}};
-      btn.addEventListener('touchend',run,{passive:false});btn.addEventListener('click',run,true);
-    });
-  }
-
-  /* ---------- VER JORNADA ---------- */
-  function wireJourney(){
-    const btn=[...document.querySelectorAll('#view-home .mainQuestCard button')].find(b=>/VER JORNADA/i.test(b.textContent||''));if(!btn||btn.dataset.s2312Bound==='1')return;
-    btn.dataset.s2312Bound='1';btn.type='button';btn.removeAttribute('onclick');let last=0;
-    const run=e=>{const n=Date.now();if(n-last<400)return;last=n;e?.preventDefault?.();e?.stopPropagation?.();try{if(typeof window.openJourneyMode==='function')window.openJourneyMode();else if(typeof openJourneyMode==='function')openJourneyMode();}catch(err){console.error('SIRIUS journey',err)}};
-    btn.addEventListener('touchend',run,{passive:false});btn.addEventListener('click',run,true);
-  }
-
-  /* ---------- EPUB LOCAL COM CONFIRMAÇÃO DE PERSISTÊNCIA ---------- */
-  window.openSiriusDb=function(){
-    return new Promise((resolve,reject)=>{
-      const req=indexedDB.open('SIRIUS_LOCAL_FILES',3);
-      req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('epubs'))db.createObjectStore('epubs');if(!db.objectStoreNames.contains('recovery'))db.createObjectStore('recovery');if(!db.objectStoreNames.contains('epubMeta'))db.createObjectStore('epubMeta')};
-      req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);req.onblocked=()=>reject(new Error('indexeddb_blocked'));
-    });
-  };
-  async function requestPersistentStorage(){try{if(navigator.storage?.persist)await navigator.storage.persist()}catch(e){console.warn('SIRIUS persistent storage',e)}}
-  async function putVerifiedEpub(id,file){
+  async function attachFileToSource(source,file){
+    if(!source||!file)return false;
+    if(!/\.epub$/i.test(file.name||"")){
+      alert("Selecione um arquivo EPUB.");
+      return false;
+    }
+    const expected=normalizedFileName(source.localFileName);
+    const chosen=normalizedFileName(file.name);
+    if(expected&&chosen!==expected){
+      const ok=confirm(`O arquivo selecionado (${file.name}) tem nome diferente do EPUB associado (${source.localFileName}).\n\nDeseja usar este arquivo mantendo o progresso deste livro?`);
+      if(!ok)return false;
+    }
     await requestPersistentStorage();
-    const blob=file instanceof Blob?file.slice(0,file.size,file.type||'application/epub+zip'):new Blob([file],{type:'application/epub+zip'});
-    const meta={name:file.name||`${id}.epub`,type:file.type||'application/epub+zip',size:Number(file.size)||blob.size,lastModified:Number(file.lastModified)||Date.now(),savedAt:new Date().toISOString()};
-    const db=await window.openSiriusDb();
-    await new Promise((resolve,reject)=>{const tx=db.transaction(['epubs','epubMeta'],'readwrite');tx.objectStore('epubs').put(blob,id);tx.objectStore('epubMeta').put(meta,id);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('epub_tx_abort'))});db.close();
-    const check=await getVerifiedEpub(id);if(!check||Number(check.size)!==Number(blob.size))throw new Error('epub_verify_failed');return {blob:check,meta};
+    await window.putLocalEpub(source.id,file);
+    source.localEpub=true;
+    source.localFileName=file.name;
+    source.lastReadAt=new Date().toISOString();
+    if(typeof window.save==="function")window.save();
+    if(typeof window.refreshDashboard==="function")window.refreshDashboard();
+    return true;
   }
-  async function getVerifiedEpub(id){
-    const db=await window.openSiriusDb();
-    return new Promise((resolve,reject)=>{const tx=db.transaction('epubs','readonly');const req=tx.objectStore('epubs').get(id);req.onsuccess=()=>{const v=req.result;resolve(v?.blob instanceof Blob?v.blob:(v instanceof Blob?v:null))};req.onerror=()=>reject(req.error);tx.oncomplete=()=>db.close();tx.onerror=()=>{try{db.close()}catch(e){}}});
+  async function chooseAndAttach(source){
+    return new Promise(resolve=>{
+      const input=document.createElement("input");
+      input.type="file";
+      input.accept=".epub,application/epub+zip";
+      input.style.position="fixed";
+      input.style.left="-9999px";
+      input.setAttribute("aria-hidden","true");
+      document.body.appendChild(input);
+      let settled=false;
+      const finish=v=>{ if(settled)return; settled=true; try{input.remove()}catch(e){} resolve(v); };
+      input.addEventListener("change",async()=>{
+        const file=input.files&&input.files[0];
+        if(!file){ finish(false); return; }
+        try{ finish(await attachFileToSource(source,file)); }
+        catch(e){ console.error(e); alert("Não foi possível associar este EPUB ao livro."); finish(false); }
+      },{once:true});
+      window.addEventListener("focus",()=>setTimeout(()=>{ if(!input.files?.length)finish(false); },700),{once:true});
+      input.click();
+    });
   }
-  window.getLocalEpub=getVerifiedEpub;
-  window.putLocalEpub=async function(id,file){await putVerifiedEpub(id,file);return true};
+  async function openLocalSource(source){
+    let file=null;
+    try{ file=await window.getLocalEpub(source.id); }catch(e){ console.warn("SIRIUS EPUB get",e); }
+    if(!file){
+      const legacy=await findLegacyEpubForSource(source);
+      if(legacy?.file){
+        try{
+          await window.putLocalEpub(source.id,legacy.file);
+          source.localEpub=true;
+          if(!source.localFileName&&legacy.file.name)source.localFileName=legacy.file.name;
+          if(typeof window.save==="function")window.save();
+          file=legacy.file;
+          if(typeof window.showToast==="function")window.showToast("EPUB RECUPERADO // BIBLIOTECA REPARADA");
+        }catch(e){ console.warn("SIRIUS EPUB relink",e); }
+      }
+    }
+    if(!file){
+      if(source.materialUrl){
+        const u=String(source.materialUrl).trim();
+        if(/\.epub(?:$|[?#])/i.test(u)&&typeof window.openEpubReader==="function"){
+          window.openEpubReader(source.id); return;
+        }
+      }
+      if(typeof window.showSystemEvent==="function"){
+        window.showSystemEvent("EPUB NÃO ENCONTRADO","Selecione o mesmo EPUB novamente. O progresso, as missões e os dados deste livro serão preservados.");
+        const closeBtn=document.getElementById("systemCloseBtn");
+        if(closeBtn){
+          closeBtn.textContent="SELECIONAR EPUB";
+          closeBtn.onclick=async()=>{
+            if(typeof window.closeSystemEvent==="function")window.closeSystemEvent();
+            closeBtn.onclick=(typeof window.closeSystemEvent==="function")?window.closeSystemEvent:null;
+            const attached=await chooseAndAttach(source);
+            if(attached&&typeof previousOpenLocalEpubReader==="function")await previousOpenLocalEpubReader(source.id);
+          };
+          return;
+        }
+      }
+      const attached=await chooseAndAttach(source);
+      if(!attached)return;
+    }
+    if(typeof previousOpenLocalEpubReader==="function")return previousOpenLocalEpubReader(source.id);
+    alert("O leitor EPUB local não está disponível nesta versão.");
+  }
 
-  const oldExtract=window.extractEpubMetadata||((file)=>Promise.resolve({title:file.name.replace(/\.epub$/i,''),author:'',coverUrl:''}));
-  window.importLocalEpub=async function(event){
-    const input=event?.target;const file=input?.files?.[0];if(!file)return;if(!/\.epub$/i.test(file.name)){alert('Selecione um arquivo EPUB.');return;}
-    try{
-      window.showToast?.('SALVANDO EPUB // AGUARDE A CONFIRMAÇÃO...');
-      const meta=await oldExtract(file);
-      data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];
-      const title=meta.title||file.name.replace(/\.epub$/i,'');
-      let source=data.knowledgeArchive.sources.find(s=>s?.localEpub&&(normalize(s.localFileName)===normalize(file.name)||normalize(s.title)===normalize(title)));
-      const id=source?.id||('src_'+Date.now());
-      const saved=await putVerifiedEpub(id,file);
-      if(!source){source={id,createdAt:new Date().toISOString(),progress:0,fileProgress:0,contentStartProgress:null,contentStartCfi:null,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[]};data.knowledgeArchive.sources.push(source)}
-      Object.assign(source,{title,author:meta.author||source.author||'',type:'Livro',area:source.area||'Conhecimento geral',section:source.section||'',materialUrl:'',localEpub:true,localEpubVerified:true,localEpubMissing:false,localFileName:file.name,localFileSize:saved.meta.size,localFileSavedAt:saved.meta.savedAt,coverUrl:meta.coverUrl||source.coverUrl||''});
-      if(!directPersist())throw new Error('metadata_persist_failed');
-      try{if(typeof render==='function')render();if(typeof refreshDashboard==='function')refreshDashboard()}catch(e){}
-      window.showSystemEvent?.('EPUB SALVO',`${title} foi gravado e verificado neste aparelho.`);
-    }catch(err){
-      console.error('SIRIUS EPUB import',err);alert('Não foi possível confirmar o salvamento deste EPUB. O livro não foi marcado como salvo.');
-    }finally{if(input)input.value=''}
+  window.openKnowledgeMaterial=async function(id){
+    const source=sourceById(id);
+    if(!source)return;
+    const hasLocalHint=!!(source.localEpub||source.localFileName);
+    if(hasLocalHint)return openLocalSource(source);
+    if(typeof previousOpenKnowledgeMaterial==="function")return previousOpenKnowledgeMaterial(id);
+    if(source.materialUrl)window.open(source.materialUrl,"_blank","noopener");
   };
 
-  async function verifyEpubSources(){
-    const locals=sources().filter(s=>s?.localEpub&&s?.id);let changed=false;
-    for(const s of locals){try{const blob=await getVerifiedEpub(s.id);const ok=!!blob;if(s.localEpubVerified!==ok||s.localEpubMissing===ok){s.localEpubVerified=ok;s.localEpubMissing=!ok;changed=true}}catch(e){if(!s.localEpubMissing){s.localEpubMissing=true;s.localEpubVerified=false;changed=true}}}
-    if(changed){directPersist();try{refreshDashboard?.()}catch(e){}}
-  }
-
-  const originalOpenLocal=window.openLocalEpubReader;
-  window.openLocalEpubReader=async function(id){
-    const s=sources().find(x=>x.id===id);if(!s)return;
-    let blob=null;try{blob=await getVerifiedEpub(id)}catch(e){}
-    if(!blob){s.localEpubMissing=true;s.localEpubVerified=false;directPersist();alert('O arquivo EPUB não está mais armazenado neste aparelho. Toque em + EPUB e selecione o mesmo arquivo para reanexá-lo sem perder o progresso do livro.');return;}
-    s.localEpubMissing=false;s.localEpubVerified=true;directPersist();
-    if(typeof originalOpenLocal==='function')return originalOpenLocal.call(this,id);
-  };
-
-  function decorateMissingEpubs(){
-    document.querySelectorAll('#view-books .libraryRealCard').forEach(card=>{const title=normalize(card.querySelector('.libraryRealTitle')?.textContent||'');const s=sources().find(x=>normalize(x.title)===title&&x.localEpub);if(s?.localEpubMissing&&!card.querySelector('.s2312EpubMissing'))card.querySelector('.libraryRealMeta')?.insertAdjacentHTML('beforeend','<br><span class="s2312EpubMissing">EPUB PRECISA SER REANEXADO</span>')});
-  }
-
-  /* ---------- RENDERIZAÇÕES SEM RECURSÃO ---------- */
-  const prevRefresh=window.refreshDashboard;
-  if(typeof prevRefresh==='function'&&!prevRefresh.__s2312Wrapped){
-    const wrapped=function(){const r=prevRefresh.apply(this,arguments);setTimeout(()=>{upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs()},0);return r};
-    wrapped.__s2312Wrapped=true;window.refreshDashboard=wrapped;
-  }
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  function init(){
-    upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs();mark();verifyEpubSources();
-    try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // BASE v2.23.10, QUEST DIÁRIA NA HOME, TREINO/JORNADA CORRIGIDOS, MISSÕES ESPECÍFICAS E EPUB COM SALVAMENTO VERIFICADO.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);directPersist()}}catch(e){}
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);
-  window.addEventListener('load',()=>setTimeout(init,350),{once:true});
-  [900,1900,3600,6000].forEach(ms=>setTimeout(()=>{upgradeMissionSpecificity();renderDailyHome();wireTraining();wireJourney();decorateMissingEpubs();mark()},ms));
-})();
-</script>
-
-
-
-<!-- ===== SIRIUS v2.23.13 // JORNADA DO JOGADOR — NÚCLEO RPG ===== -->
-<style id="sirius-v22313-journey-rpg-style">
-#journeyOverlay{background:radial-gradient(circle at 50% -8%,rgba(106,63,255,.18),transparent 34%),linear-gradient(180deg,#01050d,#020711 48%,#01040a)!important}
-.s2313Hero{position:relative;overflow:hidden;border:1px solid #754dff;background:radial-gradient(circle at 82% 15%,rgba(121,78,255,.27),transparent 34%),linear-gradient(135deg,#130b2c,#06101d 58%,#04101b);padding:15px;margin-bottom:10px;box-shadow:0 0 26px rgba(111,69,255,.16),inset 0 0 28px rgba(94,66,255,.07)}
-.s2313Hero:after{content:"";position:absolute;right:-38px;bottom:-54px;width:175px;height:175px;border:1px solid rgba(96,213,255,.16);border-radius:50%;box-shadow:0 0 0 26px rgba(90,116,255,.025),0 0 0 52px rgba(90,116,255,.02);pointer-events:none}
-.s2313HeroTop{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;position:relative;z-index:1}
-.s2313Sigil{width:72px;height:72px;border-radius:18px;border:1px solid #62ddff;background:radial-gradient(circle,#173257,#071426 64%);display:grid;place-items:center;font-size:34px;color:#d8f8ff;box-shadow:0 0 20px rgba(69,210,255,.16)}
-.s2313Nick{font-size:18px;font-weight:1000;color:#fff;letter-spacing:.4px}.s2313Title{font-size:7px;color:#9bc0df;letter-spacing:1.5px;margin-top:4px;text-transform:uppercase}.s2313Rank{text-align:center;border:1px solid #54dfff;background:#061a2d;padding:9px 12px;min-width:72px}.s2313Rank b{display:block;font-size:22px;color:#eaffff}.s2313Rank span{font-size:6px;color:#68ddff;letter-spacing:1.2px}
-.s2313Archetype{margin-top:13px;border-top:1px solid rgba(94,185,235,.22);padding-top:11px;position:relative;z-index:1}.s2313ArchKicker{font-size:6px;color:#c592ff;letter-spacing:1.5px;font-weight:1000}.s2313ArchName{font-size:16px;color:#e7d9ff;font-weight:1000;margin-top:4px}.s2313ArchText{font-size:7px;line-height:1.55;color:#9db3ca;margin-top:5px;max-width:540px}.s2313ArchActions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}.s2313ArchActions button{border:1px solid #5e77b0;background:#07182a;color:#dff7ff;min-height:34px;padding:7px 10px;font-size:6.5px;font-weight:1000;letter-spacing:.8px}.s2313ArchActions button.primary{border-color:#985cff;background:linear-gradient(180deg,#5927ca,#2d1780)}
-.s2313Map{border:1px solid #2a7cad;background:linear-gradient(180deg,#061526,#030c17);padding:14px;margin-bottom:10px;overflow:hidden}.s2313MapHead{display:flex;justify-content:space-between;gap:10px;align-items:end}.s2313MapTitle{font-size:15px;font-weight:1000}.s2313MapSub{font-size:6px;letter-spacing:1.4px;color:#77a7c8;margin-top:3px}.s2313Chapter{font-size:7px;color:#82e9ff;border:1px solid #2d759d;padding:5px 7px;background:#061321}
-.s2313Road{position:relative;margin-top:18px;padding:4px 0 7px}.s2313Road:before{content:"";position:absolute;left:18px;right:18px;top:35px;height:3px;background:linear-gradient(90deg,#604dff var(--road-progress,0%),#19364f var(--road-progress,0%));box-shadow:0 0 10px rgba(98,84,255,.22)}
-.s2313Nodes{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.s2313Node{position:relative;z-index:1;text-align:center;border:0;background:transparent;color:#b8c8da;padding:0;touch-action:manipulation}.s2313Orb{width:54px;height:54px;border-radius:50%;margin:0 auto;display:grid;place-items:center;border:2px solid #2f5573;background:#06121f;color:#7292ad;font-size:18px;box-shadow:0 0 0 5px #06111e}.s2313Node.done .s2313Orb{border-color:#58e6bd;color:#b8ffe9;background:#073027;box-shadow:0 0 13px rgba(74,230,183,.23),0 0 0 5px #06111e}.s2313Node.active .s2313Orb{border-color:#8a66ff;color:#fff;background:#26166a;box-shadow:0 0 18px rgba(119,84,255,.36),0 0 0 5px #06111e}.s2313Node.locked{opacity:.48}.s2313Node b{display:block;margin-top:8px;font-size:7px;line-height:1.2}.s2313Node span{display:block;font-size:5.5px;color:#6f8da7;margin-top:3px;line-height:1.3}
-.s2313MissionGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.s2313Quest{border:1px solid #2d6f99;background:linear-gradient(180deg,#071a2b,#04101c);padding:11px;min-height:122px;display:flex;flex-direction:column}.s2313Quest.special{border-color:#7f59ff;background:radial-gradient(circle at 88% 8%,rgba(126,83,255,.18),transparent 32%),linear-gradient(180deg,#110b28,#05101d)}.s2313QuestK{font-size:5.8px;letter-spacing:1.2px;color:#69dcff;font-weight:1000}.s2313Quest.special .s2313QuestK{color:#c69cff}.s2313QuestT{font-size:12px;font-weight:1000;margin-top:5px}.s2313QuestD{font-size:7px;line-height:1.45;color:#9fb5c9;margin-top:5px;flex:1}.s2313QuestMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.s2313QuestMeta span{font-size:5.5px;border:1px solid #285b7b;padding:4px 5px;color:#a9c8df}.s2313Quest button{width:100%;min-height:35px;margin-top:9px;border:1px solid #45d9ff;background:#0a3a5e;color:#fff;font-size:6px;font-weight:1000;letter-spacing:.9px}
-.s2313ProfilePanel{border:1px solid #285f89;background:#051321;padding:12px;margin-bottom:10px}.s2313ProfileRow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.s2313Stat{border:1px solid #244d6d;background:#030d18;padding:9px;text-align:center}.s2313Stat b{font-size:15px;color:#f2fbff}.s2313Stat span{display:block;font-size:5.5px;color:#78a3c4;margin-top:3px;letter-spacing:.7px}
-@media(max-width:520px){.s2313HeroTop{grid-template-columns:58px minmax(0,1fr) 64px;gap:9px}.s2313Sigil{width:58px;height:58px;border-radius:14px;font-size:28px}.s2313Nick{font-size:15px}.s2313Rank{min-width:64px;padding:7px 6px}.s2313Rank b{font-size:19px}.s2313MissionGrid{grid-template-columns:1fr}.s2313Road:before{left:14px;right:14px}.s2313Orb{width:46px;height:46px;font-size:15px}.s2313Node b{font-size:6px}.s2313Node span{font-size:4.8px}.s2313Map{padding:11px}.s2313ProfileRow{grid-template-columns:repeat(3,1fr)}}
-</style>
-<script id="sirius-v22313-journey-rpg-script">
-(function(){
-  const VERSION='v2.23.13';
-  const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-  function persist(){try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
-  function ensure(){
-    data.journeyProfile=data.journeyProfile&&typeof data.journeyProfile==='object'?data.journeyProfile:{};
-    if(!data.journeyProfile.createdAt)data.journeyProfile.createdAt=new Date().toISOString();
-    if(!data.journeyProfile.archetype)data.journeyProfile.archetype=detectArchetype();
-    if(!data.journeyProfile.chapter)data.journeyProfile.chapter=1;
-    return data.journeyProfile;
-  }
-  function attrPd(name){return Number(data?.attrs?.[name]?.pd)||0}
-  function detectArchetype(){
-    const scores={
-      'BUSCADOR':attrPd('Intelecto')+attrPd('Foco')+(data.knowledgeArchive?.sources?.length||0)*4,
-      'VANGUARDA':attrPd('Físico')+attrPd('Disciplina')+(data.generatedWorkouts?.length||0)*3,
-      'ESTRATEGA':attrPd('Organização')+attrPd('Foco')+Math.min(20,(data.completedMissions||0)),
-      'ELO':attrPd('Comunicação')+attrPd('Relacionamento')
+  // Importações futuras ganham uma tentativa de persistência do armazenamento do iPhone/PWA.
+  const previousImportLocalEpub=window.importLocalEpub;
+  if(typeof previousImportLocalEpub==="function"){
+    window.importLocalEpub=async function(event){
+      await requestPersistentStorage();
+      return previousImportLocalEpub(event);
     };
-    return Object.entries(scores).sort((a,b)=>b[1]-a[1])[0]?.[0]||'BUSCADOR';
   }
-  const arch={
-    BUSCADOR:{glyph:'◇',title:'O BUSCADOR',text:'Você avança quando transforma curiosidade em conhecimento aplicado. Leitura, estudo e domínio de conceitos alimentam sua jornada.'},
-    VANGUARDA:{glyph:'▲',title:'A VANGUARDA',text:'Você avança através de ação física e disciplina. Treinos, consistência e execução prática tornam o progresso visível.'},
-    ESTRATEGA:{glyph:'⌁',title:'O ESTRATEGA',text:'Você avança organizando o caos em sistemas. Planejamento, foco e execução consistente são sua principal rota de evolução.'},
-    ELO:{glyph:'◎',title:'O ELO',text:'Você avança fortalecendo comunicação e relações. Clareza, presença e prática social movimentam sua jornada.'}
-  };
-  function playerName(){return data?.cosmetics?.nickname||'JOGADOR'}
-  function lv(){try{return Number(levelInfo().level)||1}catch(e){return 1}}
-  function rk(){try{return rank(lv())}catch(e){return 'E'}}
-  function completed(){return Math.max(Number(data.completedMissions)||0,(data.missions||[]).filter(m=>m.done).length)}
-  function active(){return (data.missions||[]).filter(m=>!m.done&&!m.queued&&!m.rejectedAt).length}
-  function currentBook(){return (data.knowledgeArchive?.sources||[]).slice().sort((a,b)=>Number(b.lastReadAt?Date.parse(b.lastReadAt):0)-Number(a.lastReadAt?Date.parse(a.lastReadAt):0))[0]||null}
-  function dailyQuest(){return data.s2302DailyQuest||data.dailyQuest||null}
-  function dailyProgress(){const q=dailyQuest();if(!q?.objectives)return 0;const vals=Object.values(q.objectives);if(!vals.length)return 0;return Math.round(vals.reduce((s,o)=>s+Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1)),0)/vals.length*100)}
-  function chapterState(){
-    const c=completed(),s=Number(data.streak)||0,b=currentBook(),dp=dailyProgress();
-    const nodes=[
-      {id:'wake',title:'DESPERTAR',sub:'Primeira missão',done:c>=1,action:'missions'},
-      {id:'routine',title:'ROTINA',sub:'Quest diária',done:dp>=100||s>=3,action:'missions'},
-      {id:'knowledge',title:'CONHECIMENTO',sub:'Livro + estudo',done:!!b&&(Number(b.progress)||0)>=10,action:'books'},
-      {id:'foundation',title:'FUNDAÇÃO',sub:'Boss do arco',done:typeof foundationBossDefeated==='function'?foundationBossDefeated():false,action:'journey'}
-    ];
-    const first=nodes.findIndex(n=>!n.done);nodes.forEach((n,i)=>{n.state=n.done?'done':(i===(first<0?nodes.length-1:first)?'active':'locked')});
-    return nodes;
-  }
-  function roadProgress(nodes){const done=nodes.filter(n=>n.done).length;return Math.round((done/Math.max(1,nodes.length))*100)}
-  function openArea(area){
-    if(area==='journey')return;
-    try{window.closeJourneyMode?.()}catch(e){}
-    setTimeout(()=>{try{if(typeof window.openDockView==='function')window.openDockView(area)}catch(e){}},80);
-  }
-  window.s2313JourneyOpenArea=openArea;
-  window.s2313RefreshArchetype=function(){const p=ensure();p.archetype=detectArchetype();persist();renderJourneyMode();window.showSystemEvent?.('ARQUÉTIPO ATUALIZADO',arch[p.archetype]?.title||p.archetype)};
-  window.s2313ChooseArchetype=function(){
-    const current=ensure().archetype;
-    const raw=(prompt('Escolha seu arquétipo de jornada:\nBUSCADOR\nVANGUARDA\nESTRATEGA\nELO',current)||'').trim().toUpperCase();
-    if(!arch[raw])return;
-    data.journeyProfile.archetype=raw;data.journeyProfile.manual=true;persist();renderJourneyMode();
-  };
-  function questCards(){
-    const q=dailyQuest(),dp=dailyProgress(),book=currentBook();
-    const dq=q?`<div class="s2313Quest special"><div class="s2313QuestK">QUEST DIÁRIA // ${dp}%</div><div class="s2313QuestT">PREPARANDO-SE PARA FICAR MAIS FORTE</div><div class="s2313QuestD">Complete os objetivos físicos do ciclo atual. Cada atualização movimenta a mesma quest exibida na aba MISSÕES.</div><div class="s2313QuestMeta"><span>${Object.values(q.objectives||{}).filter(o=>(Number(o.value)||0)>=(Number(o.target)||1)).length}/${Object.keys(q.objectives||{}).length} OBJETIVOS</span><span>DISCIPLINA</span></div><button onclick="s2313JourneyOpenArea('missions')">ABRIR QUEST DIÁRIA</button></div>`:'';
-    const bk=book?`<div class="s2313Quest"><div class="s2313QuestK">CONHECIMENTO // ${Number(book.progress)||0}%</div><div class="s2313QuestT">${esc(book.title||'LIVRO EM ANDAMENTO')}</div><div class="s2313QuestD">Sua leitura atual faz parte da Jornada. Avance no conteúdo e complete as missões de aprendizagem quando forem desbloqueadas.</div><div class="s2313QuestMeta"><span>INTELECTO</span><span>${Math.floor((Number(book.readingSeconds)||0)/60)} MIN LIDOS</span></div><button onclick="s2313JourneyOpenArea('books')">IR PARA BIBLIOTECA</button></div>`:`<div class="s2313Quest"><div class="s2313QuestK">CONHECIMENTO</div><div class="s2313QuestT">ESCOLHA SEU PRIMEIRO LIVRO</div><div class="s2313QuestD">Adicione um material à Biblioteca para criar uma rota real de estudo dentro da Jornada.</div><button onclick="s2313JourneyOpenArea('books')">ABRIR BIBLIOTECA</button></div>`;
-    return dq+bk;
-  }
-  function renderRpgJourney(){
-    const target=document.getElementById('journeyContent');if(!target)return;
-    const p=ensure(),a=arch[p.archetype]||arch.BUSCADOR,nodes=chapterState(),rp=roadProgress(nodes),li=lv();
-    const originalBoss=typeof journeyRequirements==='function'?journeyRequirements():null;
-    const bossReady=originalBoss?Object.values(originalBoss).every(r=>r.done):false;
-    const bossDone=typeof foundationBossDefeated==='function'?foundationBossDefeated():false;
-    target.innerHTML=`
-      <div class="s2313Hero"><div class="s2313HeroTop"><div class="s2313Sigil">${a.glyph}</div><div><div class="s2313Nick">${esc(playerName())}</div><div class="s2313Title">JOGADOR // NÍVEL ${li}</div></div><div class="s2313Rank"><b>${esc(rk())}</b><span>RANK</span></div></div><div class="s2313Archetype"><div class="s2313ArchKicker">ARQUÉTIPO DE JORNADA</div><div class="s2313ArchName">${a.title}</div><div class="s2313ArchText">${a.text}</div><div class="s2313ArchActions"><button class="primary" onclick="s2313ChooseArchetype()">ESCOLHER ARQUÉTIPO</button><button onclick="s2313RefreshArchetype()">DETECTAR PELO PROGRESSO</button></div></div></div>
-      <div class="s2313Map"><div class="s2313MapHead"><div><div class="s2313MapTitle">MAPA DA JORNADA</div><div class="s2313MapSub">ARCO 01 // FUNDAÇÃO</div></div><div class="s2313Chapter">${rp}% CONCLUÍDO</div></div><div class="s2313Road" style="--road-progress:${rp}%"><div class="s2313Nodes">${nodes.map((n,i)=>`<button class="s2313Node ${n.state}" ${n.state==='locked'?'disabled':''} onclick="s2313JourneyOpenArea('${n.action}')"><div class="s2313Orb">${n.done?'✓':(i+1)}</div><b>${n.title}</b><span>${n.sub}</span></button>`).join('')}</div></div></div>
-      <div class="s2313MissionGrid">${questCards()}</div>
-      <div class="bossCard"><div class="journeyKicker">[ BOSS // ARCO 01 ]</div><div class="bossTitle">${bossDone?'FUNDAÇÃO CONCLUÍDA':'CONSTRUA SUA BASE'}</div><div class="bossSub">${bossDone?'O próximo arco está disponível.':bossReady?'Todos os requisitos foram cumpridos. O Boss pode ser enfrentado.':'Complete os marcos da Jornada para liberar o Boss.'}</div>${originalBoss?`<div class="bossReqList">${Object.values(originalBoss).map(r=>`<div class="bossReq ${r.done?'done':''}"><span>${r.done?'✓':'○'} ${esc(r.label)}</span><b>${Math.min(r.value,r.target)} / ${r.target}</b></div>`).join('')}</div>`:''}<button class="bossButton" ${(!bossReady||bossDone)?'disabled':''} onclick="defeatFoundationBoss()">${bossDone?'BOSS VENCIDO':bossReady?'ENFRENTAR BOSS':'BOSS BLOQUEADO'}</button></div>
-      <div class="s2313ProfilePanel"><div class="weeklyTitle">REGISTRO DO JOGADOR</div><div class="weeklySub">PROGRESSO REAL CONVERTIDO EM ESTADO DE JOGO</div><div class="s2313ProfileRow"><div class="s2313Stat"><b>${completed()}</b><span>MISSÕES</span></div><div class="s2313Stat"><b>${active()}</b><span>ATIVAS</span></div><div class="s2313Stat"><b>${Number(data.streak)||0}</b><span>SEQUÊNCIA</span></div></div></div>`;
-  }
-  window.renderJourneyMode=renderRpgJourney;
-  const oldOpen=window.openJourneyMode;
-  window.openJourneyMode=function(){renderRpgJourney();document.getElementById('journeyOverlay')?.classList.add('show')};
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  function init(){ensure();persist();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // JORNADA DO JOGADOR COM ARQUÉTIPO, MAPA DE PROGRESSÃO, QUESTS CONECTADAS E REGISTRO RPG.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);persist()}}catch(e){console.warn('SIRIUS '+VERSION,e)}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,100),{once:true});else setTimeout(init,100);window.addEventListener('load',()=>setTimeout(init,280),{once:true});
-})();
-</script>
 
-
-
-<!-- ===== SIRIUS v2.23.14 // JORNADA VISÍVEL + ACESSO ROBUSTO ===== -->
-<style id="sirius-v22314-journey-access-style">
-#view-home .mainQuestCard{position:relative!important;isolation:isolate!important}
-#view-home .mainQuestCard button,
-#view-home [data-s2314-journey-open]{
-  position:relative!important;z-index:120!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important
-}
-#journeyOverlay{z-index:2147483600!important;pointer-events:none!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important}
-#journeyOverlay.show{display:block!important;pointer-events:auto!important}
-#journeyOverlay .journeyWindow,#journeyOverlay .journeyWindow *{pointer-events:auto}
-.s2314JourneyEntry{margin:10px 0 16px;border:1px solid #7346f0;background:linear-gradient(135deg,#110724,#071426);box-shadow:inset 0 0 28px rgba(118,70,240,.08),0 0 18px rgba(112,64,245,.12);padding:12px;position:relative;overflow:hidden}
-.s2314JourneyEntry:before{content:"";position:absolute;left:0;top:0;width:38%;height:2px;background:linear-gradient(90deg,#d05dff,#6347ff,transparent);box-shadow:0 0 10px #9d4cff}
-.s2314JourneyEntryTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.s2314JourneyEntryK{font-size:6.5px;letter-spacing:1.7px;color:#c98aff;font-weight:1000}.s2314JourneyEntryT{margin-top:5px;font-size:15px;font-weight:1000;color:#f7f0ff}.s2314JourneyEntryP{font-size:9px;color:#93a9c4;font-weight:900;white-space:nowrap}
-.s2314JourneyEntry button{width:100%;margin-top:10px;min-height:42px;border:1px solid #9b5cff;background:linear-gradient(180deg,#5224ad,#2a1064);color:#fff;font-size:7px;font-weight:1000;letter-spacing:1.2px}
-body.s2314-journey-open{overflow:hidden!important}
-</style>
-<script id="sirius-v22314-journey-access-script">
-(function(){
-  const VERSION='v2.23.14';
-  let opening=false;
-  function persist(){try{if(typeof save==='function')save();else localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}}
-  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-  function lv(){try{return Number(levelInfo().level)||1}catch(e){return 1}}
-  function rk(){try{return typeof rank==='function'?rank(lv()):'E'}catch(e){return'E'}}
-  function dailyPct(){try{const q=data.s2302DailyQuest||data.dailyQuest;if(!q?.objectives)return 0;const a=Object.values(q.objectives);return a.length?Math.round(a.reduce((s,o)=>s+Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1)),0)/a.length*100):0}catch(e){return 0}}
-  function fallbackRender(){
-    const target=document.getElementById('journeyContent');if(!target)return;
-    const completed=Math.max(Number(data?.completedMissions)||0,(data?.missions||[]).filter(m=>m.done).length),streak=Number(data?.streak)||0,dp=dailyPct();
-    target.innerHTML=`<div class="s2313Hero"><div class="s2313HeroTop"><div class="s2313Sigil">◇</div><div><div class="s2313Nick">${esc(data?.cosmetics?.nickname||'JOGADOR')}</div><div class="s2313Title">JOGADOR // NÍVEL ${lv()}</div></div><div class="s2313Rank"><b>${esc(rk())}</b><span>RANK</span></div></div><div class="s2313Archetype"><div class="s2313ArchKicker">JORNADA DO JOGADOR</div><div class="s2313ArchName">ARCO 01 // FUNDAÇÃO</div><div class="s2313ArchText">Seu progresso real alimenta a Jornada. Complete missões, avance na Quest Diária e desenvolva sua base.</div></div></div><div class="s2313ProfilePanel"><div class="weeklyTitle">REGISTRO DO JOGADOR</div><div class="s2313ProfileRow"><div class="s2313Stat"><b>${completed}</b><span>MISSÕES</span></div><div class="s2313Stat"><b>${dp}%</b><span>QUEST DIÁRIA</span></div><div class="s2313Stat"><b>${streak}</b><span>SEQUÊNCIA</span></div></div></div>`;
-  }
-  function showJourney(){
-    if(opening)return;opening=true;
-    try{
-      if(typeof window.renderJourneyMode==='function')window.renderJourneyMode();
-      else if(typeof renderJourneyMode==='function')renderJourneyMode();
-      else fallbackRender();
-    }catch(err){console.error('SIRIUS journey render',err);fallbackRender()}
-    const o=document.getElementById('journeyOverlay');
-    if(o){o.classList.add('show');o.setAttribute('aria-hidden','false');o.style.display='block';o.style.pointerEvents='auto';o.scrollTop=0;document.body.classList.add('s2314-journey-open')}
-    opening=false;
-  }
-  function hideJourney(){const o=document.getElementById('journeyOverlay');if(o){o.classList.remove('show');o.setAttribute('aria-hidden','true');o.style.removeProperty('display');o.style.removeProperty('pointer-events')}document.body.classList.remove('s2314-journey-open')}
-  window.openJourneyMode=showJourney;
-  window.closeJourneyMode=hideJourney;
-
-  function bindPrimary(){
-    document.querySelectorAll('#view-home .mainQuestCard button').forEach(btn=>{
-      if(!/VER JORNADA/i.test(btn.textContent||''))return;
-      btn.dataset.s2314JourneyOpen='1';btn.type='button';btn.onclick=null;
-      if(btn.dataset.s2314Bound==='1')return;btn.dataset.s2314Bound='1';let last=0;
-      const run=ev=>{const n=Date.now();if(n-last<320){ev?.preventDefault?.();return}last=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();showJourney()};
-      btn.addEventListener('pointerup',run,true);btn.addEventListener('touchend',run,{capture:true,passive:false});btn.addEventListener('click',run,true);
+  // Repara entradas antigas que possuem nome de arquivo mas perderam a flag localEpub.
+  function normalizeLegacyLibraryFlags(){
+    const sources=data?.knowledgeArchive?.sources||[];
+    let changed=false;
+    sources.forEach(s=>{
+      if(s&&s.localFileName&&!s.localEpub&&!s.materialUrl){ s.localEpub=true; changed=true; }
     });
+    if(changed&&typeof window.save==="function")window.save();
   }
-  function addHomeEntry(){
-    const home=document.getElementById('view-home');if(!home||document.getElementById('s2314JourneyEntry'))return;
-    const anchor=home.querySelector('.mainQuestCard');if(!anchor)return;
-    const e=document.createElement('div');e.id='s2314JourneyEntry';e.className='s2314JourneyEntry';e.innerHTML=`<div class="s2314JourneyEntryTop"><div><div class="s2314JourneyEntryK">[ SIRIUS // JORNADA DO JOGADOR ]</div><div class="s2314JourneyEntryT">ARCO 01 // FUNDAÇÃO</div></div><div class="s2314JourneyEntryP">RANK ${esc(rk())}</div></div><button type="button" data-s2314-journey-open="1">ABRIR MAPA DA JORNADA</button>`;
-    anchor.insertAdjacentElement('afterend',e);
-    const b=e.querySelector('button');let last=0;const run=ev=>{const n=Date.now();if(n-last<320)return;last=n;ev?.preventDefault?.();ev?.stopPropagation?.();ev?.stopImmediatePropagation?.();showJourney()};b.addEventListener('pointerup',run,true);b.addEventListener('touchend',run,{capture:true,passive:false});b.addEventListener('click',run,true);
+  function markPatchedVersion(){
+    document.querySelectorAll(".versionMark").forEach(x=>x.textContent="SIRIUS // "+PATCH_VERSION);
   }
-  function bindClose(){
-    const b=document.querySelector('#journeyOverlay .journeyClose');if(!b||b.dataset.s2314Bound==='1')return;b.dataset.s2314Bound='1';b.onclick=null;let last=0;const run=ev=>{const n=Date.now();if(n-last<300)return;last=n;ev?.preventDefault?.();ev?.stopPropagation?.();hideJourney()};b.addEventListener('pointerup',run,true);b.addEventListener('touchend',run,{capture:true,passive:false});b.addEventListener('click',run,true);
-  }
-  function install(){bindPrimary();addHomeEntry();bindClose()}
-  const mo=new MutationObserver(()=>install());mo.observe(document.body,{childList:true,subtree:true});
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  function init(){install();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // ACESSO DA JORNADA CORRIGIDO, ENTRADA SECUNDÁRIA NA HOME E OVERLAY RPG GARANTIDO.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);persist()}}catch(e){}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,80),{once:true});else setTimeout(init,80);
-  window.addEventListener('load',()=>setTimeout(init,220),{once:true});[500,1200,2600,5000].forEach(ms=>setTimeout(()=>{install();mark()},ms));
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>{normalizeLegacyLibraryFlags();markPatchedVersion();},{once:true});
+  else {normalizeLegacyLibraryFlags();markPatchedVersion();}
+
+  window.SIRIUS_LIBRARY_PATCH=PATCH_VERSION;
 })();
 </script>
-
-
-
-<!-- ===== SIRIUS v2.23.15 // EPUB iOS RESILIENTE + JORNADA RPG 2.0 ===== -->
-<style id="sirius-v22315-rpg-epub-style">
-/* Jornada 2.0 */
-#journeyOverlay{background:
-  radial-gradient(circle at 50% -10%,rgba(126,74,255,.20),transparent 32%),
-  linear-gradient(180deg,#02050c 0%,#040815 48%,#02050b 100%)!important}
-#journeyOverlay .journeyWindow{max-width:820px!important;padding:10px 12px 28px!important}
-.s2315Hero{border:1px solid #714cff;background:linear-gradient(145deg,#140a2d,#071322 60%,#05101b);padding:16px;box-shadow:0 0 28px rgba(120,75,255,.14),inset 0 0 30px rgba(94,69,255,.05);position:relative;overflow:hidden}
-.s2315Hero:after{content:"";position:absolute;right:-42px;top:-58px;width:205px;height:205px;border:1px solid rgba(85,215,255,.13);border-radius:50%;box-shadow:0 0 0 32px rgba(108,78,255,.025),0 0 0 62px rgba(108,78,255,.018);pointer-events:none}
-.s2315Player{display:grid;grid-template-columns:66px minmax(0,1fr) 72px;gap:12px;align-items:center;position:relative;z-index:2}
-.s2315Avatar{width:66px;height:66px;border-radius:18px;border:1px solid #5fe0ff;background:radial-gradient(circle,#173050,#07121f 68%);display:grid;place-items:center;font-size:28px;color:#dffbff;box-shadow:0 0 18px rgba(71,217,255,.12)}
-.s2315Name{font-size:18px;font-weight:1000;color:#f8fbff;line-height:1.05}.s2315Sub{font-size:7px;letter-spacing:1.6px;color:#7fa7c4;margin-top:6px}.s2315Rank{height:72px;border:1px solid #42ccff;background:#071728;display:flex;flex-direction:column;align-items:center;justify-content:center}.s2315Rank b{font-size:25px}.s2315Rank span{font-size:6px;letter-spacing:1.5px;color:#66dfff;margin-top:4px}
-.s2315Xp{margin-top:14px;position:relative;z-index:2}.s2315XpTop{display:flex;justify-content:space-between;font-size:6.7px;color:#8ea8be;letter-spacing:1px}.s2315XpTrack{height:7px;margin-top:6px;border:1px solid #264763;background:#07101b;overflow:hidden}.s2315XpTrack span{display:block;height:100%;background:linear-gradient(90deg,#8b4cff,#44dfff);box-shadow:0 0 9px #5c9dff}
-.s2315Arch{margin-top:14px;padding-top:13px;border-top:1px solid #203b54;position:relative;z-index:2}.s2315Kicker{font-size:6.5px;font-weight:1000;letter-spacing:2px;color:#b17aff}.s2315ArchTitle{font-size:20px;font-weight:1000;color:#e8dcff;margin-top:6px}.s2315ArchText{font-size:8px;line-height:1.5;color:#8ea2b8;margin-top:5px;max-width:650px}.s2315ArchButtons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.s2315ArchButtons button{min-height:42px;border:1px solid #4a6e90;background:#071728;color:#dceeff;font-size:7px;font-weight:1000;letter-spacing:1px}.s2315ArchButtons button.primary{border-color:#9a5cff;background:linear-gradient(180deg,#5427b3,#2f126e)}
-.s2315Section{margin-top:11px;border:1px solid #285e84;background:linear-gradient(180deg,#071523,#050e18);padding:13px;position:relative;overflow:hidden}.s2315Section.purple{border-color:#6841c7;background:linear-gradient(180deg,#100725,#070d18)}.s2315Section.gold{border-color:#7c6430;background:linear-gradient(180deg,#191206,#080d13)}
-.s2315SectionTitle{font-size:7px;font-weight:1000;letter-spacing:1.8px;color:#63dcff}.purple .s2315SectionTitle{color:#c58cff}.gold .s2315SectionTitle{color:#ffd46c}.s2315Big{font-size:17px;font-weight:1000;margin-top:6px;color:#f6fbff}.s2315Desc{font-size:7.7px;line-height:1.5;color:#8fa8bf;margin-top:5px}
-.s2315Stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.s2315Stat{border:1px solid #244c69;background:#06121e;padding:9px;text-align:center}.s2315Stat b{display:block;font-size:15px}.s2315Stat span{display:block;font-size:5.7px;color:#6fcde8;letter-spacing:1px;margin-top:3px}
-.s2315Road{margin-top:11px;display:grid;gap:7px;position:relative}.s2315Road:before{content:"";position:absolute;left:18px;top:18px;bottom:18px;width:1px;background:linear-gradient(#6a4eff,#3ce0ff,#6843d1);opacity:.6}.s2315Node{position:relative;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px;border:1px solid #243f57;background:#06111d}.s2315Node .dot{width:28px;height:28px;border-radius:50%;border:1px solid #3e7192;background:#071827;display:grid;place-items:center;z-index:1;color:#94adc0}.s2315Node.done{border-color:#2e8c78}.s2315Node.done .dot{border-color:#4cf0b1;color:#4cf0b1}.s2315Node.current{border-color:#8153ff;box-shadow:0 0 16px rgba(126,82,255,.14)}.s2315Node.current .dot{border-color:#b277ff;color:#d3a4ff}.s2315NodeTitle{font-size:9px;font-weight:1000;color:#f1f7ff}.s2315NodeSub{font-size:6.2px;color:#7794ad;margin-top:3px}.s2315NodeState{font-size:5.8px;font-weight:1000;letter-spacing:.8px;color:#829db5}.s2315Node.done .s2315NodeState{color:#52e9b0}.s2315Node.current .s2315NodeState{color:#c18cff}
-.s2315Action{width:100%;min-height:44px;margin-top:10px;border:1px solid #48d9ff;background:linear-gradient(180deg,#0a71aa,#07416b);color:white;font-size:7px;font-weight:1000;letter-spacing:1.1px;touch-action:manipulation}.s2315Action.alt{border-color:#6951ba;background:#15102a}.s2315Action[disabled]{opacity:.38;filter:grayscale(.5)}
-.s2315BossReq{display:grid;gap:5px;margin-top:10px}.s2315BossReq div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid rgba(216,180,97,.13);padding-top:6px;font-size:6.8px;color:#9f947e}.s2315BossReq .done{color:#67e5ae}
-.s2315Modal{position:fixed;inset:0;z-index:2147483646;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,3,9,.92)}.s2315Modal.show{display:flex}.s2315ModalCard{width:min(94vw,520px);max-height:88vh;overflow:auto;border:1px solid #7b51ff;background:linear-gradient(180deg,#100827,#07111e);padding:15px;box-shadow:0 0 38px rgba(123,81,255,.24)}.s2315ModalTitle{font-size:16px;font-weight:1000}.s2315ModalSub{font-size:7.5px;color:#8ea4ba;margin-top:5px;line-height:1.5}.s2315ArchGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.s2315ArchCard{border:1px solid #345c7b;background:#071522;padding:11px;text-align:left;color:#ecf8ff;min-height:118px}.s2315ArchCard.selected{border-color:#a469ff;background:linear-gradient(180deg,#261149,#0c1623);box-shadow:0 0 16px rgba(154,94,255,.18)}.s2315ArchGlyph{font-size:20px}.s2315ArchCard b{display:block;font-size:10px;margin-top:7px}.s2315ArchCard span{display:block;font-size:6.5px;color:#879db2;line-height:1.45;margin-top:5px}.s2315ModalActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.s2315ModalActions button{min-height:42px;border:1px solid #3b6688;background:#081827;color:#e9f8ff;font-size:7px;font-weight:1000}.s2315ModalActions .primary{border-color:#9b5eff;background:#442090}
-@media(max-width:520px){.s2315Player{grid-template-columns:58px minmax(0,1fr) 60px}.s2315Avatar{width:58px;height:58px}.s2315Rank{height:60px}.s2315ArchGrid{grid-template-columns:1fr}.s2315ArchButtons{grid-template-columns:1fr}.s2315Stats{gap:5px}.s2315Stat{padding:8px 5px}}
-
-/* EPUB: feedback no padrão SIRIUS, sem alert nativo durante importação */
-.s2315EpubNote{margin-top:6px;font-size:6px;color:#61e9a8;letter-spacing:.5px}.s2315EpubWarn{color:#ffb266}
-</style>
-<script id="sirius-v22315-rpg-epub-script">
-(function(){
-  const VERSION='v2.23.15';
-  const DB='SIRIUS_LOCAL_FILES', STORE='epubs', CACHE='SIRIUS_EPUB_FILES_V1';
-  let selectedArch=null;
-  const ARCH={
-    BUSCADOR:{glyph:'◇',title:'O BUSCADOR',text:'Conhecimento, leitura e domínio de conceitos alimentam esta rota.',focus:'INTELECTO // FOCO'},
-    VANGUARDA:{glyph:'△',title:'A VANGUARDA',text:'Ação física, constância e desafios concretos movem esta rota.',focus:'FÍSICO // DISCIPLINA'},
-    ESTRATEGA:{glyph:'⌁',title:'O ESTRATEGA',text:'Planejamento, execução e consistência transformam intenção em progresso.',focus:'FOCO // DISCIPLINA'},
-    ELO:{glyph:'◎',title:'O ELO',text:'Comunicação, vínculos e presença fortalecem sua progressão.',focus:'COMUNICAÇÃO // RELACIONAMENTO'}
-  };
-  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-  function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));return true}catch(e){console.error('SIRIUS persist',e);return false}}
-  function sources(){data.knowledgeArchive=data.knowledgeArchive&&typeof data.knowledgeArchive==='object'?data.knowledgeArchive:{};data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];return data.knowledgeArchive.sources}
-  function level(){try{return Number(levelInfo().level)||1}catch(e){return 1}}
-  function rankNow(){try{return typeof rank==='function'?rank(level()):'E'}catch(e){return'E'}}
-  function completed(){return Math.max(Number(data?.completedMissions)||0,(data?.missions||[]).filter(m=>m.done).length)}
-  function active(){return (data?.missions||[]).filter(m=>!m.done&&!m.queued).length}
-  function playerName(){return data?.cosmetics?.nickname||data?.profile?.name||'JOGADOR'}
-  function daily(){return data?.s2302DailyQuest||data?.dailyQuest||null}
-  function dailyProgress(){const q=daily();const arr=Object.values(q?.objectives||{});if(!arr.length)return{pct:0,done:0,total:0};let sum=0,done=0;arr.forEach(o=>{const f=Math.min(1,(Number(o.value)||0)/Math.max(1,Number(o.target)||1));sum+=f;if(f>=1)done++});return{pct:Math.round(sum/arr.length*100),done,total:arr.length}}
-  function currentBook(){const a=sources();return [...a].filter(s=>Number(s.progress||0)<100).sort((x,y)=>Date.parse(y.lastReadAt||0)-Date.parse(x.lastReadAt||0))[0]||a[0]||null}
-  function detectArch(){const attrs=data?.attrs||{};const val=n=>Number(attrs?.[n]?.pd)||0;const scores={BUSCADOR:val('Intelecto')+val('Foco'),VANGUARDA:val('Físico')+val('Disciplina'),ESTRATEGA:val('Foco')+val('Disciplina'),ELO:val('Comunicação')+val('Relacionamento')};return Object.entries(scores).sort((a,b)=>b[1]-a[1])[0]?.[0]||'BUSCADOR'}
-  function profile(){data.journeyProfile=data.journeyProfile&&typeof data.journeyProfile==='object'?data.journeyProfile:{};if(!data.journeyProfile.archetype)data.journeyProfile.archetype=detectArch();return data.journeyProfile}
-  function xpInfo(){const lv=level();const total=Number(data?.xp)||0;const next=Math.max(100,lv*100);const cur=total%next;return{cur,next,pct:Math.max(0,Math.min(100,Math.round(cur/next*100)))}}
-  function reqs(){try{return typeof journeyRequirements==='function'?journeyRequirements():{}}catch(e){return{}}}
-  function bossDone(){try{return typeof foundationBossDefeated==='function'&&foundationBossDefeated()}catch(e){return false}}
-
-  /* ---------- EPUB: armazenamento duplo e compatível com iOS ---------- */
-  function openDbCurrent(){
-    return new Promise((resolve,reject)=>{
-      if(!window.indexedDB){reject(new Error('indexeddb_unavailable'));return}
-      const req=indexedDB.open(DB); // sem forçar versão antiga: evita VersionError no Safari
-      req.onsuccess=()=>resolve(req.result);
-      req.onerror=()=>reject(req.error||new Error('indexeddb_open_failed'));
-      req.onblocked=()=>reject(new Error('indexeddb_blocked'));
-    });
-  }
-  async function idbPut(id,blob){
-    const db=await openDbCurrent();
-    if(!db.objectStoreNames.contains(STORE)){db.close();throw new Error('epub_store_missing')}
-    await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(blob,id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('idb_write'));tx.onabort=()=>reject(tx.error||new Error('idb_abort'))});
-    db.close();
-  }
-  async function idbGet(id){
-    const db=await openDbCurrent();
-    if(!db.objectStoreNames.contains(STORE)){db.close();return null}
-    const value=await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(id);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error);tx.oncomplete=()=>{};tx.onerror=()=>{}});db.close();
-    if(value instanceof Blob)return value;
-    if(value?.blob instanceof Blob)return value.blob;
-    return null;
-  }
-  function cacheKey(id){return new URL('./__sirius_epub__/'+encodeURIComponent(id),location.href).href}
-  async function cachePut(id,blob){if(!('caches' in window))throw new Error('cache_unavailable');const c=await caches.open(CACHE);await c.put(cacheKey(id),new Response(blob,{headers:{'Content-Type':'application/epub+zip','X-Sirius-Epub':'1'}}))}
-  async function cacheGet(id){if(!('caches' in window))return null;const c=await caches.open(CACHE);const r=await c.match(cacheKey(id));return r?await r.blob():null}
-  async function resilientPut(id,file){
-    try{if(navigator.storage?.persist)await navigator.storage.persist()}catch(e){}
-    const blob=file instanceof Blob?file.slice(0,file.size,file.type||'application/epub+zip'):new Blob([file],{type:'application/epub+zip'});
-    let idbOk=false,cacheOk=false;
-    try{await idbPut(id,blob);const b=await idbGet(id);idbOk=!!b&&b.size===blob.size}catch(e){console.warn('SIRIUS EPUB IndexedDB',e)}
-    try{await cachePut(id,blob);const b=await cacheGet(id);cacheOk=!!b&&b.size===blob.size}catch(e){console.warn('SIRIUS EPUB Cache',e)}
-    if(!idbOk&&!cacheOk)throw new Error('epub_storage_failed');
-    return{blob,size:blob.size,idbOk,cacheOk,savedAt:new Date().toISOString()};
-  }
-  async function resilientGet(id){let b=null;try{b=await idbGet(id)}catch(e){}if(b)return b;try{b=await cacheGet(id)}catch(e){}return b||null}
-  window.getLocalEpub=resilientGet;
-  window.putLocalEpub=async(id,file)=>{await resilientPut(id,file);return true};
-
-  const extract=window.extractEpubMetadata||((file)=>Promise.resolve({title:file.name.replace(/\.epub$/i,''),author:'',coverUrl:''}));
-  window.importLocalEpub=async function(event){
-    const input=event?.target,file=input?.files?.[0];if(!file)return;
-    if(!/\.epub$/i.test(file.name)){window.s62ShowSystemPanel?.({type:'notice',title:'EPUB INVÁLIDO',body:'SELECIONE UM ARQUIVO .EPUB.',actions:[{label:'CONTINUAR'}]});return}
-    try{
-      window.showToast?.('SALVANDO EPUB // ARMAZENAMENTO LOCAL...');
-      const meta=await extract(file),title=meta.title||file.name.replace(/\.epub$/i,'');
-      let s=sources().find(x=>x?.localEpub&&(String(x.localFileName||'').toLowerCase()===file.name.toLowerCase()||String(x.title||'').toLowerCase()===String(title).toLowerCase()));
-      const id=s?.id||('src_'+Date.now());
-      const saved=await resilientPut(id,file);
-      if(!s){s={id,createdAt:new Date().toISOString(),progress:0,fileProgress:0,contentStartProgress:null,contentStartCfi:null,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[]};sources().push(s)}
-      Object.assign(s,{title,author:meta.author||s.author||'',type:'Livro',area:s.area||'Conhecimento geral',section:s.section||'',materialUrl:'',localEpub:true,localEpubVerified:true,localEpubMissing:false,localFileName:file.name,localFileSize:saved.size,localFileSavedAt:saved.savedAt,localStore:saved.idbOk&&saved.cacheOk?'IDB+CACHE':saved.idbOk?'IDB':'CACHE',coverUrl:meta.coverUrl||s.coverUrl||''});
-      if(!persist())throw new Error('metadata_persist_failed');
-      try{window.render?.();window.refreshDashboard?.()}catch(e){}
-      window.s62ShowSystemPanel?.({type:'message',title:'EPUB SALVO',body:`<span class="green">${esc(title)}</span><br><br>ARQUIVO CONFIRMADO NESTE APARELHO.`,actions:[{label:'CONTINUAR'}]});
-    }catch(err){console.error('SIRIUS EPUB import',err);window.s62ShowSystemPanel?.({type:'notice',title:'FALHA AO SALVAR EPUB',body:'O SIRIUS NÃO CONSEGUIU GRAVAR O ARQUIVO NESTE APARELHO. VERIFIQUE SE O SAFARI NÃO ESTÁ EM MODO PRIVADO E SE HÁ ESPAÇO DISPONÍVEL.',actions:[{label:'CONTINUAR'}]})}
-    finally{if(input)input.value=''}
-  };
-
-  window.openLocalEpubReader=async function(id){
-    const s=sources().find(x=>x.id===id);if(!s)return;
-    const file=await resilientGet(id);
-    if(!file){s.localEpubMissing=true;s.localEpubVerified=false;persist();window.s62ShowSystemPanel?.({type:'notice',title:'EPUB NÃO ENCONTRADO',body:'SELECIONE O MESMO EPUB NOVAMENTE PARA REANEXÁ-LO SEM PERDER O PROGRESSO.',actions:[{label:'CONTINUAR'}]});return}
-    s.localEpubMissing=false;s.localEpubVerified=true;s.lastReadAt=new Date().toISOString();persist();
-    if(typeof ePub!=='function'){window.s62ShowSystemPanel?.({type:'notice',title:'LEITOR INDISPONÍVEL',body:'O MECANISMO EPUB NÃO FOI CARREGADO.',actions:[{label:'CONTINUAR'}]});return}
-    activeEpubSourceId=id;activeReadingStartedAt=Date.now();activeReadingStartProgress=Number(s.fileProgress??s.progress)||0;
-    document.getElementById('epubReaderTitle').textContent=s.title||'LIVRO';document.getElementById('epubProgressText').textContent='CARREGANDO LIVRO...';document.getElementById('epubSessionInfo').textContent='EPUB LOCAL // ARQUIVO CONFIRMADO';document.getElementById('epubProgressFill').style.width=(Number(s.fileProgress??s.progress)||0)+'%';document.getElementById('epubViewport').innerHTML='';document.getElementById('epubOverlay').classList.add('show');
-    try{const buffer=await file.arrayBuffer();activeEpubBook=ePub(buffer);activeEpubRendition=activeEpubBook.renderTo('epubViewport',{width:'100%',height:'100%',spread:'none',manager:'default',flow:'paginated'});activeEpubRendition.themes.default({'body':{'background':'#07101f !important','color':'#dfeaff !important','padding':'0 8px !important'},'p':{'line-height':'1.65 !important'},'a':{'color':'#70dcff !important'}});if(typeof attachSiriusEpubProgressHandlers==='function')attachSiriusEpubProgressHandlers(s);await activeEpubBook.ready;try{await activeEpubBook.locations.generate(1200)}catch(e){}await activeEpubRendition.display(s.epubCfi||undefined)}catch(err){console.error(err);document.getElementById('epubViewport').innerHTML='<div class="epubLoading">NÃO FOI POSSÍVEL ABRIR ESTE EPUB LOCAL.</div>'}
-  };
-
-  /* ---------- Jornada: modal de arquétipo próprio ---------- */
-  function ensureArchModal(){
-    let m=document.getElementById('s2315ArchModal');if(m)return m;
-    m=document.createElement('div');m.id='s2315ArchModal';m.className='s2315Modal';m.innerHTML='<div class="s2315ModalCard"><div class="s2315ModalTitle">ESCOLHA SEU ARQUÉTIPO</div><div class="s2315ModalSub">O arquétipo muda a leitura da sua Jornada, não limita suas missões. Você poderá alterar depois.</div><div class="s2315ArchGrid" id="s2315ArchGrid"></div><div class="s2315ModalActions"><button type="button" data-s2315-cancel>CANCELAR</button><button type="button" class="primary" data-s2315-confirm>CONFIRMAR</button></div></div>';document.body.appendChild(m);return m
-  }
-  function openArch(){const p=profile();selectedArch=p.archetype||detectArch();const m=ensureArchModal(),g=m.querySelector('#s2315ArchGrid');g.innerHTML=Object.entries(ARCH).map(([k,a])=>`<button type="button" class="s2315ArchCard ${k===selectedArch?'selected':''}" data-arch="${k}"><div class="s2315ArchGlyph">${a.glyph}</div><b>${a.title}</b><span>${a.text}<br><br>${a.focus}</span></button>`).join('');m.classList.add('show')}
-  function closeArch(){document.getElementById('s2315ArchModal')?.classList.remove('show')}
-  document.addEventListener('click',e=>{const c=e.target.closest?.('[data-arch]');if(c){selectedArch=c.dataset.arch;document.querySelectorAll('.s2315ArchCard').forEach(x=>x.classList.toggle('selected',x.dataset.arch===selectedArch));return}if(e.target.closest?.('[data-s2315-cancel]'))closeArch();if(e.target.closest?.('[data-s2315-confirm]')){if(selectedArch&&ARCH[selectedArch]){const p=profile();p.archetype=selectedArch;p.manual=true;persist();closeArch();renderJourney();window.showToast?.('ARQUÉTIPO ATUALIZADO')}}},true);
-  window.s2313ChooseArchetype=openArch;
-  window.s2315ChooseArchetype=openArch;
-  window.s2315DetectArchetype=function(){const p=profile();p.archetype=detectArch();p.manual=false;persist();renderJourney();window.showToast?.('PERFIL ANALISADO')};
-
-  function action(area){try{document.getElementById('journeyOverlay')?.classList.remove('show');document.body.classList.remove('s2314-journey-open');if(area==='missions')window.openDockView?.('missions');else if(area==='books')window.openDockView?.('books');else if(area==='training')window.openDockView?.('training')}catch(e){}}
-  window.s2315JourneyAction=action;
-  function renderJourney(){
-    const target=document.getElementById('journeyContent');if(!target)return;
-    const p=profile(),a=ARCH[p.archetype]||ARCH.BUSCADOR,dp=dailyProgress(),book=currentBook(),bookPct=Math.max(0,Math.min(100,Number(book?.progress)||0)),xp=xpInfo(),r=reqs(),bd=bossDone();
-    const bossReady=Object.values(r||{}).length?Object.values(r).every(x=>x.done):false;
-    const nodes=[
-      {title:'DESPERTAR',sub:'Concluir a primeira missão',done:completed()>=1},
-      {title:'ROTINA',sub:'Avançar na Quest Diária',done:dp.pct>=60,current:dp.pct<60},
-      {title:'CONHECIMENTO',sub:book?`${book.title} // ${bookPct}%`:'Adicionar um livro à Biblioteca',done:bookPct>=10,current:dp.pct>=60&&bookPct<10},
-      {title:'FUNDAÇÃO',sub:'Boss do Arco 01',done:bd,current:bossReady&&!bd}
-    ];
-    target.innerHTML=`
-      <div class="s2315Hero"><div class="s2315Player"><div class="s2315Avatar">${a.glyph}</div><div><div class="s2315Name">${esc(playerName())}</div><div class="s2315Sub">JOGADOR // NÍVEL ${level()}</div></div><div class="s2315Rank"><b>${esc(rankNow())}</b><span>RANK</span></div></div><div class="s2315Xp"><div class="s2315XpTop"><span>XP DO NÍVEL</span><span>${xp.cur} / ${xp.next}</span></div><div class="s2315XpTrack"><span style="width:${xp.pct}%"></span></div></div><div class="s2315Arch"><div class="s2315Kicker">ARQUÉTIPO DE JORNADA</div><div class="s2315ArchTitle">${a.title}</div><div class="s2315ArchText">${a.text}<br>${a.focus}</div><div class="s2315ArchButtons"><button class="primary" type="button" onclick="s2315ChooseArchetype()">ESCOLHER ARQUÉTIPO</button><button type="button" onclick="s2315DetectArchetype()">ANALISAR PERFIL</button></div></div></div>
-      <div class="s2315Section"><div class="s2315SectionTitle">OBJETIVO ATUAL</div><div class="s2315Big">QUEST DIÁRIA // ${dp.done}/${dp.total||5}</div><div class="s2315Desc">Flexão, prancha, abdominal, agachamento e corrida alimentam o progresso do arco.</div><div class="s2315Stats"><div class="s2315Stat"><b>${dp.pct}%</b><span>QUEST</span></div><div class="s2315Stat"><b>${completed()}</b><span>MISSÕES</span></div><div class="s2315Stat"><b>${Number(data?.streak)||0}</b><span>SEQUÊNCIA</span></div></div><button class="s2315Action" type="button" onclick="s2315JourneyAction('missions')">ABRIR QUEST DIÁRIA</button></div>
-      <div class="s2315Section purple"><div class="s2315SectionTitle">MAPA // ARCO 01 — FUNDAÇÃO</div><div class="s2315Road">${nodes.map((n,i)=>`<div class="s2315Node ${n.done?'done':n.current?'current':''}"><div class="dot">${n.done?'✓':i+1}</div><div><div class="s2315NodeTitle">${n.title}</div><div class="s2315NodeSub">${esc(n.sub)}</div></div><div class="s2315NodeState">${n.done?'CONCLUÍDO':n.current?'ATUAL':'BLOQUEADO'}</div></div>`).join('')}</div></div>
-      <div class="s2315Section"><div class="s2315SectionTitle">MISSÃO DE CONHECIMENTO</div><div class="s2315Big">${book?esc(book.title):'NENHUM LIVRO ATIVO'}</div><div class="s2315Desc">${book?`PROGRESSO ${bookPct}% // ${Math.floor((Number(book.readingSeconds)||0)/60)} MIN LIDOS. Continue a leitura e desbloqueie avaliações de aprendizagem.`:'Adicione um material à Biblioteca para conectar conhecimento à Jornada.'}</div><button class="s2315Action alt" type="button" onclick="s2315JourneyAction('books')">IR PARA BIBLIOTECA</button></div>
-      <div class="s2315Section gold"><div class="s2315SectionTitle">BOSS // ARCO 01</div><div class="s2315Big">${bd?'FUNDAÇÃO CONCLUÍDA':'CONSTRUA SUA BASE'}</div><div class="s2315Desc">${bd?'Boss vencido. Seu progresso está registrado.':bossReady?'Requisitos completos. O Boss está disponível.':'Complete os requisitos abaixo para liberar o confronto.'}</div><div class="s2315BossReq">${Object.values(r||{}).map(x=>`<div class="${x.done?'done':''}"><span>${x.done?'✓':'○'} ${esc(x.label)}</span><b>${Math.min(Number(x.value)||0,Number(x.target)||0)} / ${Number(x.target)||0}</b></div>`).join('')}</div><button class="s2315Action" type="button" ${(!bossReady||bd)?'disabled':''} onclick="defeatFoundationBoss()">${bd?'BOSS VENCIDO':bossReady?'ENFRENTAR BOSS':'BOSS BLOQUEADO'}</button></div>`;
-  }
-  window.renderJourneyMode=renderJourney;
-  const prevOpen=window.openJourneyMode;
-  window.openJourneyMode=function(){renderJourney();const o=document.getElementById('journeyOverlay');if(o){o.classList.add('show');o.setAttribute('aria-hidden','false');o.style.display='block';o.style.pointerEvents='auto';o.scrollTop=0;document.body.classList.add('s2314-journey-open')}};
-
-  async function verifyLocalBooks(){let changed=false;for(const s of sources().filter(x=>x?.localEpub&&x.id)){const b=await resilientGet(s.id);const ok=!!b;if(s.localEpubVerified!==ok||s.localEpubMissing===ok){s.localEpubVerified=ok;s.localEpubMissing=!ok;changed=true}}if(changed){persist();try{window.refreshDashboard?.()}catch(e){}}}
-  function mark(){document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION)}
-  function init(){profile();persist();renderJourney();verifyLocalBooks();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg='VERSÃO INSTALADA: '+VERSION+' // EPUB iOS COM ARMAZENAMENTO RESILIENTE E JORNADA RPG 2.0 COM ARQUÉTIPOS, MAPA, CHECKPOINTS E BOSS.';if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){window.addSystemLog?.('version',msg);persist()}}catch(e){}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);window.addEventListener('load',()=>setTimeout(init,380),{once:true});
-})();
-</script>
-
 </body></html>
