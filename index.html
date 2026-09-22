@@ -13149,4 +13149,299 @@ body.s95-more-open > *:not(#moreSheet){
   window.SIRIUS_LIBRARY_PATCH=PATCH_VERSION;
 })();
 </script>
+<!-- ===== SIRIUS v2.23.03 // EPUB STORAGE REPAIR ===== -->
+<script id="sirius-v22303-epub-storage-repair">
+(function(){
+  "use strict";
+  const VERSION="v2.23.03";
+  const DB_NAME="SIRIUS_LIBRARY_FILES_V3";
+  const STORE_NAME="epubs";
+  const prevGetLocalEpub=window.getLocalEpub;
+  const prevPutLocalEpub=window.putLocalEpub;
+  const prevOpenKnowledgeMaterial=window.openKnowledgeMaterial;
+
+  function sourceById(id){return (data?.knowledgeArchive?.sources||[]).find(s=>s&&s.id===id)||null;}
+  function norm(v){return String(v||"").trim().toLowerCase().replace(/\s+/g," ");}
+  function base(v){return norm(v).replace(/\.epub$/i,"");}
+  function epubName(source,file){return file?.name||source?.localFileName||`${source?.title||"livro"}.epub`;}
+
+  function openBookDb(){
+    return new Promise((resolve,reject)=>{
+      let req;
+      try{req=indexedDB.open(DB_NAME,1);}catch(e){reject(e);return;}
+      req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE_NAME))db.createObjectStore(STORE_NAME);};
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(req.error||new Error("indexeddb_open_failed"));
+      req.onblocked=()=>reject(new Error("indexeddb_blocked"));
+    });
+  }
+
+  async function fileToRecord(file){
+    const bytes=await file.arrayBuffer();
+    return {
+      version:3,
+      name:file.name||"livro.epub",
+      type:file.type||"application/epub+zip",
+      lastModified:Number(file.lastModified)||Date.now(),
+      size:Number(file.size)||bytes.byteLength,
+      bytes,
+      savedAt:new Date().toISOString()
+    };
+  }
+
+  function recordToFile(record,fallbackName){
+    if(!record)return null;
+    if(record instanceof Blob){
+      if(!record.name&&fallbackName){try{Object.defineProperty(record,"name",{value:fallbackName,configurable:true});}catch(e){}}
+      return record;
+    }
+    const raw=record.bytes||record.buffer||record.data;
+    if(!raw)return null;
+    const name=record.name||fallbackName||"livro.epub";
+    const type=record.type||"application/epub+zip";
+    const lm=Number(record.lastModified)||Date.now();
+    try{return new File([raw],name,{type,lastModified:lm});}
+    catch(e){
+      const blob=new Blob([raw],{type});
+      try{Object.defineProperty(blob,"name",{value:name,configurable:true});}catch(_e){}
+      try{Object.defineProperty(blob,"lastModified",{value:lm,configurable:true});}catch(_e){}
+      return blob;
+    }
+  }
+
+  async function putV3(id,file){
+    const record=await fileToRecord(file);
+    const db=await openBookDb();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readwrite");
+      tx.objectStore(STORE_NAME).put(record,id);
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error("indexeddb_write_failed"));
+      tx.onabort=()=>reject(tx.error||new Error("indexeddb_write_aborted"));
+    }).finally(()=>{try{db.close();}catch(e){}});
+    return true;
+  }
+
+  async function getV3(id,fallbackName){
+    const db=await openBookDb();
+    const record=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(STORE_NAME,"readonly");
+      const req=tx.objectStore(STORE_NAME).get(id);
+      req.onsuccess=()=>resolve(req.result||null);
+      req.onerror=()=>reject(req.error||new Error("indexeddb_read_failed"));
+      tx.onabort=()=>reject(tx.error||new Error("indexeddb_read_aborted"));
+    }).finally(()=>{try{db.close();}catch(e){}});
+    return recordToFile(record,fallbackName);
+  }
+
+  async function deleteV3(id){
+    try{
+      const db=await openBookDb();
+      await new Promise((resolve,reject)=>{
+        const tx=db.transaction(STORE_NAME,"readwrite");
+        tx.objectStore(STORE_NAME).delete(id);
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+      });
+      db.close();
+    }catch(e){console.warn("SIRIUS v3 delete",e);}
+  }
+
+  async function legacyScan(source){
+    try{
+      const db=await new Promise((resolve,reject)=>{
+        const req=indexedDB.open("SIRIUS_LOCAL_FILES");
+        req.onsuccess=()=>resolve(req.result);
+        req.onerror=()=>reject(req.error);
+        req.onblocked=()=>reject(new Error("legacy_db_blocked"));
+      });
+      if(!db.objectStoreNames.contains("epubs")){db.close();return null;}
+      const wantedName=norm(source?.localFileName);
+      const wantedTitle=base(source?.title);
+      const result=await new Promise((resolve,reject)=>{
+        const tx=db.transaction("epubs","readonly");
+        const req=tx.objectStore("epubs").openCursor();
+        let fallback=null;
+        req.onsuccess=()=>{
+          const cur=req.result;
+          if(!cur){resolve(fallback);return;}
+          const candidate=recordToFile(cur.value,source?.localFileName||"");
+          const n=norm(candidate?.name);
+          const b=base(candidate?.name);
+          if(candidate&&wantedName&&n===wantedName){resolve(candidate);return;}
+          if(candidate&&!fallback&&wantedTitle&&b===wantedTitle)fallback=candidate;
+          cur.continue();
+        };
+        req.onerror=()=>reject(req.error);
+      });
+      db.close();
+      return result;
+    }catch(e){console.warn("SIRIUS legacy scan",e);return null;}
+  }
+
+  async function requestPersistence(){
+    try{if(navigator.storage?.persist)await navigator.storage.persist();}catch(e){console.warn("SIRIUS persist",e);}
+  }
+
+  window.putLocalEpub=async function(id,file){
+    if(!id||!file)throw new Error("epub_missing_input");
+    await requestPersistence();
+    let firstErr=null;
+    try{
+      await putV3(id,file);
+      const check=await getV3(id,file.name);
+      if(!check||Number(check.size||0)!==Number(file.size||0))throw new Error("epub_verify_failed");
+      return true;
+    }catch(e){firstErr=e;console.warn("SIRIUS v3 EPUB save failed",e);}
+    if(typeof prevPutLocalEpub==="function"){
+      try{await prevPutLocalEpub(id,file);return true;}catch(e){console.warn("SIRIUS legacy EPUB save failed",e);}
+    }
+    throw firstErr||new Error("epub_save_failed");
+  };
+
+  window.getLocalEpub=async function(id){
+    const source=sourceById(id);
+    try{const f=await getV3(id,source?.localFileName);if(f)return f;}catch(e){console.warn("SIRIUS v3 EPUB read",e);}
+    if(typeof prevGetLocalEpub==="function"){
+      try{
+        const old=await prevGetLocalEpub(id);
+        const file=recordToFile(old,source?.localFileName);
+        if(file){try{await putV3(id,file);}catch(e){} return file;}
+      }catch(e){console.warn("SIRIUS legacy EPUB read",e);}
+    }
+    if(source){
+      const found=await legacyScan(source);
+      if(found){try{await putV3(id,found);}catch(e){} return found;}
+    }
+    return null;
+  };
+
+  async function pickReplacement(source){
+    return new Promise(resolve=>{
+      const input=document.createElement("input");
+      input.type="file";input.accept=".epub,application/epub+zip";input.style.display="none";
+      document.body.appendChild(input);
+      let done=false;
+      const finish=v=>{if(done)return;done=true;try{input.remove();}catch(e){}resolve(v);};
+      input.onchange=async()=>{
+        const file=input.files?.[0];
+        if(!file){finish(false);return;}
+        if(!/\.epub$/i.test(file.name||"")){alert("Selecione um arquivo EPUB.");finish(false);return;}
+        try{
+          await window.putLocalEpub(source.id,file);
+          source.localEpub=true;source.localFileName=file.name;source.lastReadAt=new Date().toISOString();
+          if(typeof save==="function")save();
+          if(typeof refreshDashboard==="function")refreshDashboard();
+          finish(true);
+        }catch(e){console.error(e);alert("O iPhone não conseguiu gravar este EPUB no armazenamento do SIRIUS. Tente novamente após fechar outras abas do app.");finish(false);}
+      };
+      input.click();
+    });
+  }
+
+  function showMissing(source){
+    if(typeof showSystemEvent!=="function")return pickReplacement(source);
+    showSystemEvent("EPUB NÃO ENCONTRADO","Selecione o mesmo EPUB novamente. O progresso, as missões e os dados deste livro serão preservados.");
+    const btn=document.getElementById("systemCloseBtn");
+    if(btn){
+      btn.textContent="SELECIONAR EPUB";
+      btn.removeAttribute("onclick");
+      btn.onclick=async function(){
+        btn.onclick=null;
+        if(typeof closeSystemEvent==="function")closeSystemEvent();
+        const ok=await pickReplacement(source);
+        if(ok)await window.openLocalEpubReader(source.id);
+      };
+    }
+    return null;
+  }
+
+  window.openLocalEpubReader=async function(id){
+    const source=sourceById(id);if(!source)return;
+    let file=null;
+    try{file=await window.getLocalEpub(id);}catch(e){console.warn("SIRIUS EPUB locate",e);}
+    if(!file){await showMissing(source);return;}
+    if(typeof ePub!=="function"){alert("O leitor EPUB não carregou. Verifique a conexão e tente novamente.");return;}
+
+    activeEpubSourceId=id;
+    activeReadingStartedAt=Date.now();
+    activeReadingStartProgress=Number(source.fileProgress ?? source.progress)||0;
+    source.lastReadAt=new Date().toISOString();
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){}
+    document.getElementById("epubReaderTitle").textContent=source.title||"LIVRO";
+    document.getElementById("epubProgressText").textContent="CARREGANDO LIVRO...";
+    document.getElementById("epubSessionInfo").textContent="EPUB LOCAL // SALVO NESTE APARELHO";
+    document.getElementById("epubProgressFill").style.width=(Number(source.fileProgress ?? source.progress)||0)+"%";
+    document.getElementById("epubViewport").innerHTML="";
+    document.getElementById("epubOverlay").classList.add("show");
+    try{
+      const buffer=await file.arrayBuffer();
+      activeEpubBook=ePub(buffer);
+      activeEpubRendition=activeEpubBook.renderTo("epubViewport",{width:"100%",height:"100%",spread:"none",manager:"default",flow:"paginated"});
+      activeEpubRendition.themes.default({"body":{"background":"#07101f !important","color":"#dfeaff !important","padding":"0 8px !important"},"p":{"line-height":"1.65 !important"},"a":{"color":"#70dcff !important"}});
+      if(typeof attachSiriusEpubProgressHandlers==="function")attachSiriusEpubProgressHandlers(source);
+      await activeEpubBook.ready;
+      try{await activeEpubBook.locations.generate(1200);}catch(e){}
+      await activeEpubRendition.display(source.epubCfi||undefined);
+    }catch(err){
+      console.error(err);
+      document.getElementById("epubViewport").innerHTML='<div class="epubLoading">NÃO FOI POSSÍVEL ABRIR ESTE EPUB.</div>';
+    }
+  };
+
+  window.openKnowledgeMaterial=async function(id){
+    const source=sourceById(id);if(!source)return;
+    if(source.localEpub||source.localFileName||(!source.materialUrl&&source.type==="Livro"))return window.openLocalEpubReader(id);
+    if(typeof prevOpenKnowledgeMaterial==="function")return prevOpenKnowledgeMaterial(id);
+  };
+
+  window.importLocalEpub=async function(event){
+    const input=event?.target;
+    const file=input?.files?.[0];
+    if(!file)return;
+    if(!/\.epub$/i.test(file.name||"")){alert("Selecione um arquivo EPUB.");if(input)input.value="";return;}
+    try{
+      if(typeof showToast==="function")showToast("LENDO EPUB // AGUARDE...");
+      await requestPersistence();
+      const meta=typeof extractEpubMetadata==="function"?await extractEpubMetadata(file):{title:file.name.replace(/\.epub$/i,""),author:"",coverUrl:""};
+      const id="src_"+Date.now();
+      await window.putLocalEpub(id,file);
+      const verify=await window.getLocalEpub(id);
+      if(!verify)throw new Error("epub_not_persisted");
+      data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};
+      data.knowledgeArchive.sources.push({
+        id,title:meta.title||file.name.replace(/\.epub$/i,""),author:meta.author||"",type:"Livro",area:"Conhecimento geral",section:"",materialUrl:"",
+        localEpub:true,localFileName:file.name,coverUrl:meta.coverUrl||"",fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,
+        readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()
+      });
+      if(typeof save==="function")save();
+      if(typeof refreshDashboard==="function")refreshDashboard();
+      if(typeof showSystemEvent==="function")showSystemEvent("EPUB ADICIONADO",`${meta.title||file.name} foi salvo neste aparelho e entrou na Biblioteca SIRIUS.`);
+    }catch(e){
+      console.error("SIRIUS EPUB import",e);
+      alert("Não foi possível gravar este EPUB no armazenamento local do SIRIUS. O livro não foi adicionado para evitar um cadastro quebrado. Feche outras abas do SIRIUS e tente novamente.");
+    }finally{if(input)input.value="";}
+  };
+
+  const previousDelete=window.deleteLocalEpubFile;
+  window.deleteLocalEpubFile=async function(id){
+    await deleteV3(id);
+    if(typeof previousDelete==="function")try{await previousDelete(id);}catch(e){}
+  };
+
+  function repairFlags(){
+    let changed=false;
+    (data?.knowledgeArchive?.sources||[]).forEach(s=>{
+      if(!s)return;
+      if(s.localFileName&&!s.localEpub){s.localEpub=true;changed=true;}
+    });
+    if(changed&&typeof save==="function")save();
+  }
+  function mark(){document.querySelectorAll(".versionMark").forEach(x=>x.textContent="SIRIUS // "+VERSION);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>{repairFlags();mark();},{once:true});else{repairFlags();mark();}
+  setTimeout(mark,300);setTimeout(mark,1200);
+  window.SIRIUS_LIBRARY_PATCH=VERSION;
+})();
+</script>
+
 </body></html>
