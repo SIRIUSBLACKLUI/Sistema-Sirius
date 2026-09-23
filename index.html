@@ -14011,4 +14011,211 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VE
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.23.15 // PALETA ROXO/VIOLETA + MISSÕES COMPACTAS + MAIS COMPACTO ===== -->
+<style id="sirius-v22315-unified-purple-style">
+:root{
+  --s15-bg:#070611;
+  --s15-panel:#11091d;
+  --s15-panel-2:#160d25;
+  --s15-purple:#9b4dff;
+  --s15-violet:#6e39e8;
+  --s15-magenta:#d14cff;
+  --s15-cyan:#39d5ff;
+  --s15-line:rgba(166,84,255,.58);
+  --s15-line-soft:rgba(166,84,255,.24);
+  --s15-text:#f8f4ff;
+  --s15-muted:#b8a8cb;
+}
+
+/* ===== PALETA GLOBAL — ROXO/VIOLETA DOMINANTE ===== */
+html,body{background:var(--s15-bg)!important}
+body::before{background:radial-gradient(circle at 50% 0%,rgba(114,38,184,.18),transparent 38%),linear-gradient(180deg,#070611 0%,#090713 55%,#05040c 100%)!important}
+.view,.viewContent,.dashPanel,.statusPanel,.panel,.card,.sectionCard,
+#view-status,#view-missions,#view-library,#view-training,#view-more,
+#view-learning,#view-professor,#view-history,#view-achievements,#view-data,#view-dungeons{
+  --accent:var(--s15-purple);
+}
+#view-status .dashPanel,#view-missions .dashPanel,#view-library .dashPanel,#view-training .dashPanel,
+#view-learning .dashPanel,#view-professor .dashPanel,#view-history .dashPanel,#view-achievements .dashPanel,#view-data .dashPanel,#view-dungeons .dashPanel{
+  border-color:var(--s15-line-soft)!important;
+  background:linear-gradient(180deg,rgba(19,10,33,.96),rgba(9,7,18,.98))!important;
+  box-shadow:inset 0 0 24px rgba(142,52,255,.045),0 0 18px rgba(113,34,189,.05)!important;
+}
+#view-status button,#view-missions button,#view-library button,#view-training button,
+#view-learning button,#view-professor button,#view-history button,#view-achievements button,#view-data button,#view-dungeons button{
+  border-color:rgba(157,78,255,.48)!important;
+}
+#view-status input,#view-missions input,#view-library input,#view-training input,
+#view-status textarea,#view-missions textarea,#view-library textarea,#view-training textarea,
+#view-status select,#view-missions select,#view-library select,#view-training select{
+  border-color:rgba(154,77,255,.5)!important;background:#0e0918!important;color:var(--s15-text)!important;
+}
+
+/* Contornos e detalhes de cards comuns */
+#view-status [class*="Card"],#view-library [class*="Card"],#view-training [class*="Card"],
+#view-learning [class*="Card"],#view-history [class*="Card"],#view-achievements [class*="Card"],#view-data [class*="Card"],#view-dungeons [class*="Card"]{
+  border-color:rgba(153,76,255,.42)!important;
+}
+
+/* Navegação inferior: mesma linguagem roxa da Home, ciano apenas como apoio */
+.dock,.bottomNav,.navDock,.navBar,#bottomDock{
+  border-color:rgba(151,74,255,.55)!important;
+  background:linear-gradient(180deg,rgba(14,8,26,.98),rgba(5,5,13,.99))!important;
+  box-shadow:0 -8px 32px rgba(76,20,128,.2),inset 0 1px 0 rgba(208,129,255,.14)!important;
+}
+.dockItem.active,.navItem.active,[data-view].active{
+  background:linear-gradient(180deg,rgba(151,72,255,.88),rgba(92,42,195,.92))!important;
+  border-color:#bd6dff!important;
+  box-shadow:0 0 18px rgba(157,72,255,.38),inset 0 0 16px rgba(77,210,255,.08)!important;
+}
+
+/* ===== REMOVER TEMPORARIAMENTE PERSONALIZAÇÃO ===== */
+#s53CosmeticsPanel,#s54AvatarStudio,#s56CosmeticsPanel,
+.s53CosmeticsPanel,.s54AvatarStudio,.s56CosmeticsPanel,
+.s53CosmeticsHead,.s56CosmeticsHead,.s53CosmeticGrid,.s56CosmeticsGrid{
+  display:none!important;
+}
+
+/* ===== MISSÕES: MAIS COMPACTAS E ROXAS ===== */
+#view-missions .s2312TopStats{gap:6px!important;margin-bottom:10px!important}
+#view-missions .s2312TopStat{
+  min-height:52px!important;padding:6px 4px!important;
+  border-color:rgba(158,79,255,.5)!important;
+  background:linear-gradient(180deg,rgba(25,12,43,.92),rgba(12,8,23,.96))!important;
+}
+#view-missions .s2312TopStat b{font-size:15px!important;color:#fff7ff!important}
+#view-missions .s2312TopStat span{font-size:5.1px!important;letter-spacing:1.25px!important;color:#d39aff!important;margin-top:5px!important}
+
+#view-missions .s2312Hub{gap:10px!important}
+#view-missions .s2312Section{gap:6px!important}
+#view-missions .s2312SectionHead{margin-top:2px!important;padding:0 1px!important}
+#view-missions .s2312SectionHead b{font-size:9px!important;letter-spacing:1.5px!important}
+#view-missions .s2312SectionHead span{font-size:5.3px!important;letter-spacing:1.3px!important;color:#ae85ca!important}
+#view-missions .s2312List{gap:7px!important}
+#view-missions .s2312Card{
+  min-height:0!important;
+  grid-template-columns:48px minmax(0,1fr)!important;
+  gap:9px!important;
+  padding:10px 10px 9px!important;
+  border-color:rgba(154,75,255,.5)!important;
+  background:linear-gradient(180deg,rgba(21,10,37,.96),rgba(10,8,20,.98))!important;
+  box-shadow:inset 2px 0 0 var(--mc),0 0 14px rgba(105,35,180,.06)!important;
+}
+#view-missions .s2312Card::after{width:90px!important;height:90px!important;right:-48px!important;top:-50px!important;opacity:.3!important}
+#view-missions .s2312Left{gap:5px!important;padding-top:0!important}
+#view-missions .s2312Rank{width:38px!important;height:38px!important;font-size:13px!important;border-color:rgba(170,89,255,.7)!important}
+#view-missions .s2312Attr{font-size:4.9px!important;letter-spacing:1px!important}
+#view-missions .s2312Head{grid-template-columns:minmax(0,1fr) 54px!important;gap:7px!important}
+#view-missions .s2312TitleLine{gap:5px!important}
+#view-missions .s2312Title{font-size:8.7px!important;line-height:1.2!important}
+#view-missions .s2312Badge{min-height:18px!important;padding:0 7px!important;font-size:4.6px!important;letter-spacing:.85px!important;border-color:rgba(167,80,255,.7)!important;color:#e6c9ff!important}
+#view-missions .s2312Desc{margin-top:5px!important;font-size:5.9px!important;line-height:1.42!important;min-height:0!important;-webkit-line-clamp:2!important;color:#baaac9!important}
+#view-missions .s2312RingBox{min-width:50px!important;gap:3px!important}
+#view-missions .s2312Ring{width:48px!important;height:48px!important;background:conic-gradient(#b965ff calc(var(--p)*1%),rgba(52,31,75,.55) 0)!important}
+#view-missions .s2312Ring::before{inset:6px!important;background:#0d0818!important}
+#view-missions .s2312Ring b{font-size:8px!important;color:#d58cff!important}
+#view-missions .s2312RingLabel{font-size:4.3px!important;letter-spacing:.7px!important;color:#c699e4!important}
+#view-missions .s2312Meta{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;margin-top:7px!important}
+#view-missions .s2312MetaItem{min-height:26px!important;padding:0 6px!important;font-size:4.9px!important;border-color:rgba(126,68,177,.48)!important;background:#0d0917!important}
+#view-missions .s2312MetaItem .ico{font-size:8px!important;color:#cb8eff!important}
+#view-missions .s2312MetaItem.reward{border-color:rgba(206,89,255,.58)!important;color:#efc2ff!important}
+#view-missions .s2312Bar{margin-top:7px!important;height:3px!important;border-color:rgba(119,69,166,.45)!important;background:#180e28!important}
+#view-missions .s2312Bar>i{background:linear-gradient(90deg,#a74cff,#d553ff)!important;box-shadow:0 0 7px rgba(190,73,255,.35)!important}
+#view-missions .s2312Actions{grid-template-columns:1.45fr .8fr!important;gap:6px!important;margin-top:7px!important}
+#view-missions .s2312Btn{min-height:34px!important;padding:5px 8px!important;font-size:5.7px!important;letter-spacing:1px!important;border-color:rgba(133,72,188,.55)!important;background:#0f0a1a!important}
+#view-missions .s2312Btn.primary{background:linear-gradient(180deg,#9c4cff,#6530d1)!important;border-color:#bd72ff!important}
+#view-missions .s2312Btn.proposal{background:linear-gradient(180deg,#a153ff,#6e34d8)!important;border-color:#c084ff!important}
+#view-missions .s2312Explore{min-height:54px!important;padding:9px 12px!important;grid-template-columns:44px 1fr!important;border-color:rgba(151,77,255,.46)!important;background:linear-gradient(180deg,#130b21,#0a0713)!important}
+#view-missions .s2312Plus{font-size:26px!important;color:#ce8bff!important}.s2312ExploreText b{font-size:7px!important}.s2312ExploreText span{font-size:5.6px!important;margin-top:3px!important}
+
+/* Quest diária: mantém a caixa cinematográfica, mas reduz altura e usa a nova paleta */
+#view-missions .s2314DailyQuest{
+  margin:0 0 10px!important;padding:12px 10px 10px!important;
+  border-color:#a552ff!important;
+  background:radial-gradient(circle at 50% 0%,rgba(149,61,255,.16),transparent 34%),linear-gradient(180deg,#140a25,#0b0817)!important;
+  box-shadow:0 0 18px rgba(147,63,255,.1),inset 0 0 24px rgba(155,78,255,.05)!important;
+}
+#view-missions .s2314DailyQuest::before{background:linear-gradient(90deg,transparent,#d058ff 24%,#a54cff 76%,transparent)!important;box-shadow:0 0 10px rgba(202,72,255,.55)!important}
+#view-missions .s2314DQKicker{margin-bottom:8px!important;padding:5px 12px!important;font-size:6.6px!important;color:#f3eaff!important;border-color:rgba(173,93,255,.55)!important}
+#view-missions .s2314DQTitle{font-size:11px!important;line-height:1.17!important;max-width:96%!important}
+#view-missions .s2314DQSub{font-size:5.4px!important;margin-top:5px!important;color:#b39ac7!important}
+#view-missions .s2314DQState{padding:4px 6px!important;font-size:4.7px!important;border-color:#a44cff!important;color:#e5b8ff!important;background:#130a22!important}
+#view-missions .s2314DQObjectives{margin-top:10px!important;padding-top:8px!important;border-color:rgba(160,78,255,.25)!important}
+#view-missions .s2314DQObjectivesTitle{font-size:8px!important;letter-spacing:1.2px!important;margin-bottom:6px!important;color:#d67cff!important;text-shadow:0 0 8px rgba(208,82,255,.25)!important}
+#view-missions .s2314DQRow{min-height:42px!important;padding:4px 0!important;grid-template-columns:minmax(0,1fr) 48px 60px!important;gap:5px!important;border-color:rgba(152,75,255,.12)!important}
+#view-missions .s2314DQName b{font-size:6.6px!important}.s2314DQName span{font-size:5px!important;margin-top:2px!important;color:#a997b9!important}
+#view-missions .s2314DQCount{font-size:6.8px!important}.s2314DQBtn{min-height:28px!important;padding:4px!important;font-size:4.9px!important;border-color:rgba(173,89,255,.6)!important;background:#120a20!important}
+#view-missions .s2314DQProgress{height:3px!important;margin-top:7px!important;border-color:rgba(147,76,198,.4)!important;background:#160d23!important}.s2314DQProgress i{background:linear-gradient(90deg,#a64dff,#d14cff)!important}
+#view-missions .s2314DQFooter{margin-top:7px!important;gap:6px!important}.s2314DQReward{font-size:5.2px!important;line-height:1.35!important}.s2314DQReward b{color:#e69aff!important}
+#view-missions .s2314DQClaim{min-height:30px!important;font-size:5px!important;border-color:rgba(163,84,255,.55)!important;background:#140b22!important}.s2314DQClaim.ready{background:linear-gradient(180deg,#9b4cff,#6931d3)!important;border-color:#bb70ff!important}
+#view-missions .s2314DQAdjust{min-height:31px!important;margin-top:6px!important;font-size:5.2px!important;border-color:rgba(142,75,193,.5)!important;background:#10091c!important}
+#view-missions .s2314DQWarning{margin-top:8px!important;padding:8px 5px 2px!important;font-size:5.4px!important;line-height:1.35!important;border-color:rgba(207,75,255,.2)!important}.s2314DQWarning b{font-size:8px!important;color:#d768ff!important;margin-bottom:2px!important}
+
+/* ===== MAIS: PAINEL MENOR, MAIS SIMPLES E ROXO ===== */
+#moreSheet{padding:0 16px calc(88px + env(safe-area-inset-bottom))!important}
+#moreSheet .s94Panel{
+  width:min(520px,calc(100vw - 32px))!important;max-width:520px!important;
+  padding:10px!important;border-radius:18px!important;
+  border-color:rgba(174,88,255,.68)!important;
+  background:linear-gradient(180deg,rgba(22,11,38,.98),rgba(8,7,16,.99))!important;
+  box-shadow:0 16px 44px rgba(0,0,0,.44),0 0 24px rgba(126,45,214,.14)!important;
+}
+#moreSheet .s94Header{min-height:20px!important;margin-bottom:6px!important;opacity:.7!important}
+#moreSheet .s94Grid{grid-template-columns:repeat(3,1fr)!important;grid-auto-rows:64px!important;gap:6px!important}
+#moreSheet .s94Card{height:64px!important;min-height:64px!important;max-height:64px!important;border-radius:12px!important;border-color:rgba(155,78,255,.58)!important;box-shadow:inset 0 0 14px rgba(153,76,255,.05)!important;overflow:hidden!important}
+#moreSheet .s94Card::before{opacity:.24!important;filter:saturate(.7) hue-rotate(28deg)!important}
+#moreSheet .s94Card svg{width:17px!important;height:17px!important;margin-bottom:3px!important;color:#d9a8ff!important}
+#moreSheet .s94Card span{min-height:21px!important;padding:0 8px!important;font-size:5.4px!important;letter-spacing:.9px!important;border-color:rgba(171,96,255,.45)!important;background:rgba(8,5,15,.86)!important}
+#moreSheet .s94Close{min-height:42px!important;margin-top:7px!important;border-radius:12px!important;border-color:rgba(163,83,255,.62)!important;background:linear-gradient(180deg,#160c25,#0b0816)!important;font-size:6.6px!important;letter-spacing:1.5px!important;box-shadow:none!important}
+#moreSheet .s94Close::before,#moreSheet .s94Close::after{background:linear-gradient(90deg,transparent,#b05cff,transparent)!important;opacity:.45!important}
+
+/* Modais/overlays principais na mesma linguagem */
+.missionModal,.systemWindow,.validationWindow,.learningWindow,
+#s101DQModal{
+  border-color:rgba(165,82,255,.65)!important;
+  background:linear-gradient(180deg,#130b21,#090713)!important;
+  box-shadow:0 0 34px rgba(136,52,224,.13),inset 0 0 22px rgba(171,79,255,.04)!important;
+}
+.missionModal::before,.systemWindow::before,#s101DQModal::before{background:#b35bff!important;box-shadow:0 0 12px rgba(179,91,255,.58)!important}
+
+@media(max-width:430px){
+  #view-missions .s2312TopStat{min-height:48px!important}
+  #view-missions .s2312Card{grid-template-columns:42px minmax(0,1fr)!important;gap:8px!important;padding:9px!important}
+  #view-missions .s2312Rank{width:34px!important;height:34px!important;font-size:12px!important}
+  #view-missions .s2312Head{grid-template-columns:minmax(0,1fr) 48px!important}
+  #view-missions .s2312Ring{width:44px!important;height:44px!important}
+  #view-missions .s2312Meta{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #view-missions .s2312Btn{min-height:32px!important}
+  #view-missions .s2314DQRow{grid-template-columns:minmax(0,1fr) 44px 56px!important;min-height:40px!important}
+  #moreSheet .s94Grid{grid-auto-rows:60px!important}.moreSheet .s94Card,#moreSheet .s94Card{height:60px!important;min-height:60px!important;max-height:60px!important}
+}
+</style>
+<script id="sirius-v22315-unified-purple-script">
+(function(){
+'use strict';
+const VERSION='v2.23.15';
+function hidePersonalization(){
+  ['s53CosmeticsPanel','s54AvatarStudio','s56CosmeticsPanel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.setProperty('display','none','important')});
+  document.querySelectorAll('.s53CosmeticsPanel,.s54AvatarStudio,.s56CosmeticsPanel').forEach(el=>el.style.setProperty('display','none','important'));
+}
+function compactMore(){
+  const p=document.querySelector('#moreSheet .s94Panel');if(!p)return;
+  p.setAttribute('data-s2315-compact','1');
+}
+function apply(){
+  hidePersonalization();compactMore();
+  document.documentElement.style.setProperty('--sirius-theme-primary','#9b4dff');
+  document.documentElement.style.setProperty('--sirius-theme-secondary','#d14cff');
+  document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // '+VERSION);
+}
+const prevRefresh=window.refreshDashboard;if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);setTimeout(apply,20);return r};
+const prevDock=window.openDockView;if(typeof prevDock==='function')window.openDockView=function(){const r=prevDock.apply(this,arguments);setTimeout(apply,20);return r};
+const mo=new MutationObserver(()=>apply());
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{apply();if(document.body)mo.observe(document.body,{subtree:true,childList:true})},{once:true});else{apply();if(document.body)mo.observe(document.body,{subtree:true,childList:true})}
+window.addEventListener('load',()=>setTimeout(apply,100),{once:true});
+try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // PALETA ROXO/VIOLETA UNIFICADA, MISSÕES COMPACTAS, PERSONALIZAÇÃO OCULTA E MENU MAIS OTIMIZADO.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}
+})();
+</script>
+
 </body></html>
