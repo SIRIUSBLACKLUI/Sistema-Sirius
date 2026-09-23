@@ -14113,4 +14113,181 @@ try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VE
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.23.18 // STORAGE QUOTA + EPUB COVER HOTFIX ===== -->
+<script id="sirius-v22318-storage-cover-hotfix">
+(function(){
+'use strict';
+const VERSION='v2.23.18';
+const RECOVERY_KEY='siriusRecoverySnapshot';
+const EPUB_DB='SIRIUS_EPUB_LIBRARY_V7';
+const EPUB_STORE='files';
+const coverObjectUrls=new Map();
+
+function sources(){
+  try{
+    data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};
+    data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];
+    return data.knowledgeArchive.sources;
+  }catch(e){return []}
+}
+function isHeavyCover(v){return /^data:/i.test(String(v||''))}
+function isTransientCover(v){return /^blob:/i.test(String(v||''))}
+function compactState(input){
+  const clone=structuredClone(input);
+  const arr=clone?.knowledgeArchive?.sources;
+  if(Array.isArray(arr)){
+    for(const s of arr){
+      if(!s||typeof s!=='object')continue;
+      if(isHeavyCover(s.coverUrl)||isTransientCover(s.coverUrl))s.coverUrl='';
+      if(s.coverExtractedAt&&!s.coverRef)s.coverRef='idb';
+    }
+  }
+  return clone;
+}
+function compactJson(input){return JSON.stringify(compactState(input))}
+function removeLocalRecovery(){try{localStorage.removeItem(RECOVERY_KEY)}catch(e){}}
+
+function openRecoveryDb(){
+  if(typeof openSiriusDb==='function')return openSiriusDb();
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open('SIRIUS_LOCAL_FILES',2);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('epubs'))db.createObjectStore('epubs');if(!db.objectStoreNames.contains('recovery'))db.createObjectStore('recovery')};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);req.onblocked=()=>reject(new Error('indexeddb_blocked'));
+  });
+}
+async function recoveryToIdb(snapshot,reason){
+  try{
+    const db=await openRecoveryDb();
+    try{
+      await new Promise((resolve,reject)=>{
+        if(!db.objectStoreNames.contains('recovery')){resolve();return}
+        const tx=db.transaction('recovery','readwrite');
+        tx.objectStore('recovery').put({version:VERSION,reason,createdAt:new Date().toISOString(),data:compactState(snapshot)},'latest');
+        tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+      });
+    }finally{db.close()}
+  }catch(e){console.warn('SIRIUS v2.23.18 recovery IDB unavailable',e)}
+}
+function storageFailure(err){
+  console.error('SIRIUS storage failure',err);
+  try{showToast('NÃO FOI POSSÍVEL SALVAR. EXPORTE UM BACKUP.')}catch(e){}
+  try{alert('O SIRIUS não conseguiu salvar os dados neste aparelho. Nenhum progresso novo foi confirmado. Exporte um backup antes de continuar.')}catch(e){}
+}
+
+/* Substitui o save anterior: snapshot somente no IndexedDB e estado sem capas pesadas. */
+window.save=function(){
+  const previousRaw=localStorage.getItem(STORAGE_KEY);
+  try{
+    if(previousRaw){try{recoveryToIdb(JSON.parse(previousRaw),'before_save')}catch(e){}}
+    const raw=compactJson(data);
+    localStorage.setItem(STORAGE_KEY,raw);
+    removeLocalRecovery();
+    try{render()}catch(e){console.error(e)}
+    return true;
+  }catch(err){
+    if(previousRaw!==null){try{localStorage.setItem(STORAGE_KEY,previousRaw)}catch(e){}}
+    storageFailure(err);
+    return false;
+  }
+};
+
+/* Limpa imediatamente qualquer data URL persistida por versões anteriores. */
+let bootSanitized=false;
+for(const s of sources()){
+  if(!s?.id)continue;
+  if(isHeavyCover(s.coverUrl)||isTransientCover(s.coverUrl)){
+    s.coverUrl='';s.coverRef='idb';bootSanitized=true;
+  }
+}
+if(bootSanitized){
+  try{localStorage.setItem(STORAGE_KEY,compactJson(data));removeLocalRecovery()}catch(e){console.warn('SIRIUS cover state cleanup',e)}
+}
+
+function openEpubDb(){return new Promise((resolve,reject)=>{let r;try{r=indexedDB.open(EPUB_DB)}catch(e){reject(e);return}r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.onblocked=()=>reject(new Error('epub_db_blocked'))})}
+async function getEpubRecord(id){
+  const db=await openEpubDb();
+  try{return await new Promise((resolve,reject)=>{if(!db.objectStoreNames.contains(EPUB_STORE)){resolve(null);return}const q=db.transaction(EPUB_STORE,'readonly').objectStore(EPUB_STORE).get(String(id));q.onsuccess=()=>resolve(q.result||null);q.onerror=()=>reject(q.error)})}
+  finally{db.close()}
+}
+function dataUrlToBlob(url){
+  try{
+    const parts=String(url).split(','),meta=parts[0]||'',payload=parts[1]||'';
+    const mime=(meta.match(/^data:([^;,]+)/i)||[])[1]||'image/jpeg';
+    const bin=meta.includes(';base64')?atob(payload):decodeURIComponent(payload);
+    const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+    return new Blob([u8],{type:mime});
+  }catch(e){return null}
+}
+function revokeCover(id){const old=coverObjectUrls.get(String(id));if(old){try{URL.revokeObjectURL(old)}catch(e){}coverObjectUrls.delete(String(id))}}
+function useBlobCover(s,blob){
+  if(!s?.id||!blob)return false;
+  revokeCover(s.id);
+  const url=URL.createObjectURL(blob);coverObjectUrls.set(String(s.id),url);
+  s.coverUrl=url;s.coverRef='idb';return true;
+}
+async function hydrateCover(s){
+  if(!s?.id)return false;
+  if(s.coverUrl && !isHeavyCover(s.coverUrl) && !isTransientCover(s.coverUrl))return false; // URL manual/HTTPS preservada
+  const rec=await getEpubRecord(s.id).catch(()=>null);if(!rec)return false;
+  if(rec.coverBlob instanceof Blob)return useBlobCover(s,rec.coverBlob);
+  if(rec.coverDataUrl){
+    const blob=dataUrlToBlob(rec.coverDataUrl);if(blob){
+      /* Migra a capa antiga para Blob no IndexedDB para reduzir memória. */
+      try{
+        const db=await openEpubDb();
+        try{await new Promise((resolve,reject)=>{const tx=db.transaction(EPUB_STORE,'readwrite');rec.coverBlob=blob;delete rec.coverDataUrl;tx.objectStore(EPUB_STORE).put(rec);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}
+      }catch(e){console.warn('SIRIUS cover migration',e)}
+      return useBlobCover(s,blob);
+    }
+  }
+  return false;
+}
+let hydrateBusy=false;
+async function hydrateCovers(){
+  if(hydrateBusy)return;hydrateBusy=true;let changed=false;
+  try{
+    for(const s of sources()){
+      if(!s?.id)continue;
+      if(isHeavyCover(s.coverUrl)){s.coverUrl='';s.coverRef='idb'}
+      if((s.localEpub||s.epubManagedV7||s.coverRef==='idb') && (!s.coverUrl||isTransientCover(s.coverUrl))){
+        if(await hydrateCover(s))changed=true;
+      }
+    }
+    if(changed){try{refreshDashboard?.()}catch(e){try{render?.()}catch(_){}}}
+  }finally{hydrateBusy=false}
+}
+
+/* Depois de qualquer render/importação, reidrata capa sem gravá-la no localStorage. */
+const previousRefresh=window.refreshDashboard;
+if(typeof previousRefresh==='function')window.refreshDashboard=function(){const r=previousRefresh.apply(this,arguments);setTimeout(hydrateCovers,40);return r};
+const previousDock=window.openDockView;
+if(typeof previousDock==='function')window.openDockView=function(view){const r=previousDock.apply(this,arguments);if(view==='library'||view==='home')setTimeout(hydrateCovers,60);return r};
+const previousImport=window.importLocalEpub;
+if(typeof previousImport==='function')window.importLocalEpub=async function(){const r=await previousImport.apply(this,arguments);setTimeout(hydrateCovers,100);return r};
+
+/* Uma compactação final após os patches antigos que ainda possam extrair data URLs. */
+async function settle(){
+  await hydrateCovers();
+  let changed=false;
+  for(const s of sources()){
+    if(isHeavyCover(s.coverUrl)){s.coverUrl='';s.coverRef='idb';changed=true}
+  }
+  try{localStorage.setItem(STORAGE_KEY,compactJson(data));removeLocalRecovery()}catch(e){console.warn('SIRIUS compact save after boot',e)}
+  if(changed)await hydrateCovers();
+  document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{setTimeout(settle,80);setTimeout(settle,420);setTimeout(settle,1200)},{once:true});
+else{setTimeout(settle,80);setTimeout(settle,420);setTimeout(settle,1200)}
+window.addEventListener('load',()=>setTimeout(settle,300),{once:true});
+window.addEventListener('beforeunload',()=>{for(const id of [...coverObjectUrls.keys()])revokeCover(id)});
+
+try{
+  data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];
+  const msg=`VERSÃO INSTALADA: ${VERSION} // CAPAS EPUB FORA DO LOCALSTORAGE E RECUPERAÇÃO MIGRADA PARA INDEXEDDB.`;
+  if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);setTimeout(()=>save?.(),0)}
+}catch(e){}
+})();
+</script>
+
 </body></html>
