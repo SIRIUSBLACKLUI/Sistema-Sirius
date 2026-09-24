@@ -13595,29 +13595,54 @@ window.addEventListener('load',()=>{setTimeout(apply,120);setTimeout(hydrateCove
 <div id="siriusPtImportOverlay" aria-hidden="true"><div class="box"><div class="k">[ SIRIUS // IMPORTAÇÃO EPUB ]</div><h3 id="siriusPtImportTitle">INSTALAR LIVRO</h3><div class="siriusPtImportText" id="siriusPtImportText"></div><input id="siriusPtImportInput" type="file" accept=".epub,application/epub+zip" style="display:none"><div class="actions"><button id="siriusPtImportCancel">CANCELAR</button><button class="primary" id="siriusPtImportChoose">SELECIONAR EPUB</button></div></div></div>
 <script id="sirius-v22325-library-script">
 (()=>{'use strict';
-const VERSION='v2.23.25';
-const PT_BOOKS=[
-['54829','Memórias Póstumas de Brás Cubas','Machado de Assis','Literatura'],
-['55752','Dom Casmurro','Machado de Assis','Literatura'],
-['55682','Quincas Borba','Machado de Assis','Literatura'],
-['57001','Papéis Avulsos — inclui O Alienista','Machado de Assis','Literatura'],
-['69187','O Cortiço','Aluísio Azevedo','Literatura'],
-['67740','Iracema','José de Alencar','Literatura'],
-['67535','Triste Fim de Policarpo Quaresma','Lima Barreto','Literatura'],
-['27236','Os Lusíadas','Luís de Camões','Literatura'],
-['18220','A Cidade e as Serras','Eça de Queirós','Literatura'],
-['16384','O Mandarim','Eça de Queirós','Literatura'],
-['67162','Helena','Machado de Assis','Literatura'],
-['53101','A Mão e a Luva','Machado de Assis','Literatura'],
-['67780','Iaiá Garcia','Machado de Assis','Literatura'],
-['31347','Contos','Eça de Queirós','Literatura'],
-['17515','A Relíquia','Eça de Queirós','Literatura'],
-['27637','A correspondência de Fradique Mendes','Eça de Queirós','Literatura'],
-['32646','Contos Fantásticos','Teófilo Braga','Fantasia'],
-['2837','Lendas do Sul','J. Simões Lopes Neto','Fantasia'],
-['9654','Lendas e Narrativas — Tomo I','Alexandre Herculano','Fantasia'],
-['17005','Lendas e Narrativas — Tomo II','Alexandre Herculano','Fantasia'],
-['30359','Contos e Lendas','Luiz Augusto Rebello da Silva','Fantasia']
+const VERSION='v2.23.26';
+const CATALOG_BOOKS=[
+['54829','Memórias Póstumas de Brás Cubas','Machado de Assis','Literatura','Português'],
+['55752','Dom Casmurro','Machado de Assis','Literatura','Português'],
+['55682','Quincas Borba','Machado de Assis','Literatura','Português'],
+['57001','Papéis Avulsos — inclui O Alienista','Machado de Assis','Literatura','Português'],
+['69187','O Cortiço','Aluísio Azevedo','Literatura','Português'],
+['67740','Iracema','José de Alencar','Literatura','Português'],
+['67535','Triste Fim de Policarpo Quaresma','Lima Barreto','Literatura','Português'],
+['27236','Os Lusíadas','Luís de Camões','Literatura','Português'],
+['18220','A Cidade e as Serras','Eça de Queirós','Literatura','Português'],
+['16384','O Mandarim','Eça de Queirós','Literatura','Português'],
+['67162','Helena','Machado de Assis','Literatura','Português'],
+['53101','A Mão e a Luva','Machado de Assis','Literatura','Português'],
+['67780','Iaiá Garcia','Machado de Assis','Literatura','Português'],
+['31347','Contos','Eça de Queirós','Literatura','Português'],
+['17515','A Relíquia','Eça de Queirós','Literatura','Português'],
+['27637','A correspondência de Fradique Mendes','Eça de Queirós','Literatura','Português'],
+['32646','Contos Fantásticos','Teófilo Braga','Fantasia','Português'],
+['2837','Lendas do Sul','J. Simões Lopes Neto','Fantasia','Português'],
+['9654','Lendas e Narrativas — Tomo I','Alexandre Herculano','Fantasia','Português'],
+['17005','Lendas e Narrativas — Tomo II','Alexandre Herculano','Fantasia','Português'],
+['30359','Contos e Lendas','Luiz Augusto Rebello da Silva','Fantasia','Português'],
+['11','Alice\'s Adventures in Wonderland','Lewis Carroll','Fantasia','Inglês'],
+['12','Through the Looking-Glass','Lewis Carroll','Fantasia','Inglês'],
+['55','The Wonderful Wizard of Oz','L. Frank Baum','Fantasia','Inglês'],
+['325','Phantastes: A Faerie Romance for Men and Women','George MacDonald','Fantasia','Inglês'],
+['1640','Lilith: A Romance','George MacDonald','Fantasia','Inglês'],
+['225','At the Back of the North Wind','George MacDonald','Fantasia','Inglês'],
+['697','The Light Princess','George MacDonald','Fantasia','Inglês'],
+['708','The Princess and the Goblin','George MacDonald','Fantasia','Inglês'],
+['709','The Princess and Curdie','George MacDonald','Fantasia','Inglês'],
+['54','The Marvelous Land of Oz','L. Frank Baum','Fantasia','Inglês'],
+['486','Ozma of Oz','L. Frank Baum','Fantasia','Inglês'],
+['420','Dorothy and the Wizard in Oz','L. Frank Baum','Fantasia','Inglês'],
+['169','The Well at the World\'s End','William Morris','Fantasia','Inglês'],
+['3055','The Wood Beyond the World','William Morris','Fantasia','Inglês'],
+['2565','The Story of the Glittering Plain','William Morris','Fantasia','Inglês'],
+['34219','The Enchanted Castle','E. Nesbit','Fantasia','Inglês'],
+['778','Five Children and It','E. Nesbit','Fantasia','Inglês'],
+['836','The Phoenix and the Carpet','E. Nesbit','Fantasia','Inglês'],
+['837','The Story of the Amulet','E. Nesbit','Fantasia','Inglês'],
+['289','The Wind in the Willows','Kenneth Grahame','Fantasia','Inglês'],
+['139','The Lost World','Arthur Conan Doyle','Fantasia','Inglês'],
+['2825','Undine','Friedrich de la Motte Fouqué','Fantasia','Inglês'],
+['78120','The Marvellous Land of Snergs','E. A. Wyke-Smith','Fantasia','Inglês'],
+['485','The Road to Oz','L. Frank Baum','Fantasia','Inglês'],
+['57426','Baron Trump\'s Marvellous Underground Journey','Ingersoll Lockwood','Fantasia','Inglês']
 ];
 const TOPICS=['Todos os temas','Filosofia','Desenvolvimento Pessoal','Psicologia','Comunicação','Estratégia','Finanças','História','Ciência','Fantasia','Literatura'];
 const HIDDEN_KEY='SIRIUS_HIDDEN_CURATED_BOOKS_V1';
@@ -13633,7 +13658,7 @@ function hideId(id){const h=hiddenIds();h.add(String(id));try{localStorage.setIt
 function hasLocal(s){return !!(s&&verifiedLocal.has(String(s.id)))}
 function seed(){const a=archive(), hidden=hiddenIds();let changed=false;
  for(let i=a.length-1;i>=0;i--){const s=a[i];if(s?.curatedSirius&&s?.language==='Inglês'&&/^sirius_pg_/.test(String(s.id||''))&&!hasLocal(s)&&Number(s.progress||0)===0){a.splice(i,1);changed=true}}
- for(const [pg,title,author,area] of PT_BOOKS){const id='sirius_pt_pg_'+pg;if(hidden.has(id))continue;let s=a.find(x=>x.id===id);if(!s){s={id,title,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language:'Português',pgId:pg,fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};a.push(s);changed=true}else{Object.assign(s,{title,author,area,sourcePage:pgPage(pg),materialUrl:pgDownload(pg),coverUrl:s.coverUrl||pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language:'Português',pgId:pg})}}
+ for(const [pg,title,author,area,language='Português'] of CATALOG_BOOKS){const id=(language==='Português'?'sirius_pt_pg_':'sirius_free_pg_')+pg;if(hidden.has(id))continue;let s=a.find(x=>x.id===id);if(!s){s={id,title,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg,fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};a.push(s);changed=true}else{Object.assign(s,{title,author,area,sourcePage:pgPage(pg),materialUrl:pgDownload(pg),coverUrl:s.coverUrl||pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg})}}
  if(changed)try{save?.()}catch(e){}return changed}
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open('SIRIUS_EPUB_LIBRARY_V7',1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains('books'))db.createObjectStore('books',{keyPath:'id'});if(!db.objectStoreNames.contains('files'))db.createObjectStore('files',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error('db_blocked'))})}
 async function readInstalledIds(){const db=await openDb();try{return await new Promise((res,rej)=>{const tx=db.transaction('files','readonly'),req=tx.objectStore('files').getAllKeys();req.onsuccess=()=>res((req.result||[]).map(String));req.onerror=()=>rej(req.error)})}finally{db.close()}}
@@ -13644,7 +13669,7 @@ async function zipLooksOk(blob){if(blob.size<5000)return false;const b=new Uint8
 async function bindFile(s,file){if(!/\.epub$/i.test(file.name||'')&&file.type!=='application/epub+zip')throw new Error('not_epub');if(!await zipLooksOk(file))throw new Error('invalid_epub');s.localEpub=true;s.epubManagedV7=true;s.localEpubKey=s.id;s.localFileName=file.name||(`${s.title}.epub`);s.localEpubFileName=s.localFileName;s.localEpubSize=file.size;s.localEpubLastModified=file.lastModified||Date.now();s.installedAt=new Date().toISOString();await putV7(s,file);verifiedLocal.add(String(s.id));try{save?.()}catch(e){}return true}
 function statusFiltered(list){let f='all';try{f=typeof libraryFilter!=='undefined'?(libraryFilter||'all'):'all'}catch(e){}if(f==='reading')return list.filter(s=>Number(s.progress||s.fileProgress||0)>0&&Number(s.progress||s.fileProgress||0)<100);if(f==='finished')return list.filter(s=>Number(s.progress||s.fileProgress||0)>=100);return list}
 function injectTopics(){const tabs=document.querySelector('#view-books .libraryTabs');if(!tabs)return;let bar=document.getElementById('siriusTopicBar');if(!bar){bar=document.createElement('div');bar.id='siriusTopicBar';tabs.insertAdjacentElement('afterend',bar)}bar.innerHTML=TOPICS.map(t=>`<button type="button" class="siriusTopicBtn${t===topic?' active':''}" data-sirius-pt-topic="${esc(t)}">${esc(t)}</button>`).join('');const list=document.getElementById('dashBooksList');if(list&&!document.getElementById('siriusLibrarySummary')){const sum=document.createElement('div');sum.id='siriusLibrarySummary';sum.className='siriusLibrarySummary';list.insertAdjacentElement('beforebegin',sum)}}
-function card(s){const p=Math.max(0,Math.min(100,Number(s.fileProgress??s.progress)||0)),local=hasLocal(s),curated=s.curatedSirius?'<span class="siriusCuratedBadge">SIRIUS PT</span>':'';const state=local?'<div class="siriusPtState ready">EPUB INSTALADO NESTE APARELHO</div>':'<div class="siriusPtState">EPUB DISPONÍVEL PARA INSTALAÇÃO</div>';let actions;if(local){actions=`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">${p>0?'CONTINUAR':'LER AGORA'}</button><button class="siriusExplainBtn" data-sirius-explain="${esc(s.id)}">EXPLIQUE O LIVRO</button><button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}else{actions=`<button class="siriusPtInstallBtn" data-sirius-pt-install="${esc(s.id)}">BAIXAR E INSTALAR</button>${s.sourcePage?`<button class="siriusPtSourceBtn" data-sirius-pt-source="${esc(s.id)}">FONTE</button>`:''}<button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}return `<div class="dashPanel" data-sirius-book-id="${esc(s.id)}" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} ${curated}</div><div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span>${s.sourceName?`<div class="siriusSourceNote">FONTE // ${esc(s.sourceName)}${s.language?` // ${esc(s.language)}`:''}</div>`:''}${state}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${actions}</div></div></div></div>`}
+function card(s){const p=Math.max(0,Math.min(100,Number(s.fileProgress??s.progress)||0)),local=hasLocal(s),curated=s.curatedSirius?`<span class="siriusCuratedBadge">${s.language==='Português'?'SIRIUS PT':'SIRIUS FREE'}</span>`:'';const state=local?'<div class="siriusPtState ready">EPUB INSTALADO NESTE APARELHO</div>':'<div class="siriusPtState">EPUB DISPONÍVEL PARA INSTALAÇÃO</div>';let actions;if(local){actions=`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">${p>0?'CONTINUAR':'LER AGORA'}</button><button class="siriusExplainBtn" data-sirius-explain="${esc(s.id)}">EXPLIQUE O LIVRO</button><button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}else{actions=`<button class="siriusPtInstallBtn" data-sirius-pt-install="${esc(s.id)}">BAIXAR E INSTALAR</button>${s.sourcePage?`<button class="siriusPtSourceBtn" data-sirius-pt-source="${esc(s.id)}">FONTE</button>`:''}<button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}return `<div class="dashPanel" data-sirius-book-id="${esc(s.id)}" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} ${curated}</div><div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span>${s.sourceName?`<div class="siriusSourceNote">FONTE // ${esc(s.sourceName)}${s.language?` // ${esc(s.language)}`:''}</div>`:''}${state}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${actions}</div></div></div></div>`}
 function render(){injectTopics();const all=archive();let filtered=statusFiltered(all);if(topic!=='Todos os temas')filtered=filtered.filter(s=>String(s.area||'Conhecimento geral')===topic);filtered=[...filtered].sort((a,b)=>{const ac=(a.curatedSirius&&a.language==='Português')?0:1,bc=(b.curatedSirius&&b.language==='Português')?0:1;if(ac!==bc)return ac-bc;return String(a.title||'').localeCompare(String(b.title||''),'pt-BR')});const sum=document.getElementById('siriusLibrarySummary');if(sum){const pt=all.filter(s=>s.curatedSirius&&s.language==='Português').length,installed=all.filter(hasLocal).length;sum.innerHTML=`<div><b>${filtered.length}</b><span>NESTE TEMA</span></div><div><b>${installed}</b><span>EPUBS INSTALADOS</span></div><div><b>${pt}</b><span>COLEÇÃO PT</span></div>`}const list=document.getElementById('dashBooksList');if(list)list.innerHTML=filtered.length?filtered.map(card).join(''):'<div class="small">Nenhum livro neste tema.</div>'}
 function chooseFile(id){const s=byId(id);if(!s)return;pendingId=s.id;const input=document.getElementById('siriusPtImportInput');if(input){input.value='';input.click()}}
 function showImportHelp(s,msg){pendingId=s.id;const ov=document.getElementById('siriusPtImportOverlay'),title=document.getElementById('siriusPtImportTitle'),body=document.getElementById('siriusPtImportText');if(title)title.textContent='IMPORTAR '+(s.title||'EPUB').toUpperCase();if(body)body.innerHTML=`${esc(msg||'Selecione o arquivo EPUB salvo no app Arquivos.')}<br><br>Use <b>FONTE</b> para abrir a página oficial do livro e obter o EPUB. Depois volte ao SIRIUS e escolha o arquivo correspondente.`;ov?.classList.add('show');ov?.setAttribute('aria-hidden','false')}
@@ -13657,7 +13682,7 @@ document.getElementById('siriusPtImportInput')?.addEventListener('change',async 
 const prevRefresh=window.refreshDashboard;if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);setTimeout(render,0);return r};
 const prevFilter=window.setLibraryFilter;if(typeof prevFilter==='function')window.setLibraryFilter=function(){const r=prevFilter.apply(this,arguments);setTimeout(render,0);return r};
 function mark(){document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v})}
-async function init(){await reconcileLocalState();seed();render();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // ESTADO EPUB VERIFICADO + EXPLIQUE O LIVRO + CATÁLOGO DE CLÁSSICOS.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+async function init(){await reconcileLocalState();seed();render();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // BIBLIOTECA DE FANTASIA GRÁTIS + ESTADO EPUB VERIFICADO + EXPLIQUE O LIVRO.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,260),{once:true});else setTimeout(init,260);window.addEventListener('load',()=>setTimeout(async()=>{await reconcileLocalState();seed();render();mark()},520),{once:true});
 })();
 </script>
