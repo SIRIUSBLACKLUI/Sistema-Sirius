@@ -13554,4 +13554,75 @@ window.addEventListener('load',()=>{setTimeout(apply,120);setTimeout(hydrateCove
 })();
 </script>
 
+
+<!-- ===== SIRIUS v2.23.23 // ARQUIVO DE CONHECIMENTO POR TEMAS ===== -->
+<style id="sirius-v22323-library-topics">
+#siriusTopicBar{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;margin:0 0 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#siriusTopicBar::-webkit-scrollbar{display:none}
+.siriusTopicBtn{flex:0 0 auto;border:1px solid #6535a6;background:linear-gradient(180deg,#130923,#090714);color:#bda9d8;padding:9px 11px;font-size:8px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;box-shadow:inset 0 0 18px rgba(126,68,204,.05)}
+.siriusTopicBtn.active{color:#fff;border-color:#b45cff;background:linear-gradient(180deg,#6b20d0,#32106e);box-shadow:0 0 18px rgba(169,70,255,.28),inset 0 0 16px rgba(255,255,255,.07)}
+.siriusLibrarySummary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 12px}
+.siriusLibrarySummary>div{border:1px solid #4d287b;background:linear-gradient(180deg,rgba(42,17,68,.72),rgba(8,7,17,.94));padding:9px 7px;text-align:center}
+.siriusLibrarySummary b{display:block;color:#fff;font-size:16px;line-height:1}.siriusLibrarySummary span{display:block;color:#9c86b9;font-size:7px;font-weight:900;letter-spacing:.8px;margin-top:5px}
+.siriusBookTopic{display:inline-flex;align-items:center;border:1px solid #6e35a7;color:#c99cff;background:#1a0c2b;padding:3px 6px;font-size:7px;font-weight:900;letter-spacing:.6px;margin-top:6px}
+.siriusSourceNote{font-size:7px;color:#7d7191;margin-top:5px;letter-spacing:.4px}
+.siriusCuratedBadge{display:inline-block;margin-left:6px;border:1px solid #2d8f8c;color:#63e7d8;background:#071d1d;padding:2px 5px;font-size:6.5px;font-weight:900;vertical-align:middle}
+.siriusDownloadBtn{border-color:#7a3eb5!important;color:#eadcff!important;background:#160a28!important}
+@media(max-width:520px){.siriusLibrarySummary{grid-template-columns:repeat(3,1fr)}.siriusTopicBtn{padding:8px 9px;font-size:7.2px}}
+</style>
+<script id="sirius-v22323-library-topics-script">
+(()=>{'use strict';
+const VERSION='v2.23.23';
+const BOOKS=[
+['15877','Thoughts of Marcus Aurelius Antoninus','Marcus Aurelius','Filosofia'],
+['45109','The Enchiridion','Epictetus','Filosofia'],
+['56075',"Seneca's Morals of a Happy Life, Benefits, Anger and Clemency",'Seneca','Filosofia'],
+['55201','The Republic of Plato','Plato','Filosofia'],
+['8438','The Nicomachean Ethics of Aristotle','Aristotle','Filosofia'],
+['1656','Apology','Plato','Filosofia'],
+['216','The Tao Teh King','Laozi','Filosofia'],
+['4507','As a Man Thinketh','James Allen','Desenvolvimento Pessoal'],
+['20203','Autobiography of Benjamin Franklin','Benjamin Franklin','Desenvolvimento Pessoal'],
+['2944','Essays — First Series','Ralph Waldo Emerson','Desenvolvimento Pessoal'],
+['2274','How to Live on 24 Hours a Day','Arnold Bennett','Desenvolvimento Pessoal'],
+['58585','The Prophet','Kahlil Gibran','Desenvolvimento Pessoal'],
+['16287',"Talks To Teachers On Psychology; And To Students On Some Of Life's Ideals",'William James','Psicologia'],
+['55262','Psychology: Briefer Course','William James','Psicologia'],
+['6409','How to Speak and Write Correctly','Joseph Devlin','Comunicação'],
+['66706','Sun Tzŭ on the Art of War','Sun Tzu','Estratégia'],
+['3300','The Wealth of Nations','Adam Smith','Finanças'],
+['2707','The History of Herodotus — Volume 1','Herodotus','História'],
+['1228','On the Origin of Species','Charles Darwin','Ciência'],
+['11',"Alice's Adventures in Wonderland",'Lewis Carroll','Fantasia'],
+['55','The Wonderful Wizard of Oz','L. Frank Baum','Fantasia'],
+['708','The Princess and the Goblin','George MacDonald','Fantasia'],
+['325','Phantastes','George MacDonald','Fantasia'],
+['62','A Princess of Mars','Edgar Rice Burroughs','Fantasia'],
+['289','The Wind in the Willows','Kenneth Grahame','Fantasia'],
+['35','The Time Machine','H. G. Wells','Literatura'],
+['120','Treasure Island','Robert Louis Stevenson','Literatura'],
+['514','Little Women','Louisa May Alcott','Literatura']
+];
+const TOPICS=['Todos os temas','Filosofia','Desenvolvimento Pessoal','Psicologia','Comunicação','Estratégia','Finanças','História','Ciência','Fantasia','Literatura'];
+let siriusTopic='Todos os temas';
+function esc(v){return typeof escapeHtml==='function'?escapeHtml(v):String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function pgDownload(id){return `https://www.gutenberg.org/ebooks/${id}.epub3.images`}
+function pgPage(id){return `https://www.gutenberg.org/ebooks/${id}`}
+function pgCover(id){return `https://www.gutenberg.org/cache/epub/${id}/pg${id}.cover.medium.jpg`}
+function ensureArchive(){data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];return data.knowledgeArchive.sources}
+function seedCuratedBooks(){const sources=ensureArchive();let changed=false;for(const [pg,title,author,area] of BOOKS){const id=`sirius_pg_${pg}`;let s=sources.find(x=>x.id===id);if(!s){s={id,title,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language:'Inglês',fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};sources.push(s);changed=true}else{if(!s.area)s.area=area;if(!s.sourcePage)s.sourcePage=pgPage(pg);if(!s.coverUrl)s.coverUrl=pgCover(pg);s.curatedSirius=true;s.sourceName='Project Gutenberg';if(!s.materialUrl)s.materialUrl=pgDownload(pg)}}if(changed){try{save?.()}catch(e){console.warn('SIRIUS curated save',e)}}return changed}
+function injectTopics(){const tabs=document.querySelector('#view-books .libraryTabs');if(!tabs||document.getElementById('siriusTopicBar'))return;const bar=document.createElement('div');bar.id='siriusTopicBar';bar.innerHTML=TOPICS.map(t=>`<button type="button" class="siriusTopicBtn${t===siriusTopic?' active':''}" data-sirius-topic="${esc(t)}">${esc(t)}</button>`).join('');tabs.insertAdjacentElement('afterend',bar);const list=document.getElementById('dashBooksList');if(list&&!document.getElementById('siriusLibrarySummary')){const sum=document.createElement('div');sum.id='siriusLibrarySummary';sum.className='siriusLibrarySummary';list.insertAdjacentElement('beforebegin',sum)}}
+function statusFiltered(sources){if(typeof libraryFilter==='undefined'||libraryFilter==='all')return sources;if(libraryFilter==='reading')return sources.filter(s=>Number(s.progress||0)>0&&Number(s.progress||0)<100);if(libraryFilter==='finished')return sources.filter(s=>Number(s.progress||0)>=100);return sources}
+function renderSummary(all,filtered){const e=document.getElementById('siriusLibrarySummary');if(!e)return;const reading=all.filter(s=>Number(s.progress||0)>0&&Number(s.progress||0)<100).length;const curated=all.filter(s=>s.curatedSirius).length;e.innerHTML=`<div><b>${filtered.length}</b><span>NESTE TEMA</span></div><div><b>${reading}</b><span>LENDO</span></div><div><b>${curated}</b><span>COLEÇÃO SIRIUS</span></div>`}
+function bookCard(s){const p=Math.max(0,Math.min(100,Number(s.progress)||0));const has=(s.materialUrl||s.localEpub||s.localFileName);const curated=s.curatedSirius?'<span class="siriusCuratedBadge">SIRIUS</span>':'';const src=s.sourceName?`<div class="siriusSourceNote">FONTE // ${esc(s.sourceName)}${s.language?` // ${esc(s.language)}`:''}</div>`:'';const dl=s.curatedSirius&&s.materialUrl?`<button class="siriusDownloadBtn" onclick="downloadCuratedSiriusBook('${esc(s.id)}')">BAIXAR EPUB</button>`:'';return `<div class="dashPanel" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} ${curated}</div><div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span>${src}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${has?`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">LER AGORA</button>`:`<button onclick="setMaterialLink('${esc(s.id)}')">ASSOCIAR</button>`}${dl}<button onclick="setBookCover('${esc(s.id)}')">CAPA</button></div></div></div></div>`}
+function renderLibrary(){injectTopics();const all=ensureArchive();const bl=document.getElementById('dashBooksList');if(!bl)return;if(typeof libraryFilter!=='undefined'&&libraryFilter==='review')return;let filtered=statusFiltered(all);if(siriusTopic!=='Todos os temas')filtered=filtered.filter(s=>String(s.area||'Conhecimento geral')===siriusTopic);filtered=[...filtered].sort((a,b)=>{const ac=a.curatedSirius?0:1,bc=b.curatedSirius?0:1;if(ac!==bc)return ac-bc;return String(a.title||'').localeCompare(String(b.title||''),'pt-BR')});renderSummary(all,filtered);bl.innerHTML=filtered.length?filtered.map(bookCard).join(''):'<div class="small">Nenhum livro neste tema.</div>';document.querySelectorAll('[data-sirius-topic]').forEach(b=>b.classList.toggle('active',b.dataset.siriusTopic===siriusTopic))}
+window.downloadCuratedSiriusBook=function(id){const s=ensureArchive().find(x=>x.id===id);if(!s?.materialUrl)return;window.open(s.materialUrl,'_blank','noopener')};
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-sirius-topic]');if(!b)return;e.preventDefault();siriusTopic=b.dataset.siriusTopic||'Todos os temas';renderLibrary()},true);
+const oldSet=window.setLibraryFilter;if(typeof oldSet==='function')window.setLibraryFilter=function(){const r=oldSet.apply(this,arguments);setTimeout(renderLibrary,0);return r};
+const oldRefresh=window.refreshDashboard;if(typeof oldRefresh==='function')window.refreshDashboard=function(){const r=oldRefresh.apply(this,arguments);renderLibrary();return r};
+function init(){seedCuratedBooks();injectTopics();renderLibrary();document.querySelectorAll('.versionMark').forEach(x=>{if(String(x.textContent||'').includes('SIRIUS'))x.textContent='SIRIUS // '+VERSION});try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // BIBLIOTECA POR TEMAS + COLEÇÃO INICIAL SIRIUS.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,180),{once:true});else setTimeout(init,180);window.addEventListener('load',()=>setTimeout(init,350),{once:true});
+})();
+</script>
+
 </body></html>
