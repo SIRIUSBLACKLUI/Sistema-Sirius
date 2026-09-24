@@ -13625,4 +13625,79 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+
+<!-- ===== SIRIUS v2.23.24 // BIBLIOTECA PT + DOWNLOAD/IMPORTAÇÃO EPUB ===== -->
+<style id="sirius-v22324-pt-library-style">
+.siriusPtState{font-size:7px;font-weight:900;letter-spacing:.55px;margin-top:6px;color:#8f7da9}
+.siriusPtState.ready{color:#72f0d5}.siriusPtState.downloading{color:#55dcff}.siriusPtState.manual{color:#ffcf6b}
+.siriusPtInstallBtn{border-color:#a64dff!important;background:linear-gradient(180deg,#7624dc,#3f0e91)!important;color:#fff!important}
+.siriusPtSourceBtn{border-color:#38465f!important;color:#b8c1d5!important;background:#07111f!important}
+#siriusPtImportOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(3,2,12,.88);z-index:2147483643;pointer-events:auto}
+#siriusPtImportOverlay.show{display:flex}
+#siriusPtImportOverlay .box{width:min(620px,100%);background:linear-gradient(180deg,#100620,#050714);border:1px solid #a64dff;box-shadow:0 0 34px rgba(146,55,255,.25);padding:22px;color:#f4edff}
+#siriusPtImportOverlay .k{font:800 11px/1.2 monospace;letter-spacing:.25em;color:#70e8ff;margin-bottom:10px}
+#siriusPtImportOverlay h3{margin:0 0 10px;font-size:22px}.siriusPtImportText{line-height:1.55;color:#b8afd0;margin-bottom:16px}
+#siriusPtImportOverlay .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#siriusPtImportOverlay button{min-height:50px;border:1px solid #65408c;background:#130925;color:#fff;font-weight:900;letter-spacing:.08em}
+#siriusPtImportOverlay button.primary{border-color:#7be6ff;background:#164f79}
+</style>
+<div id="siriusPtImportOverlay" aria-hidden="true"><div class="box"><div class="k">[ SIRIUS // IMPORTAÇÃO EPUB ]</div><h3 id="siriusPtImportTitle">INSTALAR LIVRO</h3><div class="siriusPtImportText" id="siriusPtImportText"></div><input id="siriusPtImportInput" type="file" accept=".epub,application/epub+zip" style="display:none"><div class="actions"><button id="siriusPtImportCancel">CANCELAR</button><button class="primary" id="siriusPtImportChoose">SELECIONAR EPUB</button></div></div></div>
+<script id="sirius-v22324-pt-library-script">
+(()=>{'use strict';
+const VERSION='v2.23.24';
+const PT_BOOKS=[
+['26776','A filosofia da natureza dos naturalistas','Antero de Quental','Filosofia'],
+['32791','Considerações sobre a Filosofia da História Literária Portuguesa','Antero de Quental','Filosofia'],
+['68751','Estudos sobre criminalidade e educação','Manuel Antonio Ferreira-Deusdado','Filosofia'],
+['20142','Os sonetos completos de Antero de Quental','Antero de Quental','Filosofia'],
+['18220','A Cidade e as Serras','Eça de Queirós','Desenvolvimento Pessoal'],
+['16384','O Mandarim','Eça de Queirós','Desenvolvimento Pessoal'],
+['67162','Helena','Machado de Assis','Literatura'],
+['53101','A Mão e a Luva','Machado de Assis','Literatura'],
+['67780','Iaiá Garcia','Machado de Assis','Literatura'],
+['31347','Contos','Eça de Queirós','Literatura'],
+['17515','A Relíquia','Eça de Queirós','Literatura'],
+['27637','A correspondência de Fradique Mendes','Eça de Queirós','Literatura'],
+['32646','Contos Fantásticos','Teófilo Braga','Fantasia'],
+['2837','Lendas do Sul','J. Simões Lopes Neto','Fantasia'],
+['9654','Lendas e Narrativas — Tomo I','Alexandre Herculano','Fantasia'],
+['17005','Lendas e Narrativas — Tomo II','Alexandre Herculano','Fantasia'],
+['30359','Contos e Lendas','Luiz Augusto Rebello da Silva','Fantasia']
+];
+const TOPICS=['Todos os temas','Filosofia','Desenvolvimento Pessoal','Psicologia','Comunicação','Estratégia','Finanças','História','Ciência','Fantasia','Literatura'];
+let topic='Todos os temas', busy=new Set(), pendingId=null;
+function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m))}
+function archive(){data.knowledgeArchive=data.knowledgeArchive||{sources:[],records:[],reviewQueue:[]};data.knowledgeArchive.sources=Array.isArray(data.knowledgeArchive.sources)?data.knowledgeArchive.sources:[];return data.knowledgeArchive.sources}
+function pgDownload(id){return `https://www.gutenberg.org/ebooks/${id}.epub3.images`}
+function pgPage(id){return `https://www.gutenberg.org/ebooks/${id}`}
+function pgCover(id){return `https://www.gutenberg.org/cache/epub/${id}/pg${id}.cover.medium.jpg`}
+function byId(id){return archive().find(x=>String(x?.id)===String(id))||null}
+function hasLocal(s){return !!(s?.localEpub||s?.epubManagedV7||s?.localEpubKey||s?.localFileName)}
+function seed(){const a=archive();let changed=false;for(let i=a.length-1;i>=0;i--){const s=a[i];if(s?.curatedSirius&&s?.language==='Inglês'&&/^sirius_pg_/.test(String(s.id||''))&&!hasLocal(s)&&Number(s.progress||0)===0){a.splice(i,1);changed=true}}
+for(const [pg,title,author,area] of PT_BOOKS){const id='sirius_pt_pg_'+pg;let s=a.find(x=>x.id===id);if(!s){s={id,title,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language:'Português',pgId:pg,fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};a.push(s);changed=true}else{Object.assign(s,{title,author,area,sourcePage:pgPage(pg),materialUrl:s.materialUrl||pgDownload(pg),coverUrl:s.coverUrl||pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language:'Português',pgId:pg})}}
+if(changed)try{save?.()}catch(e){}return changed}
+function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open('SIRIUS_EPUB_LIBRARY_V7',1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains('books'))db.createObjectStore('books',{keyPath:'id'});if(!db.objectStoreNames.contains('files'))db.createObjectStore('files',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error('db_blocked'))})}
+async function putV7(s,file){const db=await openDb();const blob=file instanceof Blob?file.slice(0,file.size,file.type||'application/epub+zip'):new Blob([file],{type:'application/epub+zip'});const frec={id:String(s.id),blob,name:file.name||`${s.title}.epub`,size:blob.size,lastModified:file.lastModified||Date.now(),title:s.title,author:s.author,identifier:'',savedAt:new Date().toISOString()};const brec={...s,id:String(s.id)};await new Promise((res,rej)=>{const tx=db.transaction(['files','books'],'readwrite');tx.objectStore('files').put(frec);tx.objectStore('books').put(brec);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('db_abort'))});db.close();return true}
+async function zipLooksOk(blob){if(blob.size<5000)return false;const b=new Uint8Array(await blob.slice(0,4).arrayBuffer());return b[0]===0x50&&b[1]===0x4b&&b[2]===0x03&&b[3]===0x04}
+async function bindFile(s,file){if(!/\.epub$/i.test(file.name||'')&&file.type!=='application/epub+zip')throw new Error('not_epub');if(!await zipLooksOk(file))throw new Error('invalid_epub');s.localEpub=true;s.epubManagedV7=true;s.localEpubKey=s.id;s.localFileName=file.name||(`${s.title}.epub`);s.localEpubFileName=s.localFileName;s.localEpubSize=file.size;s.localEpubLastModified=file.lastModified||Date.now();s.installedAt=new Date().toISOString();await putV7(s,file);try{save?.()}catch(e){}return true}
+function statusFiltered(list){let f='all';try{f=typeof libraryFilter!=='undefined'?(libraryFilter||'all'):'all'}catch(e){}if(f==='reading')return list.filter(s=>Number(s.progress||s.fileProgress||0)>0&&Number(s.progress||s.fileProgress||0)<100);if(f==='finished')return list.filter(s=>Number(s.progress||s.fileProgress||0)>=100);return list}
+function injectTopics(){const tabs=document.querySelector('#view-books .libraryTabs');if(!tabs)return;let bar=document.getElementById('siriusTopicBar');if(!bar){bar=document.createElement('div');bar.id='siriusTopicBar';tabs.insertAdjacentElement('afterend',bar)}bar.innerHTML=TOPICS.map(t=>`<button type="button" class="siriusTopicBtn${t===topic?' active':''}" data-sirius-pt-topic="${esc(t)}">${esc(t)}</button>`).join('');const list=document.getElementById('dashBooksList');if(list&&!document.getElementById('siriusLibrarySummary')){const sum=document.createElement('div');sum.id='siriusLibrarySummary';sum.className='siriusLibrarySummary';list.insertAdjacentElement('beforebegin',sum)}}
+function card(s){const p=Math.max(0,Math.min(100,Number(s.fileProgress??s.progress)||0)), local=hasLocal(s), loading=busy.has(s.id);const state=local?'<div class="siriusPtState ready">EPUB INSTALADO NESTE APARELHO</div>':loading?'<div class="siriusPtState downloading">BAIXANDO E INSTALANDO...</div>':'<div class="siriusPtState">EPUB DISPONÍVEL PARA INSTALAÇÃO</div>';const main=local?`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">${p>0?'CONTINUAR':'LER AGORA'}</button>`:`<button class="siriusPtInstallBtn" data-sirius-pt-install="${esc(s.id)}" ${loading?'disabled':''}>${loading?'INSTALANDO...':'BAIXAR E INSTALAR'}</button>`;return `<div class="dashPanel" data-sirius-book-id="${esc(s.id)}" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} <span class="siriusCuratedBadge">SIRIUS PT</span></div><div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span><div class="siriusSourceNote">FONTE // Project Gutenberg // Português</div>${state}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${main}<button class="siriusPtSourceBtn" data-sirius-pt-source="${esc(s.id)}">FONTE</button><button onclick="setBookCover('${esc(s.id)}')">CAPA</button></div></div></div></div>`}
+function render(){injectTopics();const all=archive();let filtered=statusFiltered(all);if(topic!=='Todos os temas')filtered=filtered.filter(s=>String(s.area||'Conhecimento geral')===topic);filtered=[...filtered].sort((a,b)=>{const ac=(a.curatedSirius&&a.language==='Português')?0:1,bc=(b.curatedSirius&&b.language==='Português')?0:1;if(ac!==bc)return ac-bc;return String(a.title||'').localeCompare(String(b.title||''),'pt-BR')});const sum=document.getElementById('siriusLibrarySummary');if(sum){const pt=all.filter(s=>s.curatedSirius&&s.language==='Português').length,installed=all.filter(hasLocal).length;sum.innerHTML=`<div><b>${filtered.length}</b><span>NESTE TEMA</span></div><div><b>${installed}</b><span>EPUBS INSTALADOS</span></div><div><b>${pt}</b><span>COLEÇÃO PT</span></div>`}const list=document.getElementById('dashBooksList');if(list)list.innerHTML=filtered.length?filtered.map(card).join(''):'<div class="small">Nenhum livro neste tema.</div>'}
+function showManual(s,msg){pendingId=s.id;const ov=document.getElementById('siriusPtImportOverlay');document.getElementById('siriusPtImportTitle').textContent='IMPORTAR '+(s.title||'EPUB').toUpperCase();document.getElementById('siriusPtImportText').innerHTML=`${esc(msg||'O navegador não permitiu instalar automaticamente este EPUB.')}<br><br>1. Toque em <b>FONTE</b> ou abra o download oficial.<br>2. Salve o arquivo EPUB no app Arquivos.<br>3. Volte ao SIRIUS e toque em <b>SELECIONAR EPUB</b>.<br><br>O SIRIUS vinculará o arquivo a este livro sem apagar seu progresso.`;ov?.classList.add('show');ov?.setAttribute('aria-hidden','false')}
+async function install(id){const s=byId(id);if(!s||busy.has(id))return;if(hasLocal(s)){openKnowledgeMaterial(id);return}busy.add(id);render();try{showToast?.('BAIXANDO EPUB // AGUARDE...');const r=await fetch(s.materialUrl,{mode:'cors',cache:'no-store',redirect:'follow'});if(!r.ok)throw new Error('http_'+r.status);const blob=await r.blob();if(!await zipLooksOk(blob))throw new Error('invalid_download');let file;try{file=new File([blob],`${String(s.title||'livro').replace(/[\\/:*?"<>|]+/g,' ').trim()}.epub`,{type:'application/epub+zip',lastModified:Date.now()})}catch(e){file=blob;Object.defineProperty(file,'name',{value:`${s.title||'livro'}.epub`})}await bindFile(s,file);showSystemEvent?.('EPUB INSTALADO',`${s.title} foi salvo no SIRIUS e já pode ser lido offline.`);render();setTimeout(()=>openKnowledgeMaterial(id),120)}catch(e){console.warn('SIRIUS PT auto install',e);showManual(s,'O download automático foi bloqueado pelo navegador ou pela fonte. O arquivo continua disponível oficialmente para você importar.')}finally{busy.delete(id);render()}}
+window.downloadCuratedSiriusBook=install;
+document.addEventListener('click',e=>{const t=e.target.closest?.('[data-sirius-pt-topic]');if(t){e.preventDefault();topic=t.dataset.siriusPtTopic||'Todos os temas';render();return}const i=e.target.closest?.('[data-sirius-pt-install]');if(i){e.preventDefault();e.stopPropagation();install(i.dataset.siriusPtInstall);return}const src=e.target.closest?.('[data-sirius-pt-source]');if(src){e.preventDefault();const s=byId(src.dataset.siriusPtSource);if(s?.sourcePage)window.open(s.sourcePage,'_blank','noopener');}},true);
+document.getElementById('siriusPtImportCancel')?.addEventListener('click',()=>{pendingId=null;document.getElementById('siriusPtImportOverlay')?.classList.remove('show')});
+document.getElementById('siriusPtImportChoose')?.addEventListener('click',()=>{const i=document.getElementById('siriusPtImportInput');if(i){i.value='';i.click()}});
+document.getElementById('siriusPtImportInput')?.addEventListener('change',async e=>{const file=e.target.files?.[0],s=byId(pendingId);if(!file||!s)return;try{showToast?.('VINCULANDO EPUB...');await bindFile(s,file);document.getElementById('siriusPtImportOverlay')?.classList.remove('show');pendingId=null;render();showSystemEvent?.('EPUB VINCULADO',`${s.title} agora está salvo no SIRIUS.`);setTimeout(()=>openKnowledgeMaterial(s.id),120)}catch(err){console.error(err);alert('Não foi possível vincular este EPUB. Confirme se o arquivo selecionado é um EPUB válido.')}});
+const prevRefresh=window.refreshDashboard;if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);setTimeout(render,0);return r};
+const prevFilter=window.setLibraryFilter;if(typeof prevFilter==='function')window.setLibraryFilter=function(){const r=prevFilter.apply(this,arguments);setTimeout(render,0);return r};
+function mark(){document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v})}
+function init(){seed();injectTopics();render();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // BIBLIOTECA PORTUGUÊS + INSTALAÇÃO EPUB.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,260),{once:true});else setTimeout(init,260);window.addEventListener('load',()=>setTimeout(()=>{seed();render();mark()},520),{once:true});
+})();
+</script>
+
 </body></html>
