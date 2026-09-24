@@ -13564,7 +13564,7 @@ window.addEventListener('load',()=>{setTimeout(apply,120);setTimeout(hydrateCove
 .siriusLibrarySummary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 12px}
 .siriusLibrarySummary>div{border:1px solid #4d287b;background:linear-gradient(180deg,rgba(42,17,68,.72),rgba(8,7,17,.94));padding:9px 7px;text-align:center}
 .siriusLibrarySummary b{display:block;color:#fff;font-size:16px;line-height:1}.siriusLibrarySummary span{display:block;color:#9c86b9;font-size:7px;font-weight:900;letter-spacing:.8px;margin-top:5px}
-.siriusBookTopic{display:inline-flex;align-items:center;border:1px solid #6e35a7;color:#c99cff;background:#1a0c2b;padding:3px 6px;font-size:7px;font-weight:900;letter-spacing:.6px;margin-top:6px}
+.siriusOriginalTitle{font-size:8px;letter-spacing:.45px;color:#8f82ad;margin:3px 0 5px}.siriusBookTopic{display:inline-flex;align-items:center;border:1px solid #6e35a7;color:#c99cff;background:#1a0c2b;padding:3px 6px;font-size:7px;font-weight:900;letter-spacing:.6px;margin-top:6px}
 .siriusSourceNote{font-size:7px;color:#7d7191;margin-top:5px;letter-spacing:.4px}
 .siriusCuratedBadge{display:inline-block;margin-left:6px;border:1px solid #2d8f8c;color:#63e7d8;background:#071d1d;padding:2px 5px;font-size:6.5px;font-weight:900;vertical-align:middle}
 .siriusDownloadBtn{border-color:#7a3eb5!important;color:#eadcff!important;background:#160a28!important}
@@ -13595,56 +13595,40 @@ window.addEventListener('load',()=>{setTimeout(apply,120);setTimeout(hydrateCove
 <div id="siriusPtImportOverlay" aria-hidden="true"><div class="box"><div class="k">[ SIRIUS // IMPORTAÇÃO EPUB ]</div><h3 id="siriusPtImportTitle">INSTALAR LIVRO</h3><div class="siriusPtImportText" id="siriusPtImportText"></div><input id="siriusPtImportInput" type="file" accept=".epub,application/epub+zip" style="display:none"><div class="actions"><button id="siriusPtImportCancel">CANCELAR</button><button class="primary" id="siriusPtImportChoose">SELECIONAR EPUB</button></div></div></div>
 <script id="sirius-v22325-library-script">
 (()=>{'use strict';
-const VERSION='v2.23.26';
+const VERSION='v2.23.28';
 const CATALOG_BOOKS=[
-['54829','Memórias Póstumas de Brás Cubas','Machado de Assis','Literatura','Português'],
-['55752','Dom Casmurro','Machado de Assis','Literatura','Português'],
-['55682','Quincas Borba','Machado de Assis','Literatura','Português'],
-['57001','Papéis Avulsos — inclui O Alienista','Machado de Assis','Literatura','Português'],
-['69187','O Cortiço','Aluísio Azevedo','Literatura','Português'],
-['67740','Iracema','José de Alencar','Literatura','Português'],
-['67535','Triste Fim de Policarpo Quaresma','Lima Barreto','Literatura','Português'],
-['27236','Os Lusíadas','Luís de Camões','Literatura','Português'],
-['18220','A Cidade e as Serras','Eça de Queirós','Literatura','Português'],
-['16384','O Mandarim','Eça de Queirós','Literatura','Português'],
-['67162','Helena','Machado de Assis','Literatura','Português'],
-['53101','A Mão e a Luva','Machado de Assis','Literatura','Português'],
-['67780','Iaiá Garcia','Machado de Assis','Literatura','Português'],
-['31347','Contos','Eça de Queirós','Literatura','Português'],
-['17515','A Relíquia','Eça de Queirós','Literatura','Português'],
-['27637','A correspondência de Fradique Mendes','Eça de Queirós','Literatura','Português'],
-['32646','Contos Fantásticos','Teófilo Braga','Fantasia','Português'],
-['2837','Lendas do Sul','J. Simões Lopes Neto','Fantasia','Português'],
-['9654','Lendas e Narrativas — Tomo I','Alexandre Herculano','Fantasia','Português'],
-['17005','Lendas e Narrativas — Tomo II','Alexandre Herculano','Fantasia','Português'],
-['30359','Contos e Lendas','Luiz Augusto Rebello da Silva','Fantasia','Português'],
-['11','Alice\'s Adventures in Wonderland','Lewis Carroll','Fantasia','Inglês'],
-['12','Through the Looking-Glass','Lewis Carroll','Fantasia','Inglês'],
-['55','The Wonderful Wizard of Oz','L. Frank Baum','Fantasia','Inglês'],
-['325','Phantastes: A Faerie Romance for Men and Women','George MacDonald','Fantasia','Inglês'],
-['1640','Lilith: A Romance','George MacDonald','Fantasia','Inglês'],
-['225','At the Back of the North Wind','George MacDonald','Fantasia','Inglês'],
-['697','The Light Princess','George MacDonald','Fantasia','Inglês'],
-['708','The Princess and the Goblin','George MacDonald','Fantasia','Inglês'],
-['709','The Princess and Curdie','George MacDonald','Fantasia','Inglês'],
-['54','The Marvelous Land of Oz','L. Frank Baum','Fantasia','Inglês'],
-['486','Ozma of Oz','L. Frank Baum','Fantasia','Inglês'],
-['420','Dorothy and the Wizard in Oz','L. Frank Baum','Fantasia','Inglês'],
-['169','The Well at the World\'s End','William Morris','Fantasia','Inglês'],
-['3055','The Wood Beyond the World','William Morris','Fantasia','Inglês'],
-['2565','The Story of the Glittering Plain','William Morris','Fantasia','Inglês'],
-['34219','The Enchanted Castle','E. Nesbit','Fantasia','Inglês'],
-['778','Five Children and It','E. Nesbit','Fantasia','Inglês'],
-['836','The Phoenix and the Carpet','E. Nesbit','Fantasia','Inglês'],
-['837','The Story of the Amulet','E. Nesbit','Fantasia','Inglês'],
-['289','The Wind in the Willows','Kenneth Grahame','Fantasia','Inglês'],
-['139','The Lost World','Arthur Conan Doyle','Fantasia','Inglês'],
-['2825','Undine','Friedrich de la Motte Fouqué','Fantasia','Inglês'],
-['78120','The Marvellous Land of Snergs','E. A. Wyke-Smith','Fantasia','Inglês'],
-['485','The Road to Oz','L. Frank Baum','Fantasia','Inglês'],
-['57426','Baron Trump\'s Marvellous Underground Journey','Ingersoll Lockwood','Fantasia','Inglês']
+['32646','Contos Fantásticos','Contos Fantásticos','Teófilo Braga','Fantasia','Português'],
+['2837','Lendas do Sul','Lendas do Sul','J. Simões Lopes Neto','Fantasia','Português'],
+['9654','Lendas e Narrativas — Tomo I','Lendas e Narrativas — Tomo I','Alexandre Herculano','Fantasia','Português'],
+['30359','Contos e Lendas','Contos e Lendas','Luiz Augusto Rebello da Silva','Fantasia','Português'],
+['22015','As Minas de Salomão','As Minas de Salomão','H. Rider Haggard','Aventura','Português'],
+['11','Alice no País das Maravilhas','Alice\'s Adventures in Wonderland','Lewis Carroll','Fantasia','Inglês'],
+['78131','Peter Pan','Peter Pan: or, The Boy Who Would Not Grow Up','J. M. Barrie','Fantasia','Inglês'],
+['55','O Maravilhoso Mágico de Oz','The Wonderful Wizard of Oz','L. Frank Baum','Fantasia','Inglês'],
+['325','Phantastes — Um Romance de Fadas','Phantastes: A Faerie Romance for Men and Women','George MacDonald','Fantasia','Inglês'],
+['1640','Lilith — Um Romance','Lilith: A Romance','George MacDonald','Fantasia','Inglês'],
+['708','A Princesa e o Goblin','The Princess and the Goblin','George MacDonald','Fantasia','Inglês'],
+['289','O Vento nos Salgueiros','The Wind in the Willows','Kenneth Grahame','Fantasia','Inglês'],
+['139','O Mundo Perdido','The Lost World','Arthur Conan Doyle','Aventura','Inglês'],
+['120','A Ilha do Tesouro','Treasure Island','Robert Louis Stevenson','Aventura','Inglês'],
+['103','A Volta ao Mundo em 80 Dias','Around the World in Eighty Days','Jules Verne','Aventura','Inglês'],
+['164','Vinte Mil Léguas Submarinas','Twenty Thousand Leagues under the Sea','Jules Verne','Aventura','Inglês'],
+['236','O Livro da Selva','The Jungle Book','Rudyard Kipling','Aventura','Inglês'],
+['78','Tarzan dos Macacos','Tarzan of the Apes','Edgar Rice Burroughs','Aventura','Inglês'],
+['215','O Chamado Selvagem','The Call of the Wild','Jack London','Aventura','Inglês'],
+['910','Caninos Brancos','White Fang','Jack London','Aventura','Inglês'],
+['521','Robinson Crusoé','The Life and Adventures of Robinson Crusoe','Daniel Defoe','Aventura','Inglês'],
+['829','As Viagens de Gulliver','Gulliver\'s Travels into Several Remote Nations of the World','Jonathan Swift','Fantasia','Inglês'],
+['1184','O Conde de Monte Cristo','The Count of Monte Cristo','Alexandre Dumas','Aventura','Inglês'],
+['1257','Os Três Mosqueteiros','The Three Musketeers','Alexandre Dumas','Aventura','Inglês'],
+['82','Ivanhoé','Ivanhoe: A Romance','Walter Scott','Aventura','Inglês'],
+['60','O Pimpinela Escarlate','The Scarlet Pimpernel','Baroness Orczy','Aventura','Inglês'],
+['95','O Prisioneiro de Zenda','The Prisoner of Zenda','Anthony Hope','Aventura','Inglês'],
+['35','A Máquina do Tempo','The Time Machine','H. G. Wells','Fantasia','Inglês'],
+['2591','Contos dos Irmãos Grimm','Grimms\' Fairy Tales','Jacob e Wilhelm Grimm','Fantasia','Inglês'],
+['1597','Contos de Hans Christian Andersen','Andersen\'s Fairy Tales','Hans Christian Andersen','Fantasia','Inglês']
 ];
-const TOPICS=['Todos os temas','Filosofia','Desenvolvimento Pessoal','Psicologia','Comunicação','Estratégia','Finanças','História','Ciência','Fantasia','Literatura'];
+const TOPICS=['Todos os temas','Filosofia','Desenvolvimento Pessoal','Psicologia','Comunicação','Estratégia','Finanças','História','Ciência','Fantasia','Aventura','Literatura'];
 const HIDDEN_KEY='SIRIUS_HIDDEN_CURATED_BOOKS_V1';
 let topic='Todos os temas', pendingId=null, verifiedLocal=new Set(), reconciling=false;
 function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m))}
@@ -13658,7 +13642,7 @@ function hideId(id){const h=hiddenIds();h.add(String(id));try{localStorage.setIt
 function hasLocal(s){return !!(s&&verifiedLocal.has(String(s.id)))}
 function seed(){const a=archive(), hidden=hiddenIds();let changed=false;
  for(let i=a.length-1;i>=0;i--){const s=a[i];if(s?.curatedSirius&&s?.language==='Inglês'&&/^sirius_pg_/.test(String(s.id||''))&&!hasLocal(s)&&Number(s.progress||0)===0){a.splice(i,1);changed=true}}
- for(const [pg,title,author,area,language='Português'] of CATALOG_BOOKS){const id=(language==='Português'?'sirius_pt_pg_':'sirius_free_pg_')+pg;if(hidden.has(id))continue;let s=a.find(x=>x.id===id);if(!s){s={id,title,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg,fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};a.push(s);changed=true}else{Object.assign(s,{title,author,area,sourcePage:pgPage(pg),materialUrl:pgDownload(pg),coverUrl:s.coverUrl||pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg})}}
+ for(const [pg,title,originalTitle,author,area,language='Português'] of CATALOG_BOOKS){const id=(language==='Português'?'sirius_pt_pg_':'sirius_free_pg_')+pg;if(hidden.has(id))continue;let s=a.find(x=>x.id===id);if(!s){s={id,title,originalTitle,author,type:'Livro',area,section:'',materialUrl:pgDownload(pg),sourcePage:pgPage(pg),coverUrl:pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg,fileProgress:0,contentStartProgress:null,contentStartCfi:null,progress:0,epubCfi:null,readingSeconds:0,lastReadAt:null,milestonesSeen:[],learningMilestonesCreated:[],createdAt:new Date().toISOString()};a.push(s);changed=true}else{Object.assign(s,{title,originalTitle,author,area,sourcePage:pgPage(pg),materialUrl:pgDownload(pg),coverUrl:s.coverUrl||pgCover(pg),curatedSirius:true,sourceName:'Project Gutenberg',language,pgId:pg})}}
  if(changed)try{save?.()}catch(e){}return changed}
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open('SIRIUS_EPUB_LIBRARY_V7',1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains('books'))db.createObjectStore('books',{keyPath:'id'});if(!db.objectStoreNames.contains('files'))db.createObjectStore('files',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error('db_blocked'))})}
 async function readInstalledIds(){const db=await openDb();try{return await new Promise((res,rej)=>{const tx=db.transaction('files','readonly'),req=tx.objectStore('files').getAllKeys();req.onsuccess=()=>res((req.result||[]).map(String));req.onerror=()=>rej(req.error)})}finally{db.close()}}
@@ -13669,7 +13653,7 @@ async function zipLooksOk(blob){if(blob.size<5000)return false;const b=new Uint8
 async function bindFile(s,file){if(!/\.epub$/i.test(file.name||'')&&file.type!=='application/epub+zip')throw new Error('not_epub');if(!await zipLooksOk(file))throw new Error('invalid_epub');s.localEpub=true;s.epubManagedV7=true;s.localEpubKey=s.id;s.localFileName=file.name||(`${s.title}.epub`);s.localEpubFileName=s.localFileName;s.localEpubSize=file.size;s.localEpubLastModified=file.lastModified||Date.now();s.installedAt=new Date().toISOString();await putV7(s,file);verifiedLocal.add(String(s.id));try{save?.()}catch(e){}return true}
 function statusFiltered(list){let f='all';try{f=typeof libraryFilter!=='undefined'?(libraryFilter||'all'):'all'}catch(e){}if(f==='reading')return list.filter(s=>Number(s.progress||s.fileProgress||0)>0&&Number(s.progress||s.fileProgress||0)<100);if(f==='finished')return list.filter(s=>Number(s.progress||s.fileProgress||0)>=100);return list}
 function injectTopics(){const tabs=document.querySelector('#view-books .libraryTabs');if(!tabs)return;let bar=document.getElementById('siriusTopicBar');if(!bar){bar=document.createElement('div');bar.id='siriusTopicBar';tabs.insertAdjacentElement('afterend',bar)}bar.innerHTML=TOPICS.map(t=>`<button type="button" class="siriusTopicBtn${t===topic?' active':''}" data-sirius-pt-topic="${esc(t)}">${esc(t)}</button>`).join('');const list=document.getElementById('dashBooksList');if(list&&!document.getElementById('siriusLibrarySummary')){const sum=document.createElement('div');sum.id='siriusLibrarySummary';sum.className='siriusLibrarySummary';list.insertAdjacentElement('beforebegin',sum)}}
-function card(s){const p=Math.max(0,Math.min(100,Number(s.fileProgress??s.progress)||0)),local=hasLocal(s),curated=s.curatedSirius?`<span class="siriusCuratedBadge">${s.language==='Português'?'SIRIUS PT':'SIRIUS FREE'}</span>`:'';const state=local?'<div class="siriusPtState ready">EPUB INSTALADO NESTE APARELHO</div>':'<div class="siriusPtState">EPUB DISPONÍVEL PARA INSTALAÇÃO</div>';let actions;if(local){actions=`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">${p>0?'CONTINUAR':'LER AGORA'}</button><button class="siriusExplainBtn" data-sirius-explain="${esc(s.id)}">EXPLIQUE O LIVRO</button><button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}else{actions=`<button class="siriusPtInstallBtn" data-sirius-pt-install="${esc(s.id)}">BAIXAR E INSTALAR</button>${s.sourcePage?`<button class="siriusPtSourceBtn" data-sirius-pt-source="${esc(s.id)}">FONTE</button>`:''}<button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}return `<div class="dashPanel" data-sirius-book-id="${esc(s.id)}" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} ${curated}</div><div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span>${s.sourceName?`<div class="siriusSourceNote">FONTE // ${esc(s.sourceName)}${s.language?` // ${esc(s.language)}`:''}</div>`:''}${state}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${actions}</div></div></div></div>`}
+function card(s){const p=Math.max(0,Math.min(100,Number(s.fileProgress??s.progress)||0)),local=hasLocal(s),curated=s.curatedSirius?`<span class="siriusCuratedBadge">${s.language==='Português'?'SIRIUS PT':'SIRIUS FREE'}</span>`:'';const state=local?'<div class="siriusPtState ready">EPUB INSTALADO NESTE APARELHO</div>':'<div class="siriusPtState">EPUB DISPONÍVEL PARA INSTALAÇÃO</div>';let actions;if(local){actions=`<button class="primary" onclick="openKnowledgeMaterial('${esc(s.id)}')">${p>0?'CONTINUAR':'LER AGORA'}</button><button class="siriusExplainBtn" data-sirius-explain="${esc(s.id)}">EXPLIQUE O LIVRO</button><button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}else{actions=`<button class="siriusPtInstallBtn" data-sirius-pt-install="${esc(s.id)}">BAIXAR E INSTALAR</button>${s.sourcePage?`<button class="siriusPtSourceBtn" data-sirius-pt-source="${esc(s.id)}">FONTE</button>`:''}<button class="siriusRemoveBtn" data-sirius-remove="${esc(s.id)}">REMOVER</button>`}return `<div class="dashPanel" data-sirius-book-id="${esc(s.id)}" style="margin-bottom:8px"><div class="bookHero">${bookCoverMarkup(s)}<div><div class="dashPanelTitle">${esc(s.title)} ${curated}</div>${s.originalTitle&&s.originalTitle!==s.title?`<div class="siriusOriginalTitle">ORIGINAL // ${esc(s.originalTitle)}</div>`:'' }<div class="dashPanelSub">${esc(s.author||'Autor não informado')} // ${p}%</div><span class="siriusBookTopic">${esc(s.area||'Conhecimento geral')}</span>${s.sourceName?`<div class="siriusSourceNote">FONTE // ${esc(s.sourceName)}${s.language?` // ${esc(s.language)}`:''}</div>`:''}${state}<div class="xp" style="margin-top:7px"><div class="bar" style="width:${p}%"></div></div><div class="bookActions">${actions}</div></div></div></div>`}
 function render(){injectTopics();const all=archive();let filtered=statusFiltered(all);if(topic!=='Todos os temas')filtered=filtered.filter(s=>String(s.area||'Conhecimento geral')===topic);filtered=[...filtered].sort((a,b)=>{const ac=(a.curatedSirius&&a.language==='Português')?0:1,bc=(b.curatedSirius&&b.language==='Português')?0:1;if(ac!==bc)return ac-bc;return String(a.title||'').localeCompare(String(b.title||''),'pt-BR')});const sum=document.getElementById('siriusLibrarySummary');if(sum){const pt=all.filter(s=>s.curatedSirius&&s.language==='Português').length,installed=all.filter(hasLocal).length;sum.innerHTML=`<div><b>${filtered.length}</b><span>NESTE TEMA</span></div><div><b>${installed}</b><span>EPUBS INSTALADOS</span></div><div><b>${pt}</b><span>COLEÇÃO PT</span></div>`}const list=document.getElementById('dashBooksList');if(list)list.innerHTML=filtered.length?filtered.map(card).join(''):'<div class="small">Nenhum livro neste tema.</div>'}
 function chooseFile(id){const s=byId(id);if(!s)return;pendingId=s.id;const input=document.getElementById('siriusPtImportInput');if(input){input.value='';input.click()}}
 function showImportHelp(s,msg){pendingId=s.id;const ov=document.getElementById('siriusPtImportOverlay'),title=document.getElementById('siriusPtImportTitle'),body=document.getElementById('siriusPtImportText');if(title)title.textContent='IMPORTAR '+(s.title||'EPUB').toUpperCase();if(body)body.innerHTML=`${esc(msg||'Selecione o arquivo EPUB salvo no app Arquivos.')}<br><br>Use <b>FONTE</b> para abrir a página oficial do livro e obter o EPUB. Depois volte ao SIRIUS e escolha o arquivo correspondente.`;ov?.classList.add('show');ov?.setAttribute('aria-hidden','false')}
@@ -13682,156 +13666,92 @@ document.getElementById('siriusPtImportInput')?.addEventListener('change',async 
 const prevRefresh=window.refreshDashboard;if(typeof prevRefresh==='function')window.refreshDashboard=function(){const r=prevRefresh.apply(this,arguments);setTimeout(render,0);return r};
 const prevFilter=window.setLibraryFilter;if(typeof prevFilter==='function')window.setLibraryFilter=function(){const r=prevFilter.apply(this,arguments);setTimeout(render,0);return r};
 function mark(){document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v})}
-async function init(){await reconcileLocalState();seed();render();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // BIBLIOTECA DE FANTASIA GRÁTIS + ESTADO EPUB VERIFICADO + EXPLIQUE O LIVRO.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,260),{once:true});else setTimeout(init,260);window.addEventListener('load',()=>setTimeout(async()=>{await reconcileLocalState();seed();render();mark()},520),{once:true});
+async function pruneRetiredCurated(){
+ const allowed=new Set(CATALOG_BOOKS.map(x=>(x[5]==='Português'?'sirius_pt_pg_':'sirius_free_pg_')+x[0]));
+ const a=archive();let changed=false;
+ for(let i=a.length-1;i>=0;i--){
+  const x=a[i];if(!x?.curatedSirius||!/^sirius_(?:pt_|free_)?pg_/.test(String(x.id||''))||allowed.has(String(x.id)))continue;
+  const pct=Number(x.progress||x.fileProgress||0);
+  if(pct>0)continue;
+  if(hasLocal(x))try{await deleteV7(x.id)}catch(e){}
+  a.splice(i,1);changed=true;
+ }
+ if(changed)try{save?.()}catch(e){}
+}
+async function init(){await reconcileLocalState();await pruneRetiredCurated();seed();render();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // AVENTURA/FANTASIA CURADA + TÍTULOS PT-BR + CATÁLOGO SEM REPETIÇÕES + ESTADO EPUB VERIFICADO.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,260),{once:true});else setTimeout(init,260);window.addEventListener('load',()=>setTimeout(async()=>{await reconcileLocalState();await pruneRetiredCurated();seed();render();mark()},520),{once:true});
 })();
 </script>
 
-<!-- ===== SIRIUS v2.23.27 // TRANSLATE READER ===== -->
-<style id="sirius-v22327-translate-style">
+<!-- ===== SIRIUS v2.23.28 // TRANSLATE READER 2 ===== -->
+<style id="sirius-v22328-translate-style">
 #epubViewport{position:relative!important}
 .siriusTranslateBar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 8px}
 .siriusTranslateBar button{border:1px solid #7a58cf;background:linear-gradient(180deg,#17102b,#0d0a19);color:#f1eaff;padding:9px 8px;font-size:9px;font-weight:900;letter-spacing:.7px;min-height:38px}
 .siriusTranslateBar button.active{border-color:#c46cff;box-shadow:0 0 18px #9a4dff45;background:linear-gradient(180deg,#2a1550,#160d2c)}
 .siriusTranslateBar button:disabled{opacity:.55}
 .siriusTranslateState{text-align:center;font-size:8px;letter-spacing:.65px;color:#bba8df;margin:-2px 0 7px;min-height:12px}
-#siriusTranslationPane{position:absolute;inset:0;z-index:8;display:none;overflow:auto;-webkit-overflow-scrolling:touch;background:#080713f5;color:#efeaff;padding:20px 18px 40px;line-height:1.68;font-size:16px;white-space:pre-wrap}
+#siriusTranslationPane{position:absolute;inset:0;z-index:8;display:none;overflow:auto;-webkit-overflow-scrolling:touch;background:#080713f5;color:#efeaff;padding:20px 18px 40px;line-height:1.72;font-size:17px;white-space:pre-wrap}
 #siriusTranslationPane.show{display:block}
 #siriusTranslationPane .siriusTranslatePaneTitle{font-size:10px;letter-spacing:1.5px;color:#d67cff;font-weight:900;margin-bottom:14px;position:sticky;top:-20px;background:#080713f5;padding:14px 0 10px}
 #siriusTranslationPane .siriusTranslateDisclaimer{font-size:10px;line-height:1.45;color:#9f91bc;border:1px solid #39275d;padding:9px 10px;margin:0 0 14px;background:#100b1f}
 </style>
-<script id="sirius-v22327-translate-script">
+<script id="sirius-v22328-translate-script">
 (()=>{
 'use strict';
-const VERSION='v2.23.27';
-const TRANSLATE_DB='siriusTranslationsV1';
+const VERSION='v2.23.28';
+const TRANSLATE_DB='siriusTranslationsV2';
 const TRANSLATE_STORE='translations';
-let boundRendition=null;
-let currentSectionKey='';
-let currentSectionHref='';
-let translating=false;
+let boundRendition=null,currentSectionHref='',translating=false;
 
 function srcById(id){return (data?.knowledgeArchive?.sources||[]).find(x=>String(x.id)===String(id))||null}
-function sourceLang(s){
- const raw=String(s?.language||'').toLowerCase();
- if(/portugu|pt-br|pt_br|\bpt\b/.test(raw))return 'pt';
- if(/spanish|espa[nñ]ol|espanhol|castelh/.test(raw))return 'es';
- if(/french|fran[cç]ais|franc[eê]s/.test(raw))return 'fr';
- if(/german|deutsch|alem[aã]o/.test(raw))return 'de';
- if(/italian|italiano/.test(raw))return 'it';
- return 'en';
-}
+function sourceLang(s){const raw=String(s?.language||'').toLowerCase();if(/portugu|pt-br|pt_br|\bpt\b/.test(raw))return 'pt';if(/spanish|espa[nñ]ol|espanhol|castelh/.test(raw))return 'es';if(/french|fran[cç]ais|franc[eê]s/.test(raw))return 'fr';if(/german|deutsch|alem[aã]o/.test(raw))return 'de';if(/italian|italiano/.test(raw))return 'it';return 'en'}
 function isPortugueseBook(s){return sourceLang(s)==='pt'}
-function escHtml(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
 function simpleHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
 function openTranslateDb(){return new Promise((res,rej)=>{const req=indexedDB.open(TRANSLATE_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(TRANSLATE_STORE))db.createObjectStore(TRANSLATE_STORE,{keyPath:'key'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
-async function cacheGet(key){try{const db=await openTranslateDb();const val=await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readonly');const q=tx.objectStore(TRANSLATE_STORE).get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)});db.close();return val}catch(e){console.warn('SIRIUS translate cache read',e);return null}}
-async function cachePut(obj){try{const db=await openTranslateDb();await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readwrite');tx.objectStore(TRANSLATE_STORE).put(obj);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('translation_db_abort'))});db.close();return true}catch(e){console.warn('SIRIUS translate cache write',e);return false}}
+async function cacheGet(key){try{const db=await openTranslateDb();const val=await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readonly');const q=tx.objectStore(TRANSLATE_STORE).get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)});db.close();return val}catch(e){return null}}
+async function cachePut(obj){try{const db=await openTranslateDb();await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readwrite');tx.objectStore(TRANSLATE_STORE).put(obj);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('translation_db_abort'))});db.close();return true}catch(e){return false}}
 function ensureUi(){
  const bottom=document.querySelector('.epubBottom');
- if(bottom&&!document.getElementById('siriusTranslateBar')){
-  const bar=document.createElement('div');bar.id='siriusTranslateBar';bar.className='siriusTranslateBar';
-  bar.innerHTML='<button type="button" id="siriusOriginalBtn" class="active">ORIGINAL</button><button type="button" id="siriusPtBtn">TRADUZIR PT-BR</button>';
-  const state=document.createElement('div');state.id='siriusTranslateState';state.className='siriusTranslateState';state.textContent='TRADUÇÃO ONLINE SOB DEMANDA // CACHE LOCAL';
-  bottom.insertBefore(state,bottom.firstChild);bottom.insertBefore(bar,state);
-  document.getElementById('siriusOriginalBtn').addEventListener('click',showOriginal);
-  document.getElementById('siriusPtBtn').addEventListener('click',showPortuguese);
- }
- const vp=document.getElementById('epubViewport');
- if(vp&&!document.getElementById('siriusTranslationPane')){
-  const pane=document.createElement('div');pane.id='siriusTranslationPane';
-  pane.innerHTML='<div class="siriusTranslatePaneTitle">SIRIUS // PT-BR</div><div class="siriusTranslateDisclaimer">Tradução automática online. O texto original permanece disponível em ORIGINAL.</div><div id="siriusTranslationText"></div>';
-  vp.appendChild(pane);
- }
+ if(bottom&&!document.getElementById('siriusTranslateBar')){const bar=document.createElement('div');bar.id='siriusTranslateBar';bar.className='siriusTranslateBar';bar.innerHTML='<button type="button" id="siriusOriginalBtn" class="active">ORIGINAL</button><button type="button" id="siriusPtBtn">TRADUZIR PT-BR</button>';const state=document.createElement('div');state.id='siriusTranslateState';state.className='siriusTranslateState';state.textContent='TRADUÇÃO PT-BR // ONLINE + CACHE LOCAL';bottom.insertBefore(state,bottom.firstChild);bottom.insertBefore(bar,state);document.getElementById('siriusOriginalBtn').addEventListener('click',showOriginal);document.getElementById('siriusPtBtn').addEventListener('click',showPortuguese)}
+ const vp=document.getElementById('epubViewport');if(vp&&!document.getElementById('siriusTranslationPane')){const p=document.createElement('div');p.id='siriusTranslationPane';p.innerHTML='<div class="siriusTranslatePaneTitle">SIRIUS // TRADUÇÃO PT-BR</div><div class="siriusTranslateDisclaimer">Tradução automática online. O EPUB original nunca é alterado. A tradução desta seção fica armazenada localmente quando concluída.</div><div id="siriusTranslationText"></div>';vp.appendChild(p)}
 }
 function pane(){ensureUi();return document.getElementById('siriusTranslationPane')}
 function setState(msg){ensureUi();const e=document.getElementById('siriusTranslateState');if(e)e.textContent=msg||''}
 function setButtons(mode){ensureUi();document.getElementById('siriusOriginalBtn')?.classList.toggle('active',mode==='original');document.getElementById('siriusPtBtn')?.classList.toggle('active',mode==='pt')}
-function showOriginal(){pane()?.classList.remove('show');setButtons('original');setState(isPortugueseBook(srcById(activeEpubSourceId))?'LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS':'ORIGINAL ATIVO // PT-BR DISPONÍVEL SOB DEMANDA')}
-function sectionIdentity(){
- let loc=null;try{loc=activeEpubRendition?.currentLocation?.()}catch(e){}
- const href=loc?.start?.href||loc?.end?.href||currentSectionHref||'';
- const cfi=loc?.start?.cfi||'';
- currentSectionHref=href;
- return {href,cfi,key:`${activeEpubSourceId||'book'}::${href||cfi||'section'}`}
+function showOriginal(){pane()?.classList.remove('show');setButtons('original');setState(isPortugueseBook(srcById(activeEpubSourceId))?'LIVRO JÁ EM PORTUGUÊS':'ORIGINAL ATIVO // TOQUE EM TRADUZIR PT-BR')}
+function sectionIdentity(){let loc=null;try{loc=activeEpubRendition?.currentLocation?.()}catch(e){}const href=loc?.start?.href||loc?.end?.href||currentSectionHref||'';const cfi=loc?.start?.cfi||'';currentSectionHref=href;return {href,cfi,key:`${activeEpubSourceId||'book'}::${href||cfi||'section'}`}}
+function cleanText(v){return String(v||'').replace(/\u00ad/g,'').replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').replace(/\n[ \t]+/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim()}
+function textFromDocument(doc){if(!doc)return '';const body=doc.body||doc.querySelector?.('body')||doc.documentElement;if(!body)return '';try{const c=body.cloneNode(true);c.querySelectorAll?.('script,style,noscript,svg,nav,button,form').forEach(x=>x.remove());return cleanText(c.innerText||c.textContent||'')}catch(e){return cleanText(body.innerText||body.textContent||'')}}
+async function getSectionText(){
+ try{const cs=activeEpubRendition?.getContents?.()||[];const parts=[];for(const c of cs){const t=textFromDocument(c?.document);if(t)parts.push(t)}const joined=cleanText(parts.join('\n\n'));if(joined.length>20)return joined}catch(e){console.warn('SIRIUS translate rendered',e)}
+ try{const vp=document.getElementById('epubViewport');const frames=[...(vp?.querySelectorAll?.('iframe')||[])];for(const f of frames){try{const t=textFromDocument(f.contentDocument);if(t.length>20)return t}catch(e){}}}catch(e){}
+ try{const ident=sectionIdentity();if(activeEpubBook&&ident.href){const sec=activeEpubBook.spine?.get?.(ident.href);if(sec){await sec.load(activeEpubBook.load.bind(activeEpubBook));const t=textFromDocument(sec.document);if(t.length>20)return t}}}catch(e){console.warn('SIRIUS translate spine',e)}
+ return ''
 }
-function getRenderedText(){
- try{
-  const contents=activeEpubRendition?.getContents?.()||[];
-  const body=contents[0]?.document?.body;
-  if(!body)return '';
-  const clone=body.cloneNode(true);
-  clone.querySelectorAll('script,style,noscript,svg,nav').forEach(x=>x.remove());
-  return String(clone.innerText||clone.textContent||'').replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
- }catch(e){console.warn('SIRIUS rendered text',e);return ''}
-}
-function splitText(text,max=430){
- const parts=[];for(const para of text.split(/\n{2,}/)){let s=para.trim();if(!s)continue;while(s.length>max){let cut=Math.max(s.lastIndexOf('. ',max),s.lastIndexOf('! ',max),s.lastIndexOf('? ',max),s.lastIndexOf('; ',max),s.lastIndexOf(', ',max),s.lastIndexOf(' ',max));if(cut<Math.floor(max*.55))cut=max;parts.push(s.slice(0,cut+1).trim());s=s.slice(cut+1).trim()}if(s)parts.push(s)}return parts
-}
-async function translateChunk(q,sl){
- const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(sl+'|pt-BR');
- const r=await fetch(url,{method:'GET',mode:'cors',cache:'no-store',headers:{'Accept':'application/json'}});
- if(!r.ok)throw new Error('translate_http_'+r.status);
- const j=await r.json();
- const t=j?.responseData?.translatedText;
- if(!t)throw new Error('translate_empty');
- return String(t).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
-}
-async function mapLimit(items,limit,fn){
- const out=new Array(items.length);let next=0,done=0;
- async function worker(){while(true){const i=next++;if(i>=items.length)return;out[i]=await fn(items[i],i);done++;setState(`TRADUZINDO PT-BR // ${done}/${items.length}`)}}
- await Promise.all(Array.from({length:Math.min(limit,items.length)},worker));return out
-}
+function splitText(text,max=1100){const out=[];for(const para of cleanText(text).split(/\n{2,}/)){let q=para.trim();if(!q)continue;while(q.length>max){let cut=Math.max(q.lastIndexOf('. ',max),q.lastIndexOf('! ',max),q.lastIndexOf('? ',max),q.lastIndexOf('; ',max),q.lastIndexOf(', ',max),q.lastIndexOf(' ',max));if(cut<Math.floor(max*.55))cut=max;out.push(q.slice(0,cut+1).trim());q=q.slice(cut+1).trim()}if(q)out.push(q)}return out}
+function decodeHtml(v){const t=document.createElement('textarea');t.innerHTML=String(v||'');return t.value}
+async function googleTranslate(q,sl){const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(sl)+'&tl=pt&dt=t&q='+encodeURIComponent(q);const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('google_http_'+r.status);const j=await r.json();const t=Array.isArray(j?.[0])?j[0].map(x=>x?.[0]||'').join(''):'';if(!t)throw new Error('google_empty');return cleanText(t)}
+async function myMemorySmall(q,sl){const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(sl+'|pt-BR');const r=await fetch(url,{method:'GET',mode:'cors',cache:'no-store',headers:{Accept:'application/json'}});if(!r.ok)throw new Error('mymemory_http_'+r.status);const j=await r.json();const t=j?.responseData?.translatedText;if(!t)throw new Error('mymemory_empty');return cleanText(decodeHtml(t))}
+async function myMemoryTranslate(q,sl){const small=splitText(q,430),arr=[];for(const p of small)arr.push(await myMemorySmall(p,sl));return arr.join(' ')}
+async function translateChunk(q,sl){try{return await googleTranslate(q,sl)}catch(e){console.warn('SIRIUS translate fallback',e);return await myMemoryTranslate(q,sl)}}
+async function translateSeries(items,sl){const out=[];for(let i=0;i<items.length;i++){setState(`TRADUZINDO PT-BR // ${i+1}/${items.length}`);out.push(await translateChunk(items[i],sl));if(i<items.length-1)await new Promise(r=>setTimeout(r,70))}return out}
+function showTranslation(text,fromCache){ensureUi();const t=document.getElementById('siriusTranslationText');if(t)t.textContent=text;pane()?.classList.add('show');pane()?.scrollTo?.(0,0);setButtons('pt');setState(fromCache?'PT-BR // RECUPERADO DO CACHE LOCAL':'PT-BR // TRADUÇÃO SALVA NO APARELHO')}
 async function translateCurrentSection(){
- if(translating)return;
- const s=srcById(activeEpubSourceId);if(!s)return;
- if(isPortugueseBook(s)){showOriginal();setState('LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS');return}
- const ident=sectionIdentity();
- const text=getRenderedText();
- if(!text){setState('NÃO FOI POSSÍVEL LER O TEXTO DESTA SEÇÃO');return}
- const hash=simpleHash(text);
- const cacheKey=`${ident.key}::pt-BR`;
- const cached=await cacheGet(cacheKey);
- if(cached?.text&&cached?.hash===hash){showTranslation(cached.text,true);return}
+ if(translating)return;const src=srcById(activeEpubSourceId);if(!src)return;if(isPortugueseBook(src)){showOriginal();return}
+ const ident=sectionIdentity();setState('LENDO TEXTO DA SEÇÃO...');const text=await getSectionText();if(!text){setState('NÃO FOI POSSÍVEL EXTRAIR O TEXTO // AVANCE UMA PÁGINA E TENTE NOVAMENTE');return}
+ const hash=simpleHash(text),cacheKey=`${ident.key}::pt-BR::v2`;const cached=await cacheGet(cacheKey);if(cached?.text&&cached?.hash===hash){showTranslation(cached.text,true);return}
  const btn=document.getElementById('siriusPtBtn');translating=true;if(btn){btn.disabled=true;btn.textContent='TRADUZINDO...'}
- try{
-  const chunks=splitText(text,430);
-  if(!chunks.length)throw new Error('no_chunks');
-  if(chunks.length>120)throw new Error('section_too_large');
-  setState(`TRADUZINDO PT-BR // 0/${chunks.length}`);
-  const translated=await mapLimit(chunks,2,(q)=>translateChunk(q,sourceLang(s)));
-  const result=translated.join('\n\n');
-  await cachePut({key:cacheKey,sourceId:String(s.id),href:ident.href||'',target:'pt-BR',sourceLanguage:sourceLang(s),hash,text:result,createdAt:new Date().toISOString()});
-  showTranslation(result,false);
- }catch(err){
-  console.error('SIRIUS translation',err);
-  if(String(err?.message||'').includes('section_too_large'))setState('SEÇÃO MUITO LONGA // AVANCE ALGUMAS PÁGINAS E TENTE NOVAMENTE');
-  else setState('TRADUÇÃO ONLINE INDISPONÍVEL // VERIFIQUE A INTERNET E TENTE NOVAMENTE');
-  showOriginal();
- }finally{translating=false;if(btn){btn.disabled=false;btn.textContent='TRADUZIR PT-BR'}}
+ try{const chunks=splitText(text,1100);if(!chunks.length)throw new Error('no_chunks');if(chunks.length>80)throw new Error('section_too_large');const translated=await translateSeries(chunks,sourceLang(src));const result=translated.join('\n\n');await cachePut({key:cacheKey,sourceId:String(src.id),href:ident.href||'',target:'pt-BR',sourceLanguage:sourceLang(src),hash,text:result,createdAt:new Date().toISOString(),engine:'google+mymemory-fallback'});showTranslation(result,false)}catch(err){console.error('SIRIUS translation',err);setState(String(err?.message||'').includes('section_too_large')?'SEÇÃO MUITO LONGA // AVANCE ALGUMAS PÁGINAS E TENTE NOVAMENTE':'TRADUÇÃO ONLINE INDISPONÍVEL // TENTE NOVAMENTE COM INTERNET ATIVA');showOriginal()}finally{translating=false;if(btn){btn.disabled=false;btn.textContent='TRADUZIR PT-BR'}}
 }
-function showTranslation(text,fromCache){
- ensureUi();const t=document.getElementById('siriusTranslationText');if(t)t.textContent=text;pane()?.classList.add('show');setButtons('pt');setState(fromCache?'PT-BR // TRADUÇÃO RECUPERADA DO CACHE LOCAL':'PT-BR // TRADUÇÃO SALVA NO CACHE LOCAL')
-}
-async function showPortuguese(){
- const s=srcById(activeEpubSourceId);if(!s)return;
- if(isPortugueseBook(s)){showOriginal();setState('LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS');return}
- const ident=sectionIdentity();const text=getRenderedText();const hash=text?simpleHash(text):'';const cached=await cacheGet(`${ident.key}::pt-BR`);
- if(cached?.text&&(!hash||cached.hash===hash)){showTranslation(cached.text,true);return}
- await translateCurrentSection();
-}
-function syncForBook(){
- ensureUi();showOriginal();const s=srcById(activeEpubSourceId);const btn=document.getElementById('siriusPtBtn');if(btn){const pt=isPortugueseBook(s);btn.disabled=pt;btn.textContent=pt?'JÁ EM PT-BR':'TRADUZIR PT-BR'}
- if(!activeEpubRendition||boundRendition===activeEpubRendition)return;
- boundRendition=activeEpubRendition;
- try{activeEpubRendition.on('relocated',loc=>{currentSectionHref=loc?.start?.href||'';currentSectionKey='';if(pane()?.classList.contains('show'))showOriginal();const s2=srcById(activeEpubSourceId);if(!isPortugueseBook(s2))setState('NOVA SEÇÃO // TOQUE EM TRADUZIR PT-BR')})}catch(e){}
-}
-const prevLocal=window.openLocalEpubReader;if(typeof prevLocal==='function')window.openLocalEpubReader=async function(){const r=await prevLocal.apply(this,arguments);setTimeout(syncForBook,120);return r};
-const prevRemote=window.openEpubReader;if(typeof prevRemote==='function')window.openEpubReader=async function(){const r=await prevRemote.apply(this,arguments);setTimeout(syncForBook,120);return r};
+async function showPortuguese(){const src=srcById(activeEpubSourceId);if(!src)return;if(isPortugueseBook(src)){showOriginal();return}const ident=sectionIdentity(),cached=await cacheGet(`${ident.key}::pt-BR::v2`);if(cached?.text){showTranslation(cached.text,true);return}await translateCurrentSection()}
+function syncForBook(){ensureUi();showOriginal();const src=srcById(activeEpubSourceId),btn=document.getElementById('siriusPtBtn');if(btn){const pt=isPortugueseBook(src);btn.disabled=pt;btn.textContent=pt?'JÁ EM PT-BR':'TRADUZIR PT-BR'}if(!activeEpubRendition||boundRendition===activeEpubRendition)return;boundRendition=activeEpubRendition;try{activeEpubRendition.on('relocated',loc=>{currentSectionHref=loc?.start?.href||'';if(pane()?.classList.contains('show'))showOriginal();const s2=srcById(activeEpubSourceId);if(!isPortugueseBook(s2))setState('NOVA SEÇÃO // TRADUÇÃO PT-BR DISPONÍVEL')})}catch(e){}}
+const prevLocal=window.openLocalEpubReader;if(typeof prevLocal==='function')window.openLocalEpubReader=async function(){const r=await prevLocal.apply(this,arguments);setTimeout(syncForBook,160);return r};
+const prevRemote=window.openEpubReader;if(typeof prevRemote==='function')window.openEpubReader=async function(){const r=await prevRemote.apply(this,arguments);setTimeout(syncForBook,160);return r};
 const prevClose=window.closeEpubReader;if(typeof prevClose==='function')window.closeEpubReader=function(){pane()?.classList.remove('show');boundRendition=null;currentSectionHref='';return prevClose.apply(this,arguments)};
 function mark(){document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v})}
-function boot(){ensureUi();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // LEITOR COM TRADUÇÃO ONLINE PT-BR POR SEÇÃO + CACHE LOCAL.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,300),{once:true});else setTimeout(boot,300);
+function boot(){ensureUi();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // TRADUÇÃO PT-BR MELHORADA COM EXTRAÇÃO EPUB MULTIESTRATÉGIA + FALLBACK ONLINE + CACHE LOCAL.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,320),{once:true});else setTimeout(boot,320);
 })();
 </script>
 </body></html>
