@@ -13686,4 +13686,152 @@ async function init(){await reconcileLocalState();seed();render();mark();try{dat
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,260),{once:true});else setTimeout(init,260);window.addEventListener('load',()=>setTimeout(async()=>{await reconcileLocalState();seed();render();mark()},520),{once:true});
 })();
 </script>
+
+<!-- ===== SIRIUS v2.23.27 // TRANSLATE READER ===== -->
+<style id="sirius-v22327-translate-style">
+#epubViewport{position:relative!important}
+.siriusTranslateBar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 8px}
+.siriusTranslateBar button{border:1px solid #7a58cf;background:linear-gradient(180deg,#17102b,#0d0a19);color:#f1eaff;padding:9px 8px;font-size:9px;font-weight:900;letter-spacing:.7px;min-height:38px}
+.siriusTranslateBar button.active{border-color:#c46cff;box-shadow:0 0 18px #9a4dff45;background:linear-gradient(180deg,#2a1550,#160d2c)}
+.siriusTranslateBar button:disabled{opacity:.55}
+.siriusTranslateState{text-align:center;font-size:8px;letter-spacing:.65px;color:#bba8df;margin:-2px 0 7px;min-height:12px}
+#siriusTranslationPane{position:absolute;inset:0;z-index:8;display:none;overflow:auto;-webkit-overflow-scrolling:touch;background:#080713f5;color:#efeaff;padding:20px 18px 40px;line-height:1.68;font-size:16px;white-space:pre-wrap}
+#siriusTranslationPane.show{display:block}
+#siriusTranslationPane .siriusTranslatePaneTitle{font-size:10px;letter-spacing:1.5px;color:#d67cff;font-weight:900;margin-bottom:14px;position:sticky;top:-20px;background:#080713f5;padding:14px 0 10px}
+#siriusTranslationPane .siriusTranslateDisclaimer{font-size:10px;line-height:1.45;color:#9f91bc;border:1px solid #39275d;padding:9px 10px;margin:0 0 14px;background:#100b1f}
+</style>
+<script id="sirius-v22327-translate-script">
+(()=>{
+'use strict';
+const VERSION='v2.23.27';
+const TRANSLATE_DB='siriusTranslationsV1';
+const TRANSLATE_STORE='translations';
+let boundRendition=null;
+let currentSectionKey='';
+let currentSectionHref='';
+let translating=false;
+
+function srcById(id){return (data?.knowledgeArchive?.sources||[]).find(x=>String(x.id)===String(id))||null}
+function sourceLang(s){
+ const raw=String(s?.language||'').toLowerCase();
+ if(/portugu|pt-br|pt_br|\bpt\b/.test(raw))return 'pt';
+ if(/spanish|espa[nñ]ol|espanhol|castelh/.test(raw))return 'es';
+ if(/french|fran[cç]ais|franc[eê]s/.test(raw))return 'fr';
+ if(/german|deutsch|alem[aã]o/.test(raw))return 'de';
+ if(/italian|italiano/.test(raw))return 'it';
+ return 'en';
+}
+function isPortugueseBook(s){return sourceLang(s)==='pt'}
+function escHtml(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+function simpleHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+function openTranslateDb(){return new Promise((res,rej)=>{const req=indexedDB.open(TRANSLATE_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(TRANSLATE_STORE))db.createObjectStore(TRANSLATE_STORE,{keyPath:'key'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
+async function cacheGet(key){try{const db=await openTranslateDb();const val=await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readonly');const q=tx.objectStore(TRANSLATE_STORE).get(key);q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)});db.close();return val}catch(e){console.warn('SIRIUS translate cache read',e);return null}}
+async function cachePut(obj){try{const db=await openTranslateDb();await new Promise((res,rej)=>{const tx=db.transaction(TRANSLATE_STORE,'readwrite');tx.objectStore(TRANSLATE_STORE).put(obj);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error||new Error('translation_db_abort'))});db.close();return true}catch(e){console.warn('SIRIUS translate cache write',e);return false}}
+function ensureUi(){
+ const bottom=document.querySelector('.epubBottom');
+ if(bottom&&!document.getElementById('siriusTranslateBar')){
+  const bar=document.createElement('div');bar.id='siriusTranslateBar';bar.className='siriusTranslateBar';
+  bar.innerHTML='<button type="button" id="siriusOriginalBtn" class="active">ORIGINAL</button><button type="button" id="siriusPtBtn">TRADUZIR PT-BR</button>';
+  const state=document.createElement('div');state.id='siriusTranslateState';state.className='siriusTranslateState';state.textContent='TRADUÇÃO ONLINE SOB DEMANDA // CACHE LOCAL';
+  bottom.insertBefore(state,bottom.firstChild);bottom.insertBefore(bar,state);
+  document.getElementById('siriusOriginalBtn').addEventListener('click',showOriginal);
+  document.getElementById('siriusPtBtn').addEventListener('click',showPortuguese);
+ }
+ const vp=document.getElementById('epubViewport');
+ if(vp&&!document.getElementById('siriusTranslationPane')){
+  const pane=document.createElement('div');pane.id='siriusTranslationPane';
+  pane.innerHTML='<div class="siriusTranslatePaneTitle">SIRIUS // PT-BR</div><div class="siriusTranslateDisclaimer">Tradução automática online. O texto original permanece disponível em ORIGINAL.</div><div id="siriusTranslationText"></div>';
+  vp.appendChild(pane);
+ }
+}
+function pane(){ensureUi();return document.getElementById('siriusTranslationPane')}
+function setState(msg){ensureUi();const e=document.getElementById('siriusTranslateState');if(e)e.textContent=msg||''}
+function setButtons(mode){ensureUi();document.getElementById('siriusOriginalBtn')?.classList.toggle('active',mode==='original');document.getElementById('siriusPtBtn')?.classList.toggle('active',mode==='pt')}
+function showOriginal(){pane()?.classList.remove('show');setButtons('original');setState(isPortugueseBook(srcById(activeEpubSourceId))?'LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS':'ORIGINAL ATIVO // PT-BR DISPONÍVEL SOB DEMANDA')}
+function sectionIdentity(){
+ let loc=null;try{loc=activeEpubRendition?.currentLocation?.()}catch(e){}
+ const href=loc?.start?.href||loc?.end?.href||currentSectionHref||'';
+ const cfi=loc?.start?.cfi||'';
+ currentSectionHref=href;
+ return {href,cfi,key:`${activeEpubSourceId||'book'}::${href||cfi||'section'}`}
+}
+function getRenderedText(){
+ try{
+  const contents=activeEpubRendition?.getContents?.()||[];
+  const body=contents[0]?.document?.body;
+  if(!body)return '';
+  const clone=body.cloneNode(true);
+  clone.querySelectorAll('script,style,noscript,svg,nav').forEach(x=>x.remove());
+  return String(clone.innerText||clone.textContent||'').replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
+ }catch(e){console.warn('SIRIUS rendered text',e);return ''}
+}
+function splitText(text,max=430){
+ const parts=[];for(const para of text.split(/\n{2,}/)){let s=para.trim();if(!s)continue;while(s.length>max){let cut=Math.max(s.lastIndexOf('. ',max),s.lastIndexOf('! ',max),s.lastIndexOf('? ',max),s.lastIndexOf('; ',max),s.lastIndexOf(', ',max),s.lastIndexOf(' ',max));if(cut<Math.floor(max*.55))cut=max;parts.push(s.slice(0,cut+1).trim());s=s.slice(cut+1).trim()}if(s)parts.push(s)}return parts
+}
+async function translateChunk(q,sl){
+ const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(sl+'|pt-BR');
+ const r=await fetch(url,{method:'GET',mode:'cors',cache:'no-store',headers:{'Accept':'application/json'}});
+ if(!r.ok)throw new Error('translate_http_'+r.status);
+ const j=await r.json();
+ const t=j?.responseData?.translatedText;
+ if(!t)throw new Error('translate_empty');
+ return String(t).replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+}
+async function mapLimit(items,limit,fn){
+ const out=new Array(items.length);let next=0,done=0;
+ async function worker(){while(true){const i=next++;if(i>=items.length)return;out[i]=await fn(items[i],i);done++;setState(`TRADUZINDO PT-BR // ${done}/${items.length}`)}}
+ await Promise.all(Array.from({length:Math.min(limit,items.length)},worker));return out
+}
+async function translateCurrentSection(){
+ if(translating)return;
+ const s=srcById(activeEpubSourceId);if(!s)return;
+ if(isPortugueseBook(s)){showOriginal();setState('LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS');return}
+ const ident=sectionIdentity();
+ const text=getRenderedText();
+ if(!text){setState('NÃO FOI POSSÍVEL LER O TEXTO DESTA SEÇÃO');return}
+ const hash=simpleHash(text);
+ const cacheKey=`${ident.key}::pt-BR`;
+ const cached=await cacheGet(cacheKey);
+ if(cached?.text&&cached?.hash===hash){showTranslation(cached.text,true);return}
+ const btn=document.getElementById('siriusPtBtn');translating=true;if(btn){btn.disabled=true;btn.textContent='TRADUZINDO...'}
+ try{
+  const chunks=splitText(text,430);
+  if(!chunks.length)throw new Error('no_chunks');
+  if(chunks.length>120)throw new Error('section_too_large');
+  setState(`TRADUZINDO PT-BR // 0/${chunks.length}`);
+  const translated=await mapLimit(chunks,2,(q)=>translateChunk(q,sourceLang(s)));
+  const result=translated.join('\n\n');
+  await cachePut({key:cacheKey,sourceId:String(s.id),href:ident.href||'',target:'pt-BR',sourceLanguage:sourceLang(s),hash,text:result,createdAt:new Date().toISOString()});
+  showTranslation(result,false);
+ }catch(err){
+  console.error('SIRIUS translation',err);
+  if(String(err?.message||'').includes('section_too_large'))setState('SEÇÃO MUITO LONGA // AVANCE ALGUMAS PÁGINAS E TENTE NOVAMENTE');
+  else setState('TRADUÇÃO ONLINE INDISPONÍVEL // VERIFIQUE A INTERNET E TENTE NOVAMENTE');
+  showOriginal();
+ }finally{translating=false;if(btn){btn.disabled=false;btn.textContent='TRADUZIR PT-BR'}}
+}
+function showTranslation(text,fromCache){
+ ensureUi();const t=document.getElementById('siriusTranslationText');if(t)t.textContent=text;pane()?.classList.add('show');setButtons('pt');setState(fromCache?'PT-BR // TRADUÇÃO RECUPERADA DO CACHE LOCAL':'PT-BR // TRADUÇÃO SALVA NO CACHE LOCAL')
+}
+async function showPortuguese(){
+ const s=srcById(activeEpubSourceId);if(!s)return;
+ if(isPortugueseBook(s)){showOriginal();setState('LIVRO JÁ IDENTIFICADO COMO PORTUGUÊS');return}
+ const ident=sectionIdentity();const text=getRenderedText();const hash=text?simpleHash(text):'';const cached=await cacheGet(`${ident.key}::pt-BR`);
+ if(cached?.text&&(!hash||cached.hash===hash)){showTranslation(cached.text,true);return}
+ await translateCurrentSection();
+}
+function syncForBook(){
+ ensureUi();showOriginal();const s=srcById(activeEpubSourceId);const btn=document.getElementById('siriusPtBtn');if(btn){const pt=isPortugueseBook(s);btn.disabled=pt;btn.textContent=pt?'JÁ EM PT-BR':'TRADUZIR PT-BR'}
+ if(!activeEpubRendition||boundRendition===activeEpubRendition)return;
+ boundRendition=activeEpubRendition;
+ try{activeEpubRendition.on('relocated',loc=>{currentSectionHref=loc?.start?.href||'';currentSectionKey='';if(pane()?.classList.contains('show'))showOriginal();const s2=srcById(activeEpubSourceId);if(!isPortugueseBook(s2))setState('NOVA SEÇÃO // TOQUE EM TRADUZIR PT-BR')})}catch(e){}
+}
+const prevLocal=window.openLocalEpubReader;if(typeof prevLocal==='function')window.openLocalEpubReader=async function(){const r=await prevLocal.apply(this,arguments);setTimeout(syncForBook,120);return r};
+const prevRemote=window.openEpubReader;if(typeof prevRemote==='function')window.openEpubReader=async function(){const r=await prevRemote.apply(this,arguments);setTimeout(syncForBook,120);return r};
+const prevClose=window.closeEpubReader;if(typeof prevClose==='function')window.closeEpubReader=function(){pane()?.classList.remove('show');boundRendition=null;currentSectionHref='';return prevClose.apply(this,arguments)};
+function mark(){document.querySelectorAll('.versionMark').forEach(x=>{const v='SIRIUS // '+VERSION;if(x.textContent!==v)x.textContent=v})}
+function boot(){ensureUi();mark();try{data.systemLog=Array.isArray(data.systemLog)?data.systemLog:[];const msg=`VERSÃO INSTALADA: ${VERSION} // LEITOR COM TRADUÇÃO ONLINE PT-BR POR SEÇÃO + CACHE LOCAL.`;if(!data.systemLog.some(x=>String(x?.text||x?.message||'').includes(VERSION))){addSystemLog?.('version',msg);save?.()}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,300),{once:true});else setTimeout(boot,300);
+})();
+</script>
 </body></html>
