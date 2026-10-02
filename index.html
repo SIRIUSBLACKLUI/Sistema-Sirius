@@ -2987,7 +2987,8 @@ async function evaluateEvolutionTrialWithAI(n){
  m.evaluating=true;m.evolutionState="pending";save();closeMissionPanel();showSystemEvent("PROVA EM AVALIAÇÃO",`O SIRIUS está avaliando a evolução real de ${m.targetAttr}.`);
  const instruction=`Você é o avaliador de evolução do SIRIUS. Avalie com rigor a prova do atributo ${m.targetAttr}. Considere: ação concreta 30 pontos, qualidade da evidência 25, superação/dificuldade 20, resultado observável 15, reflexão honesta 10. Nota mínima 80. Responda SOMENTE JSON válido: {"score":0,"feedback":"avaliação objetiva em português","strengths":["força"],"gaps":["lacuna"]}. CRITÉRIO: ${m.completionCondition}. HISTÓRICO: ${m.evolutionProof.historyCount} missões concluídas. RELATO: ${m.evolutionProof.text}`;
  try{
-  const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:instruction,task:"evaluate_evolution",attribute:m.targetAttr,proof:m.evolutionProof,context:buildSiriusContext(),history:[]})});
+  const response=await fetch(endpoint,{
+      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:instruction,task:"evaluate_evolution",attribute:m.targetAttr,proof:m.evolutionProof,context:buildSiriusContext(),history:[]})});
   const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||`HTTP ${response.status}`);
   const evaluation=normalizeLearningEvaluation(parseLearningEvaluation(payload));evaluation.approved=evaluation.score>=80;m.evaluating=false;m.evolutionEvaluation=evaluation;
   if(evaluation.approved)approveEvolutionTrial(n,evaluation);else{m.evolutionState="rejected";addSystemLog("attribute",`PROVA DE EVOLUÇÃO REPROVADA: ${m.targetAttr} // ${evaluation.score}/100`);save();refreshDashboard();setTimeout(()=>showSystemEvent("EVOLUÇÃO NEGADA",`${evaluation.score}/100 // ${evaluation.feedback} // O atributo permanece em 100 PD.`),80);}
@@ -5872,7 +5873,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
  }
  async function callProfessorAI(messageText,task){
   const endpoint=getAiEndpoint();if(!endpoint){configureSiriusAI();throw new Error("IA não configurada")}
-  const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task:task||"professor_teach",message:messageText,context:buildSiriusContext(),professorSession:session(),history:[]})});
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);let r;try{r=await fetch(endpoint,{signal:controller.signal,method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({task:task||"professor_teach",message:messageText,context:buildSiriusContext(),professorSession:session(),history:[]})});}finally{clearTimeout(timer)}
   const p=await r.json().catch(()=>({}));if(!r.ok)throw new Error(p.details||p.error||`HTTP ${r.status}`);const turn=normalizeTeacherTurn(extractJsonFromTeacher(p));turn.engine=String(p.engine||turn.engine||"");if(!turn.teacher&&!turn.feedback&&!turn.question)throw new Error("O Worker não retornou uma etapa de aula válida. Atualize o worker.js para v2.19.0.");return turn;
  }
  function renderProfessorAI(){
@@ -5893,10 +5894,11 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
   } else s.reward="NENHUMA RECOMPENSA // recuperação necessária";
   data.professorClassHistory.push({id:s.id,topic:s.topic,objective:s.objective,score:s.score,approved:s.approved,strengths:s.strengths,gaps:s.gaps,summary:s.summary,startedAt:s.startedAt,endedAt:s.endedAt,reward:s.reward});data.professorClassHistory=data.professorClassHistory.slice(-MAX_HISTORY);save();
  }
- window.startProfessorClass=async function(){
+ window.startProfessorClass=async function(schoolContext){
   ensureProfessorAI();
   const input=document.getElementById("professorTopicInput"),topic=(input?.value||"").trim();
   if(topic.length<2){showSystemEvent("TEMA NECESSÁRIO","Diga o que você quer aprender hoje. Você também pode informar seu nível, por exemplo: Inglês — iniciante.");return}
+  if(session()?.busy)return;
   if(session()?.status==="active"&&!confirm("Há uma aula em andamento. Iniciar outro tema?"))return;
   const declaredLevel=detectDeclaredLevel(topic);
   data.professorLiveSession={
@@ -5908,12 +5910,16 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
    askedQuestions:[],
    method:"aula guiada adaptativa",
    turn:0,status:"active",busy:true,messages:[],
+   schoolContext:schoolContext&&typeof schoolContext==="object"?schoolContext:null,
    startedAt:new Date().toISOString(),rewardProcessed:false
   };
   save();renderProfessorAI();setBusy(true,"PREPARANDO AULA...");
   try{
-   let t=await callProfessorAI(teacherPromptStart(topic,declaredLevel),"professor_start");
+   const context=session().schoolContext;
+   if(context){message("teacher",context.content,"teacher");message("teacher",context.question,"practice");if(context.answer)message("student",context.answer);}
+   let t=await callProfessorAI(teacherPromptStart(topic,declaredLevel)+(context?"\nCONTINUAÇÃO DA AULA JÁ ESTUDADA:\n"+JSON.stringify(context)+"\nAvalie especificamente a resposta enviada: identifique acertos e erros, explique a correção com exemplo e depois aprofunde a aula. Não repita a pergunta original. Se não há resposta, aprofunde o conteúdo. Não dê aprovação ou XP neste primeiro turno.":""),"professor_start");
    const s=session();
+   if(t.feedback)message("teacher",t.feedback,"feedback");
    s.objective=t.objective||`Aprender ${topic} de forma progressiva e conseguir aplicar o conteúdo.`;
    s.difficulty=declaredLevel||t.difficulty||s.difficulty||"basico";
    s.method=t.method||s.method||"aula guiada";
@@ -5933,7 +5939,7 @@ Retorne apenas o próximo passo no schema do Professor SIRIUS.`;
    s.busy=false;save();renderProfessorAI();
   }catch(e){
    const s=session();
-   if(s){s.busy=false;s.status="error";message("teacher",`Não consegui iniciar a aula agora. ${e.message||"Verifique a conexão com a IA."}`,"feedback");save()}
+   if(s){s.busy=false;s.status="error";message("teacher",`Não foi possível conectar ao Professor. Sua resposta continua salva. Toque em COMEÇAR AULA para tentar novamente. ${/load failed|failed to fetch|network|abort/i.test(e.message||"")?"Verifique sua conexão e a disponibilidade do serviço de IA.":e.message||""}`,"feedback");save()}
    renderProfessorAI();
   }finally{setBusy(false)}
  };
@@ -6765,7 +6771,8 @@ button,a,[role="button"]{touch-action:manipulation}
       messages:(s.messages||[]).slice(-8)
     }:null;
 
-    const response=await fetch(endpoint,{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+    let response;try{response=await fetch(endpoint,{signal:controller.signal,
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
@@ -6775,7 +6782,7 @@ button,a,[role="button"]{touch-action:manipulation}
         professorSession:compactSession,
         history:[]
       })
-    });
+    });}finally{clearTimeout(timer)}
 
     const payload=await response.json().catch(()=>({}));
     if(!response.ok){
@@ -13942,7 +13949,7 @@ const SCHOOL_TRACKS=[
 (()=>{'use strict';
 const STORE='SIRIUS_SCHOOL_V1',tracks=SCHOOL_TRACKS,byId=new Map(tracks.flatMap(t=>t.lessons.map(l=>[l.id,{...l,track:t}])));
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function initial(){return {track:'politica',lesson:'estado-governo',answers:{},results:{},reviews:{},reflection:'',notice:''}}
+function initial(){return {track:'politica',lesson:'estado-governo',answers:{},results:{},reviews:{},reflection:'',notice:'',submissions:{}}}
 function read(){try{const x=JSON.parse(localStorage.getItem(STORE)||'null');if(!x||typeof x!=='object')return initial();return {...initial(),...x,answers:x.answers&&typeof x.answers==='object'?x.answers:{},results:x.results&&typeof x.results==='object'?x.results:{},reviews:x.reviews&&typeof x.reviews==='object'?x.reviews:{}}}catch(e){return initial()}}
 let state=read();
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch(e){state.notice='Não foi possível salvar o progresso neste aparelho. Libere espaço e tente novamente.';return false}}
@@ -13952,19 +13959,22 @@ function due(l){const x=state.reviews[l.id];return !!x&&Date.now()>=Date.parse(x
 function progress(){return tracks.reduce((n,t)=>n+t.lessons.filter(l=>!!state.results[l.id]).length,0)}
 function count(){return tracks.reduce((n,t)=>n+t.lessons.length,0)}
 function buttons(l){return l.quiz.map((q,qi)=>{const selected=state.answers[l.id]?.[qi],shown=selected!==undefined;return `<div class="ssQuestion"><h4>QUESTÃO ${qi+1} // ${safe(q[0])}</h4><div class="ssOptions">${q[1].map((o,i)=>`<button type="button" data-ss="answer" data-q="${qi}" data-option="${i}" class="${selected===i?'chosen':''}" aria-pressed="${selected===i}">${String.fromCharCode(65+i)}. ${safe(o)}</button>`).join('')}</div>${shown?`<p class="ssFeedback ${selected===q[2]?'correct':''}">${selected===q[2]?'CORRETO.':'REVEJA. '} ${safe(q[3])}</p>`:''}</div>`}).join('')}
-function render(){const root=document.getElementById('siriusSchoolRoot');if(!root)return;const t=activeTrack(),l=activeLesson(),done=progress(),total=count(),review=Object.keys(state.reviews).filter(id=>byId.has(id)&&due(byId.get(id))).length;root.innerHTML=`<div class="ssHead"><span class="ssKicker">[ SIRIUS // ESCOLA ]</span><h2>CONHECIMENTO GERAL</h2><p>Comece pelos fundamentos, avance no seu ritmo e teste o que entendeu. Abra uma aula do Professor para aprofundar ou tirar dúvidas.</p><div class="ssStats"><span><b>${done}/${total}</b> PRÁTICAS</span><span><b>${tracks.length}</b> MATÉRIAS</span><span><b>${review}</b> REVISÕES</span></div></div>
+function render(){const shell=document.getElementById('professorClassShell');if(shell&&shell.closest('#siriusSchoolRoot'))document.getElementById('view-learning').append(shell);const root=document.getElementById('siriusSchoolRoot');if(!root)return;const t=activeTrack(),l=activeLesson(),done=progress(),total=count(),review=Object.keys(state.reviews).filter(id=>byId.has(id)&&due(byId.get(id))).length;root.innerHTML=`<div class="ssHead"><span class="ssKicker">[ SIRIUS // ESCOLA ]</span><h2>CONHECIMENTO GERAL</h2><p>Comece pelos fundamentos, avance no seu ritmo e teste o que entendeu. Abra uma aula do Professor para aprofundar ou tirar dúvidas.</p><div class="ssStats"><span><b>${done}/${total}</b> PRÁTICAS</span><span><b>${tracks.length}</b> MATÉRIAS</span><span><b>${review}</b> REVISÕES</span></div></div>
 <div class="ssTabs" role="tablist" aria-label="Matérias da Escola SIRIUS">${tracks.map(x=>`<button type="button" role="tab" aria-selected="${x.id===t.id}" data-ss="track" data-track="${x.id}" class="${x.id===t.id?'active':''}">${x.icon} ${safe(x.name)}</button>`).join('')}</div>
 <div class="ssPanel"><small>TRILHA // ${safe(t.name)}</small><h3>DO BÁSICO AO AVANÇADO</h3><p>As aulas estão em sequência recomendada. Você pode abrir qualquer uma e voltar às anteriores sempre que precisar.</p><div class="ssLessonList">${t.lessons.map((x,i)=>`<button type="button" data-ss="lesson" data-lesson="${x.id}" class="ssLessonCard ${x.id===l.id?'active':''}"><span class="ssNumber">${i+1}</span><span><strong>${safe(x.title)}</strong><em>${safe(x.level)}${due(x)?' // REVISÃO DISPONÍVEL':''}</em></span><span class="ssDone">${state.results[x.id]?'✓':''}</span></button>`).join('')}</div></div>
-<article class="ssLesson" id="ssLesson"><small class="ssKicker">${safe(t.name)} // ${safe(l.level)}</small><h3>${safe(l.title)}</h3><p class="ssGoal">OBJETIVO // ${safe(l.goal)}</p>${l.parts.map(p=>`<section class="ssPart"><h4>${safe(p[0])}</h4><p>${safe(p[1])}</p></section>`).join('')}<div class="ssExample"><strong>EXEMPLO CONCRETO</strong><br>${safe(l.example)}</div><div class="ssPart"><h4>PRATIQUE E CONFIRA</h4><p>Responda às duas questões. Se errar, leia a explicação e tente novamente.</p></div>${buttons(l)}<div class="ssReflection"><label for="ssReflection">EXPLIQUE COM SUAS PALAVRAS // ${safe(l.question)}</label><textarea id="ssReflection" maxlength="1200" placeholder="Escreva uma explicação e um exemplo seu; não copie o texto da aula.">${safe(state.reflection||'')}</textarea></div><div class="ssActionRow"><button type="button" data-ss="submit">REGISTRAR PRÁTICA</button><button type="button" data-ss="professor" class="secondary">CONVERSAR COM O PROFESSOR</button></div>${state.notice?`<p class="ssFeedback" role="status">${safe(state.notice)}</p>`:''}<p class="ssNote">A prática local registra estudo e revisão. XP e aprovação por compreensão dependem da avaliação do Professor SIRIUS.</p><span class="ssSource">BASE DA TRILHA // <a href="${safe(t.url)}" target="_blank" rel="noopener noreferrer">${safe(t.source)}</a>${t.url2?` · <a href="${safe(t.url2)}" target="_blank" rel="noopener noreferrer">${safe(t.source2)}</a>`:''}</span></article>
-<div class="ssReviews"><b>REVISÃO PROGRAMADA</b><br>${review?`Você tem ${review} aula(s) para revisar. Abra a matéria e escolha o card marcado como REVISÃO DISPONÍVEL.`:'As aulas praticadas voltarão para revisão. Na primeira vez, o intervalo é de um dia.'}</div>`}
+<article class="ssLesson" id="ssLesson"><small class="ssKicker">${safe(t.name)} // ${safe(l.level)}</small><h3>${safe(l.title)}</h3><p class="ssGoal">OBJETIVO // ${safe(l.goal)}</p>${l.parts.map(p=>`<section class="ssPart"><h4>${safe(p[0])}</h4><p>${safe(p[1])}</p></section>`).join('')}<div class="ssExample"><strong>EXEMPLO CONCRETO</strong><br>${safe(l.example)}</div><div class="ssPart"><h4>PRATIQUE E CONFIRA</h4><p>Responda às duas questões. Se errar, leia a explicação e tente novamente.</p></div>${buttons(l)}<div class="ssReflection"><label for="ssReflection">EXPLIQUE COM SUAS PALAVRAS // ${safe(l.question)}</label><textarea id="ssReflection" maxlength="1200" placeholder="Escreva uma explicação e um exemplo seu; não copie o texto da aula.">${safe(state.reflection||'')}</textarea></div><div class="ssActionRow"><button type="button" data-ss="submit">ENVIAR RESPOSTA</button><button type="button" data-ss="professor" class="secondary">COMEÇAR AULA</button></div>${state.notice?`<p class="ssFeedback" role="status">${safe(state.notice)}</p>`:''}<p class="ssNote">A prática local registra estudo e revisão. XP e aprovação por compreensão dependem da avaliação do Professor SIRIUS.</p><span class="ssSource">BASE DA TRILHA // <a href="${safe(t.url)}" target="_blank" rel="noopener noreferrer">${safe(t.source)}</a>${t.url2?` · <a href="${safe(t.url2)}" target="_blank" rel="noopener noreferrer">${safe(t.source2)}</a>`:''}</span></article>
+<section class="ssPanel" id="ssChat"><h3>CONTINUE A AULA COM O PROFESSOR</h3><p>Envie sua explicação acima e toque em COMEÇAR AULA. O professor usa o conteúdo estudado e sua resposta para corrigir, aprofundar e conversar com você.</p><div id="ssChatMount"></div><button type="button" data-ss="professor">COMEÇAR AULA</button></section>
+<div class="ssReviews"><b>REVISÃO PROGRAMADA</b><br>${review?`Você tem ${review} aula(s) para revisar. Abra a matéria e escolha o card marcado como REVISÃO DISPONÍVEL.`:'As aulas praticadas voltarão para revisão. Na primeira vez, o intervalo é de um dia.'}</div>`;if(shell)document.getElementById('ssChatMount').append(shell)}
 function pickTrack(id){const t=tracks.find(x=>x.id===id);if(!t)return;state.track=t.id;state.lesson=t.lessons[0].id;state.answers={};state.reflection='';state.notice='';persist();render()}
-function pickLesson(id){const l=byId.get(id);if(!l)return;state.track=l.track.id;state.lesson=id;state.answers={};state.reflection='';state.notice='';persist();render();document.getElementById('ssLesson')?.scrollIntoView({behavior:'smooth',block:'start'})}
+function pickLesson(id){const l=byId.get(id);if(!l)return;state.track=l.track.id;state.lesson=id;state.answers={};state.reflection=state.submissions?.[id]?.answer||'';state.notice='';persist();render();document.getElementById('ssLesson')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function answer(q,i){const l=activeLesson(),question=l.quiz[q];if(!question||!Number.isInteger(i)||i<0||i>=question[1].length)return;state.answers[l.id]=state.answers[l.id]||{};state.answers[l.id][q]=i;state.reflection=document.getElementById('ssReflection')?.value||'';state.notice='';render()}
-function submit(){const l=activeLesson(),a=state.answers[l.id]||{},text=document.getElementById('ssReflection')?.value.trim()||'';state.reflection=text;if(l.quiz.some((q,i)=>a[i]!==q[2])){state.notice='Responda corretamente às duas questões. Leia as explicações para rever os pontos difíceis.';render();return}if(text.length<80){state.notice='Explique com mais detalhes e dê um exemplo próprio (mínimo de 80 caracteres).';render();return}const old=state.results[l.id],oldReview=state.reviews[l.id],stage=old?Math.min(4,(old.stage||0)+1):0,days=[1,3,7,14,30][stage];state.results[l.id]={stage,practicedAt:new Date().toISOString(),reflection:text.slice(0,1200)};state.reviews[l.id]=new Date(Date.now()+days*86400000).toISOString();state.notice=`Prática registrada. Revise em ${days} dia${days>1?'s':''}. Para avaliação e XP, converse com o Professor SIRIUS.`;if(!persist()){if(old)state.results[l.id]=old;else delete state.results[l.id];if(oldReview)state.reviews[l.id]=oldReview;else delete state.reviews[l.id]}render()}
-function professor(){const l=activeLesson(),input=document.getElementById('professorTopicInput');if(!input){state.notice='O Professor ainda está carregando. Abra Aprender novamente.';render();return}const level=l.level==='FUNDAMENTOS'?'básico':l.level==='INTERMEDIÁRIO'?'intermediário':'avançado';input.value=`${l.track.name}: ${l.title} — nível ${level}`.slice(0,140);document.querySelector('.professorAiHero')?.scrollIntoView({behavior:'smooth',block:'start'});if(typeof window.startProfessorClass==='function')window.startProfessorClass()}
+function submit(){const l=activeLesson(),text=document.getElementById('ssReflection')?.value.trim()||'';state.reflection=text;if(!text){state.notice='Escreva sua explicação antes de enviar.';render();return}state.submissions=state.submissions||{};state.submissions[l.id]={answer:text,answers:{...(state.answers[l.id]||{})},sentAt:new Date().toISOString()};state.notice='Resposta enviada e salva. Toque em COMEÇAR AULA para receber a correção e continuar no chat.';persist();render()}
+async function professor(){const l=activeLesson(),input=document.getElementById('professorTopicInput');if(!input)return;const draft=document.getElementById('ssReflection')?.value.trim()||'';state.reflection=draft;persist();const sent=state.submissions?.[l.id];if(draft&&draft!==sent?.answer){state.notice='Toque em ENVIAR RESPOSTA para enviar sua explicação atual antes de começar a aula.';render();return}const level=l.level==='FUNDAMENTOS'?'básico':l.level==='INTERMEDIÁRIO'?'intermediário':'avançado';input.value=`${l.track.name}: ${l.title} — nível ${level}`.slice(0,140);document.getElementById('ssChat')?.scrollIntoView({behavior:'smooth',block:'start'});if(typeof window.startProfessorClass==='function')await window.startProfessorClass({lessonId:l.id,goal:l.goal,content:l.parts.map(p=>p.join(': ')).join('\n')+'\nExemplo: '+l.example,question:l.question,answer:sent?.answer||'',quiz:l.quiz.map((q,i)=>({question:q[0],answer:q[1][sent?.answers?.[i]]||'Não respondida',explanation:q[3]}))})}
 function mount(){const view=document.getElementById('view-learning');if(!view||document.getElementById('siriusSchoolRoot'))return;const root=document.createElement('section');root.id='siriusSchoolRoot';const header=document.getElementById('unifiedLearningHeader');if(header)header.after(root);else view.prepend(root);root.addEventListener('click',e=>{const b=e.target.closest('button[data-ss]');if(!b||!root.contains(b))return;const action=b.dataset.ss;if(action==='track')pickTrack(b.dataset.track);else if(action==='lesson')pickLesson(b.dataset.lesson);else if(action==='answer')answer(Number(b.dataset.q),Number(b.dataset.option));else if(action==='submit')submit();else if(action==='professor')professor()});render()}
-function boot(){setTimeout(mount,650);setTimeout(mount,1500);document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // v2.23.44')}
+function boot(){setTimeout(mount,650);setTimeout(mount,1500);document.querySelectorAll('.versionMark').forEach(x=>x.textContent='SIRIUS // v2.23.45')}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script>
-</body></html>
+<style id="sirius-v22345-chat-style">
+#ssChat .professorClassShell{margin:12px 0;background:#100b20;border-color:#653b94}#ssChat textarea{font-size:16px;min-height:100px}#ssChat button{min-height:44px}#ssChat .professorMessages{max-height:460px;overflow-y:auto}#ssChat .professorComposer button,#ssChat>button{background:#4b2476;border:1px solid #9360cd;color:white;padding:14px;width:100%}#siriusSchoolRoot~.professorAiHero{display:none}
+</style></body></html>
